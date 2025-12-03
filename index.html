@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LYNEX – Coming Soon</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins', sans-serif;
+    }
+
+    body{
+      background:#000;
+      color:white;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      flex-direction:column;
+    }
+
+    /* Animated Background Glow */
+    .glow{
+      position:absolute;
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,#ff8c1a33,#000000);
+      filter:blur(90px);
+      animation:move 7s infinite alternate;
+      z-index:-1;
+    }
+
+    @keyframes move{
+      0%{ transform:translate(-150px,-100px); }
+      100%{ transform:translate(150px,120px); }
+    }
+
+    /* LOGO */
+    .logo{
+      font-size:70px;
+      font-weight:800;
+      letter-spacing:4px;
+      display:flex;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .lyn{
+      color:white;
+      display:flex;
+      gap:5px;
+    }
+
+    .lyn span{
+      display:inline-block;
+      animation:slide 1s forwards;
+      opacity:0;
+    }
+
+    .nex{
+      color:#ff8c1a;
+      animation:fade 1.4s ease-in-out forwards;
+      opacity:0;
+      margin-left:8px;
+    }
+
+    @keyframes slide{
+      0%{ transform:translateY(20px); opacity:0; }
+      100%{ transform:translateY(0); opacity:1; }
+    }
+
+    @keyframes fade{
+      0%{ opacity:0; transform:scale(0.8); }
+      100%{ opacity:1; transform:scale(1); }
+    }
+
+    /* LOADING TEXT */
+    .loading{
+      margin-top:10px;
+      font-size:18px;
+      color:#ff8c1a;
+      animation:blink 1.3s infinite alternate;
+    }
+
+    @keyframes blink{
+      0%{ opacity:0.4; }
+      100%{ opacity:1; }
+    }
+
+    /* Coming Soon Box */
+    .coming{
+      margin-top:25px;
+      font-size:20px;
+      opacity:0;
+      animation:fade 2.5s forwards;
+      text-align:center;
+    }
+
+    /* Button */
+    .btn{
+      margin-top:30px;
+      padding:12px 28px;
+      border:2px solid #ff8c1a;
+      color:#ff8c1a;
+      border-radius:40px;
+      text-decoration:none;
+      font-size:16px;
+      font-weight:600;
+      transition:0.3s;
+      opacity:0;
+      animation:fade 3s forwards;
+    }
+
+    .btn:hover{
+      background:#ff8c1a;
+      color:black;
+      box-shadow:0 0 15px #ff8c1a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="glow"></div>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="lyn">
+      <span>L</span>
+      <span>Y</span>
+      <span>N</span>
+    </div>
+    <div class="nex">EX</div>
+  </div>
+
+  <div class="loading">Loading…</div>
+
+  <div class="coming">
+    Our official website is currently under development.<br>
+    Stay connected — something amazing is coming soon!
+  </div>
+
+  <a class="btn" href="https://facebook.com/LYNEX" target="_blank">
+    Follow Our Facebook Page
+  </a>
+
+</body>
+</html>
