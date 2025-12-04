@@ -1,4 +1,4 @@
-// script.js - The Brain of LYNEX (Fully Functional)
+// script.js - Updated Logic
 
 // --- LOCAL STORAGE KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
@@ -6,339 +6,298 @@ const KEY_CART = 'lynex_cart';
 const KEY_ORDERS = 'lynex_orders';
 const KEY_ADMIN_LOGGED = 'lynex_admin_logged';
 
-// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // 1. Navigation Logic
+    // Navigation
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
-    }
+    if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
-    // Cart Count Update
     updateCartCount();
 
-    // 2. Routing Logic
+    // Routing
     const path = window.location.pathname;
-    const page = path.split("/").pop(); 
-    
-    // Website Pages
-    if (page === 'index.html' || page === '' || page === 'products.html') {
-        loadProductsDisplay();
-    } 
-    else if (page === 'cart.html') {
-        loadCartDisplay();
-    } 
-    else if (page === 'checkout.html') {
-        handleCheckoutForm();
-        loadCartSummaryForCheckout();
-    } 
-    
-    // Admin Pages Logic
+    const page = path.split("/").pop();
+
+    if (page === 'index.html' || page === '') loadHomePage(); // New Arrival Logic
+    else if (page === 'products.html') loadAllProductsPage();
+    else if (page === 'cart.html') loadCartDisplay();
+    else if (page === 'checkout.html') { handleCheckoutForm(); loadCartSummaryForCheckout(); }
     else if (page.includes('admin_') && !page.includes('login')) {
-        checkAdminAuth(); // Security Check
-        
-        // Load specific dashboard functions
-        if (page.includes('products')) {
-            initAdminProducts();
-        } else if (page.includes('orders')) {
-            initAdminOrders();
-        } else if (page.includes('dashboard')) {
-            initAdminDashboard();
-        }
+        checkAdminAuth();
+        if (page.includes('dashboard')) initAdminDashboard();
+        if (page.includes('products')) initAdminProducts();
+        if (page.includes('orders')) initAdminOrders();
     }
     
-    // Admin Login Handler
+    // Login
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const user = e.target.username.value;
-            const pass = e.target.password.value;
-            if (user === 'admin' && pass === '1234') {
+            if (e.target.username.value === 'admin' && e.target.password.value === '1234') {
                 sessionStorage.setItem(KEY_ADMIN_LOGGED, 'true');
-                window.location.href = 'admin_products.html';
-            } else {
-                alert('Login Failed!');
-            }
+                window.location.href = 'admin_dashboard.html';
+            } else alert('Login Failed!');
         });
     }
 });
 
-// --- HELPER FUNCTIONS ---
-function getStorage(key) {
-    return JSON.parse(localStorage.getItem(key)) || [];
-}
-
-function setStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-}
-
+// --- HELPER ---
+function getStorage(key) { return JSON.parse(localStorage.getItem(key)) || []; }
+function setStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 function updateCartCount() {
     const cart = getStorage(KEY_CART);
-    const icons = document.querySelectorAll('.cart-count');
-    icons.forEach(el => el.innerText = `(${cart.length})`);
+    document.querySelectorAll('.cart-count').forEach(el => el.innerText = `(${cart.length})`);
 }
 
-// --- WEBSITE FUNCTIONS ---
+// --- PRODUCT DISPLAY LOGIC ---
 
-// Load Products on Website
-function loadProductsDisplay() {
-    const grid = document.querySelector('.product-grid');
-    if (!grid) return;
+// Product Card Generator
+function createProductCard(p) {
+    // ডিসকাউন্ট ক্যালকুলেশন
+    let priceHTML = `<span class="current-price">৳ ${p.price}</span>`;
+    let discountBadge = '';
     
-    const products = getStorage(KEY_PRODUCTS);
-    grid.innerHTML = '';
-
-    if (products.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; background:#1e1e1e; border-radius:8px;"><h3>No Products Available</h3><p>Please add products from Admin Panel</p></div>';
-        return;
+    if (p.originalPrice && p.originalPrice > p.price) {
+        priceHTML = `
+            <span class="old-price">৳ ${p.originalPrice}</span>
+            <span class="current-price">৳ ${p.price}</span>
+        `;
+        const percent = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
+        discountBadge = `<span class="discount-badge">-${percent}%</span>`;
     }
 
-    products.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-            <div class="product-image">
-                <i class="fas fa-tshirt" style="font-size:3em; color:#555;"></i>
-            </div>
+    // ছবি হ্যান্ডেলিং (যদি ছবি না থাকে ডিফল্ট আইকন)
+    let imageHTML = p.image 
+        ? `<img src="${p.image}" alt="${p.name}">` 
+        : `<i class="fas fa-tshirt" style="font-size:3em; color:#555;"></i>`;
+
+    return `
+        <div class="product-card">
+            ${discountBadge}
+            <div class="product-image">${imageHTML}</div>
             <h3>${p.name}</h3>
-            <p>৳ ${p.price}</p>
-            <button onclick="addToCart(${p.id})" class="btn primary-btn" style="width:100%;">Add to Cart</button>
-        `;
-        grid.appendChild(card);
-    });
+            <div class="price-container">${priceHTML}</div>
+            <button onclick="addToCart('${p.id}')" class="btn primary-btn" style="width:100%;">Add to Cart</button>
+        </div>
+    `;
 }
 
-// Add to Cart Logic
-window.addToCart = function(id) {
+// Home Page: Only New Arrivals
+function loadHomePage() {
+    const grid = document.querySelector('#latest-products .product-grid');
+    if (!grid) return;
+    const products = getStorage(KEY_PRODUCTS).filter(p => p.isNewArrival); // ফিল্টার
+    grid.innerHTML = products.length ? products.map(createProductCard).join('') : '<p style="text-align:center; color:#777; width:100%;">No new arrivals yet.</p>';
+}
+
+// All Products Page
+function loadAllProductsPage() {
+    const grid = document.querySelector('.product-grid');
+    if (!grid) return;
     const products = getStorage(KEY_PRODUCTS);
-    const product = products.find(p => p.id == id);
+    grid.innerHTML = products.length ? products.map(createProductCard).join('') : '<p style="text-align:center;">No products available.</p>';
+}
+
+// Add to Cart
+window.addToCart = function(id) {
+    const product = getStorage(KEY_PRODUCTS).find(p => p.id == id);
     if (product) {
         const cart = getStorage(KEY_CART);
         cart.push(product);
         setStorage(KEY_CART, cart);
         updateCartCount();
-        alert('Product added to cart!');
+        alert('Product added!');
     }
 };
 
-// Load Cart Page
-function loadCartDisplay() {
-    const container = document.querySelector('.cart-items');
-    const totalEl = document.getElementById('cart-total');
-    if (!container) return;
+// --- ADMIN LOGIC ---
 
-    const cart = getStorage(KEY_CART);
-    container.innerHTML = '';
-    let total = 0;
-
-    if (cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Your cart is empty.</p>';
-        if(totalEl) totalEl.innerText = '0';
-        // Hide checkout button logic can be added here
-        return;
-    }
-
-    cart.forEach((item, index) => {
-        total += parseFloat(item.price);
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="width:50px; height:50px; background:#2a2a2a; display:flex; align-items:center; justify-content:center;"><i class="fas fa-tshirt"></i></div>
-                <div><h4>${item.name}</h4><p>৳ ${item.price}</p></div>
-            </div>
-            <button onclick="removeFromCart(${index})" style="color:#ff9f43; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
-        `;
-        container.appendChild(div);
-    });
-    if(totalEl) totalEl.innerText = total;
-}
-
-window.removeFromCart = function(index) {
-    const cart = getStorage(KEY_CART);
-    cart.splice(index, 1);
-    setStorage(KEY_CART, cart);
-    loadCartDisplay();
-    updateCartCount();
-};
-
-// Checkout Summary
-function loadCartSummaryForCheckout() {
-    const totalEl = document.getElementById('checkout-total');
-    if(!totalEl) return;
-    const cart = getStorage(KEY_CART);
-    const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-    totalEl.innerText = total;
-}
-
-// Handle Checkout
-function handleCheckoutForm() {
-    const form = document.getElementById('checkout-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const cart = getStorage(KEY_CART);
-            if(cart.length === 0) { alert("Cart is empty!"); return; }
-
-            const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            const order = {
-                id: 'ORD-' + Math.floor(Math.random() * 100000),
-                date: new Date().toLocaleDateString(),
-                customer: {
-                    name: e.target.name.value,
-                    phone: e.target.phone.value,
-                    address: e.target.address.value
-                },
-                items: cart,
-                total: total,
-                status: 'Pending'
-            };
-
-            const orders = getStorage(KEY_ORDERS);
-            orders.unshift(order);
-            setStorage(KEY_ORDERS, orders);
-            setStorage(KEY_CART, []); // Clear cart
-            
-            alert('Order Placed Successfully!');
-            window.location.href = 'index.html';
-        });
-    }
-}
-
-// --- ADMIN FUNCTIONS ---
-
-function checkAdminAuth() {
-    if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) {
-        window.location.href = 'admin_login.html';
-    }
-}
-
-// 1. ADMIN PRODUCTS LOGIC
+// 1. PRODUCTS MANAGEMENT (Image & Options)
 function initAdminProducts() {
     const form = document.getElementById('add-product-form');
     const tableBody = document.querySelector('#product-table tbody');
-    
-    // Function to render table
+
     const renderTable = () => {
         const products = getStorage(KEY_PRODUCTS);
-        tableBody.innerHTML = '';
-        
-        if (products.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No products found</td></tr>';
-            document.getElementById('current-product-count').innerText = 0;
-            return;
-        }
-
-        products.forEach((p, index) => {
-            const row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${p.name}</td>
-                <td>৳ ${p.price}</td>
-                <td><button onclick="deleteProduct(${index})" class="action-btn" style="color:#ff9f43; border:1px solid #ff9f43; padding:5px 10px; background:none; cursor:pointer;">Delete</button></td>
-            `;
-        });
+        tableBody.innerHTML = products.length ? products.map((p, i) => `
+            <tr>
+                <td><img src="${p.image || ''}" style="width:40px; height:40px; object-fit:cover; border-radius:4px; background:#333;"></td>
+                <td>${p.name} ${p.isNewArrival ? '<span style="color:#2ecc71; font-size:0.8em;">(New)</span>' : ''}</td>
+                <td>৳ ${p.price} ${p.originalPrice ? `<small style="text-decoration:line-through; color:#777;">${p.originalPrice}</small>` : ''}</td>
+                <td><button onclick="deleteProduct(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer;">Delete</button></td>
+            </tr>
+        `).join('') : '<tr><td colspan="4" style="text-align:center;">No products</td></tr>';
         document.getElementById('current-product-count').innerText = products.length;
     };
-
-    // Initial render
     renderTable();
 
-    // Add Product Event
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = e.target.name.value;
-            const price = e.target.price.value;
+            
+            // Image processing
+            const fileInput = e.target.image;
+            const reader = new FileReader();
 
-            if(name && price) {
+            const saveProduct = (imgData) => {
                 const newProduct = {
                     id: Date.now(),
-                    name: name,
-                    price: price
+                    name: e.target.name.value,
+                    price: parseFloat(e.target.price.value),
+                    originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null,
+                    isNewArrival: e.target.isNew.checked,
+                    image: imgData
                 };
-                
                 const products = getStorage(KEY_PRODUCTS);
                 products.push(newProduct);
                 setStorage(KEY_PRODUCTS, products);
-                
                 e.target.reset();
-                alert('Product Added Successfully!');
-                renderTable(); // Update table immediately
+                renderTable();
+                alert('Product Added!');
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                reader.onload = function(evt) { saveProduct(evt.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveProduct(null); // No image
             }
         });
     }
 
-    // Global Delete Function
-    window.deleteProduct = function(index) {
-        if(confirm('Are you sure you want to delete this product?')) {
-            const products = getStorage(KEY_PRODUCTS);
-            products.splice(index, 1);
-            setStorage(KEY_PRODUCTS, products);
-            renderTable(); // Update table immediately
+    window.deleteProduct = (i) => {
+        if(confirm('Delete?')) {
+            const p = getStorage(KEY_PRODUCTS);
+            p.splice(i, 1);
+            setStorage(KEY_PRODUCTS, p);
+            renderTable();
         }
     };
 }
 
-// 2. ADMIN ORDERS LOGIC
-function initAdminOrders() {
-    const tableBody = document.querySelector('#orders-table tbody');
-    const orders = getStorage(KEY_ORDERS);
-    
-    tableBody.innerHTML = '';
-    
-    if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders found</td></tr>';
-        return;
-    }
-
-    orders.forEach((order, index) => {
-        const row = tableBody.insertRow();
-        let color = '#ff9f43';
-        if(order.status === 'Shipped') color = '#3498db';
-        if(order.status === 'Delivered') color = '#2ecc71';
-
-        row.innerHTML = `
-            <td><small>${order.id}</small></td>
-            <td>${order.customer.name}<br><small>${order.customer.phone}</small></td>
-            <td>৳ ${order.total}</td>
-            <td>
-                <select onchange="updateOrderStatus(${index}, this.value)" class="status-select" style="color:${color}; border-color:${color}; padding:5px; background:#2a2a2a;">
-                    <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                    <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                    <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                    <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                </select>
-            </td>
-            <td><button onclick="viewOrderDetails(${index})" style="color:#fff; background:#333; border:none; padding:5px 10px; cursor:pointer;">View</button></td>
-        `;
-    });
-
-    window.updateOrderStatus = function(index, newStatus) {
-        const currentOrders = getStorage(KEY_ORDERS);
-        currentOrders[index].status = newStatus;
-        setStorage(KEY_ORDERS, currentOrders);
-        initAdminOrders(); // Reload table
-    };
-
-    window.viewOrderDetails = function(index) {
-        const o = orders[index];
-        const items = o.items.map(i => `- ${i.name} (৳${i.price})`).join('\n');
-        alert(`Order Details:\n\nCustomer: ${o.customer.name}\nAddress: ${o.customer.address}\n\nItems:\n${items}\n\nTotal: ৳${o.total}`);
-    };
-}
-
-// 3. ADMIN DASHBOARD LOGIC
+// 2. DASHBOARD (Revenue & Status Counts)
 function initAdminDashboard() {
     const orders = getStorage(KEY_ORDERS);
     const products = getStorage(KEY_PRODUCTS);
+
+    // Filter Logic
+    const delivered = orders.filter(o => o.status === 'Delivered');
+    const pending = orders.filter(o => o.status === 'Pending');
+    const cancelled = orders.filter(o => o.status === 'Cancelled');
+
+    // Revenue Calculation (Only Delivered)
+    const revenue = delivered.reduce((sum, o) => sum + parseFloat(o.total), 0);
+
+    // Update UI
+    const setTxt = (id, val) => { if(document.getElementById(id)) document.getElementById(id).innerText = val; };
     
-    const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
-    const pendingCount = orders.filter(o => o.status === 'Pending').length;
-    
-    if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = '৳ ' + totalRevenue;
-    if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pendingCount;
-    if(document.getElementById('stat-products')) document.getElementById('stat-products').innerText = products.length;
+    setTxt('stat-revenue', '৳ ' + revenue);
+    setTxt('stat-pending', pending.length);
+    setTxt('stat-delivered', delivered.length);
+    setTxt('stat-cancelled', cancelled.length);
+    setTxt('stat-products', products.length);
+}
+
+// 3. ORDERS (Filtering)
+function initAdminOrders() {
+    const tableBody = document.querySelector('#orders-table tbody');
+    let currentFilter = 'All';
+
+    const renderOrders = () => {
+        const allOrders = getStorage(KEY_ORDERS);
+        // Filter Logic
+        const orders = currentFilter === 'All' ? allOrders : allOrders.filter(o => o.status === currentFilter);
+
+        tableBody.innerHTML = orders.length ? orders.map((o, i) => {
+            // Find actual index in main array for updates
+            const realIndex = allOrders.findIndex(ao => ao.id === o.id);
+            let color = o.status === 'Pending' ? '#ff9f43' : o.status === 'Delivered' ? '#2ecc71' : o.status === 'Cancelled' ? '#e74c3c' : '#3498db';
+            
+            return `
+            <tr>
+                <td><small>${o.id}</small></td>
+                <td>${o.customer.name}</td>
+                <td>৳ ${o.total}</td>
+                <td>
+                    <select onchange="updateStatus(${realIndex}, this.value)" style="color:${color}; border:1px solid ${color}; padding:5px; border-radius:4px; background:#222;">
+                        <option value="Pending" ${o.status === 'Pending'?'selected':''}>Pending</option>
+                        <option value="Shipped" ${o.status === 'Shipped'?'selected':''}>Shipped</option>
+                        <option value="Delivered" ${o.status === 'Delivered'?'selected':''}>Delivered</option>
+                        <option value="Cancelled" ${o.status === 'Cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                </td>
+                <td><button onclick="alert('Addr: ${o.customer.address}')" style="color:#fff; background:none; border:none; cursor:pointer;">View</button></td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="5" style="text-align:center;">No orders found</td></tr>';
+    };
+
+    renderOrders();
+
+    // Filter Buttons Logic
+    window.filterOrders = (status) => {
+        currentFilter = status;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.filter-btn[onclick="filterOrders('${status}')"]`).classList.add('active');
+        renderOrders();
+    };
+
+    window.updateStatus = (index, status) => {
+        const orders = getStorage(KEY_ORDERS);
+        orders[index].status = status;
+        setStorage(KEY_ORDERS, orders);
+        renderOrders(); // Refresh table color
+    };
+}
+
+// Security
+function checkAdminAuth() {
+    if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) window.location.href = 'admin_login.html';
+}
+
+// Cart & Checkout (Standard)
+function loadCartDisplay() { /* ... Same as before ... */ 
+    const container = document.querySelector('.cart-items');
+    const totalEl = document.getElementById('cart-total');
+    if (!container) return;
+    const cart = getStorage(KEY_CART);
+    container.innerHTML = cart.length ? cart.map((item, i) => `
+        <div class="cart-item">
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="${item.image || ''}" style="width:50px; height:50px; background:#333; object-fit:cover;">
+                <div><h4>${item.name}</h4><p>৳ ${item.price}</p></div>
+            </div>
+            <button onclick="removeFromCart(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+        </div>`).join('') : '<p style="text-align:center;">Empty Cart</p>';
+    if(totalEl) totalEl.innerText = cart.reduce((sum, i) => sum + i.price, 0);
+}
+window.removeFromCart = (i) => { const c=getStorage(KEY_CART); c.splice(i,1); setStorage(KEY_CART,c); loadCartDisplay(); updateCartCount(); };
+function handleCheckoutForm() { /* ... Same as before logic ... */ 
+     const form = document.getElementById('checkout-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const cart = getStorage(KEY_CART);
+            if(cart.length === 0) { alert("Cart Empty"); return; }
+            const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            const order = {
+                id: 'ORD-' + Math.floor(Math.random() * 10000),
+                date: new Date().toLocaleDateString(),
+                customer: { name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value },
+                items: cart,
+                total: total,
+                status: 'Pending' // Default Status
+            };
+            const orders = getStorage(KEY_ORDERS);
+            orders.unshift(order);
+            setStorage(KEY_ORDERS, orders);
+            setStorage(KEY_CART, []);
+            alert('Order Placed!');
+            window.location.href = 'index.html';
+        });
+    }
+}
+function loadCartSummaryForCheckout() {
+    const el = document.getElementById('checkout-total');
+    if(el) { const c=getStorage(KEY_CART); el.innerText = c.reduce((s,i)=>s+i.price,0); }
 }
