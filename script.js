@@ -1,47 +1,42 @@
-// script.js - Updated with Contact Form & Message Logic
+// script.js - Final Fixed Version
 
 // --- KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
 const KEY_CART = 'lynex_cart';
 const KEY_ORDERS = 'lynex_orders';
-const KEY_MESSAGES = 'lynex_messages'; // নতুন কী
+const KEY_MESSAGES = 'lynex_messages';
 const KEY_ADMIN_LOGGED = 'lynex_admin_logged';
 const KEY_ORDER_COUNT = 'lynex_order_count';
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Navigation & Cart Init
+    // Nav Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
+    
     updateCartCount();
 
-    // Routing Logic
+    // Route Handling
     const path = window.location.pathname;
     const page = path.split("/").pop(); 
+
+    if (page === 'index.html' || page === '') loadProductsDisplay(true); // Home: New Arrivals
+    else if (page === 'products.html') loadProductsDisplay(false); // All Products
+    else if (page === 'cart.html') loadCartDisplay();
+    else if (page === 'checkout.html') { handleCheckoutForm(); loadCartSummary(); }
+    else if (page === 'contact.html') handleContactForm();
     
-    // Website Pages
-    if (page === 'index.html' || page === '' || page === 'products.html') {
-        loadProductsDisplay(page === 'index.html' || page === '');
-    } else if (page === 'cart.html') {
-        loadCartDisplay();
-    } else if (page === 'checkout.html') {
-        handleCheckoutForm();
-        loadCartSummaryForCheckout();
-    } else if (page === 'contact.html') {
-        handleContactForm(); // নতুন ফাংশন কল
-    }
-    
-    // Admin Pages
+    // Admin Routes
     else if (page.includes('admin_') && !page.includes('login')) {
         checkAdminAuth();
         if (page.includes('dashboard')) initAdminDashboard();
         if (page.includes('products')) initAdminProducts();
         if (page.includes('orders')) initAdminOrders();
-        if (page.includes('messages')) initAdminMessages(); // নতুন অ্যাডমিন ফাংশন
+        if (page.includes('messages')) initAdminMessages();
     }
     
-    // Login Handler
+    // Admin Login
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -54,42 +49,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// --- HELPER FUNCTIONS ---
+// --- HELPER ---
 function getStorage(key) { return JSON.parse(localStorage.getItem(key)) || []; }
 function setStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 function updateCartCount() {
     const cart = getStorage(KEY_CART);
-    document.querySelectorAll('.cart-count').forEach(el => el.innerText = `(${cart.length})`);
+    // Count total items including quantity
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.querySelectorAll('.cart-count').forEach(el => el.innerText = `(${totalQty})`);
 }
 
-// --- WEBSITE LOGIC ---
-
-// 1. Contact Form Handler (New)
-function handleContactForm() {
-    const form = document.getElementById('contact-form');
-    if(form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const message = {
-                id: Date.now(),
-                date: new Date().toLocaleDateString(),
-                name: e.target.name.value,
-                email: e.target.email.value,
-                subject: e.target.subject.value,
-                text: e.target.message.value
-            };
-            
-            const messages = getStorage(KEY_MESSAGES);
-            messages.unshift(message); // Add to top
-            setStorage(KEY_MESSAGES, messages);
-            
-            e.target.reset();
-            alert('আপনার বার্তা সফলভাবে পাঠানো হয়েছে!');
-        });
-    }
-}
-
-// 2. Product Display
+// --- PRODUCT LOGIC ---
 function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid');
     if (!grid) return;
@@ -113,43 +83,96 @@ function loadProductsDisplay(isHome) {
                 <h3>${p.name}</h3>
                 <div class="price-container">${priceHTML}</div>
                 <div class="product-actions">
-                    <button onclick="addToCart(${p.id})" class="btn secondary-btn" style="flex:1;">Add</button>
-                    <button onclick="buyNow(${p.id})" class="btn primary-btn" style="flex:1;">Buy</button>
+                    <button onclick="addToCart('${p.id}')" class="btn secondary-btn">Add to Cart</button>
+                    <button onclick="buyNow('${p.id}')" class="btn primary-btn">Buy Now</button>
                 </div>
             </div>
         </div>`;
-    }).join('') : '<p style="text-align:center; width:100%; color:#777;">No products available.</p>';
+    }).join('') : '<p style="text-align:center;width:100%;color:#777;">No products available.</p>';
 }
 
-// Add to Cart & Buy Now
+// Add to Cart (With Quantity Logic)
 window.addToCart = (id) => {
-    const p = getStorage(KEY_PRODUCTS).find(x => x.id == id);
-    if(p) { 
-        const c = getStorage(KEY_CART); c.push(p); setStorage(KEY_CART, c); 
-        updateCartCount(); alert('Added to cart!'); 
+    const products = getStorage(KEY_PRODUCTS);
+    const product = products.find(p => p.id == id);
+    if (product) {
+        let cart = getStorage(KEY_CART);
+        const existingItemIndex = cart.findIndex(item => item.id == id);
+        
+        if (existingItemIndex > -1) {
+            cart[existingItemIndex].qty += 1; // Increase qty if exists
+        } else {
+            cart.push({ ...product, qty: 1 }); // Add new with qty 1
+        }
+        setStorage(KEY_CART, cart);
+        updateCartCount();
+        alert('Added to Cart!');
     }
 };
 window.buyNow = (id) => { window.addToCart(id); window.location.href = 'checkout.html'; };
 
-// Cart Display
+// --- CART PAGE LOGIC ---
 function loadCartDisplay() {
     const container = document.querySelector('.cart-items');
     const totalEl = document.getElementById('cart-total');
-    if(!container) return;
+    if (!container) return;
     const cart = getStorage(KEY_CART);
-    container.innerHTML = cart.length ? cart.map((item, i) => `
-        <div class="cart-item">
-            <div style="display:flex; align-items:center; gap:15px;">
-                ${item.image ? `<img src="${item.image}" style="width:50px; height:50px; object-fit:cover;">` : `<i class="fas fa-tshirt"></i>`}
-                <div><h4>${item.name}</h4><p>৳ ${item.price}</p></div>
-            </div>
-            <button onclick="removeFromCart(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
-        </div>`).join('') : '<p style="text-align:center;">Cart is empty.</p>';
-    if(totalEl) totalEl.innerText = cart.reduce((s, i) => s + parseFloat(i.price), 0);
-}
-window.removeFromCart = (i) => { const c = getStorage(KEY_CART); c.splice(i, 1); setStorage(KEY_CART, c); loadCartDisplay(); updateCartCount(); };
+    
+    if (cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">Cart is empty.</p>';
+        if(totalEl) totalEl.innerText = '0';
+        return;
+    }
 
-// Checkout
+    container.innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+            <div class="cart-item-info">
+                <img src="${item.image || ''}" style="width:60px; height:60px; background:#333; object-fit:cover; border-radius:4px;">
+                <div>
+                    <h4>${item.name}</h4>
+                    <p>৳ ${item.price} x ${item.qty}</p>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateQty(${i}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <p style="font-weight:bold; color:#ff9f43;">৳ ${item.price * item.qty}</p>
+                <button onclick="removeFromCart(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer; margin-top:5px;"><i class="fas fa-trash"></i> Remove</button>
+            </div>
+        </div>`).join('');
+        
+    if(totalEl) totalEl.innerText = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+}
+
+window.updateQty = (index, change) => {
+    let cart = getStorage(KEY_CART);
+    cart[index].qty += change;
+    if (cart[index].qty <= 0) {
+        if(confirm("Remove item?")) cart.splice(index, 1);
+        else cart[index].qty = 1;
+    }
+    setStorage(KEY_CART, cart);
+    loadCartDisplay();
+    updateCartCount();
+};
+
+window.removeFromCart = (i) => {
+    let cart = getStorage(KEY_CART);
+    cart.splice(i, 1);
+    setStorage(KEY_CART, cart);
+    loadCartDisplay();
+    updateCartCount();
+};
+
+// --- CHECKOUT & CONTACT ---
+function loadCartSummary() {
+    const el = document.getElementById('checkout-total');
+    if(el) { const c = getStorage(KEY_CART); el.innerText = c.reduce((s, i) => s + (i.price * i.qty), 0); }
+}
+
 function handleCheckoutForm() {
     const form = document.getElementById('checkout-form');
     if (form) {
@@ -166,61 +189,51 @@ function handleCheckoutForm() {
                 date: new Date().toLocaleDateString(),
                 customer: { name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value },
                 items: cart,
-                total: cart.reduce((s, i) => s + parseFloat(i.price), 0),
+                total: cart.reduce((s, i) => s + (i.price * i.qty), 0),
                 status: 'Pending'
             };
             const orders = getStorage(KEY_ORDERS); orders.unshift(order); setStorage(KEY_ORDERS, orders);
             setStorage(KEY_CART, []);
-            alert('Order Placed: ' + order.id); window.location.href = 'index.html';
+            alert('Order Placed Successfully! ID: ' + order.id); window.location.href = 'index.html';
         });
     }
 }
-function loadCartSummaryForCheckout() {
-    const el = document.getElementById('checkout-total');
-    if(el) { const c = getStorage(KEY_CART); el.innerText = c.reduce((s, i) => s + parseFloat(i.price), 0); }
+
+function handleContactForm() {
+    const form = document.getElementById('contact-form');
+    if(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = {
+                id: Date.now(), date: new Date().toLocaleDateString(),
+                name: e.target.name.value, email: e.target.email.value,
+                subject: e.target.subject.value, text: e.target.message.value
+            };
+            const msgs = getStorage(KEY_MESSAGES); msgs.unshift(msg); setStorage(KEY_MESSAGES, msgs);
+            e.target.reset(); alert('Message Sent!');
+        });
+    }
 }
 
 // --- ADMIN LOGIC ---
-
 function checkAdminAuth() { if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) window.location.href = 'admin_login.html'; }
 
-// Admin Messages (New)
 function initAdminMessages() {
     const tbody = document.querySelector('#messages-table tbody');
-    const messages = getStorage(KEY_MESSAGES);
-    tbody.innerHTML = messages.length ? messages.map((m, i) => `
-        <tr>
-            <td>${m.date}</td>
-            <td>${m.name}<br><small>${m.email}</small></td>
-            <td>${m.subject}</td>
-            <td>${m.text}</td>
-            <td><button onclick="deleteMessage(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer;">Delete</button></td>
-        </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;">No messages.</td></tr>';
-    
-    window.deleteMessage = (i) => {
-        if(confirm('Delete?')) {
-            const m = getStorage(KEY_MESSAGES); m.splice(i, 1); setStorage(KEY_MESSAGES, m); initAdminMessages();
-        }
-    };
+    const msgs = getStorage(KEY_MESSAGES);
+    tbody.innerHTML = msgs.length ? msgs.map((m, i) => `<tr><td>${m.date}</td><td>${m.name}<br><small>${m.email}</small></td><td>${m.subject}</td><td>${m.text}</td><td><button onclick="delMsg(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;">No Messages</td></tr>';
+    window.delMsg = (i) => { if(confirm('Del?')) { msgs.splice(i,1); setStorage(KEY_MESSAGES, msgs); initAdminMessages(); }};
 }
 
-// Admin Products
 function initAdminProducts() {
     const form = document.getElementById('add-product-form');
     const tbody = document.querySelector('#product-table tbody');
-    const renderTable = () => {
+    const render = () => {
         const p = getStorage(KEY_PRODUCTS);
-        tbody.innerHTML = p.length ? p.map((x, i) => `
-            <tr>
-                <td><img src="${x.image || ''}" style="width:40px; height:40px; object-fit:cover;"></td>
-                <td>${x.name}</td>
-                <td>৳ ${x.price}</td>
-                <td><button onclick="deleteProduct(${i})" style="color:#e74c3c; background:none; border:none; cursor:pointer;">Del</button></td>
-            </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;">Empty</td></tr>';
+        tbody.innerHTML = p.length ? p.map((x, i) => `<tr><td><img src="${x.image||''}" style="width:40px;height:40px;object-fit:cover;"></td><td>${x.name} ${x.isNewArrival?'<span style="color:#2ecc71">(New)</span>':''}</td><td>৳ ${x.price}</td><td><button onclick="delProd(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;">Empty</td></tr>';
         document.getElementById('current-product-count').innerText = p.length;
     };
-    renderTable();
-
+    render();
     if(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -228,23 +241,15 @@ function initAdminProducts() {
             const reader = new FileReader();
             const save = (img) => {
                 const p = getStorage(KEY_PRODUCTS);
-                p.push({
-                    id: Date.now(),
-                    name: e.target.name.value,
-                    price: parseFloat(e.target.price.value),
-                    originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null,
-                    isNewArrival: e.target.isNew.checked,
-                    image: img
-                });
-                setStorage(KEY_PRODUCTS, p); e.target.reset(); renderTable(); alert('Added!');
+                p.push({ id: Date.now(), name: e.target.name.value, price: parseFloat(e.target.price.value), originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null, isNewArrival: e.target.isNew.checked, image: img });
+                setStorage(KEY_PRODUCTS, p); e.target.reset(); render(); alert('Added!');
             };
             if(file) { reader.onload = (ev) => save(ev.target.result); reader.readAsDataURL(file); } else save(null);
         });
     }
-    window.deleteProduct = (i) => { if(confirm('Delete?')) { const p = getStorage(KEY_PRODUCTS); p.splice(i, 1); setStorage(KEY_PRODUCTS, p); renderTable(); }};
+    window.delProd = (i) => { if(confirm('Del?')) { const p=getStorage(KEY_PRODUCTS); p.splice(i,1); setStorage(KEY_PRODUCTS, p); render(); }};
 }
 
-// Admin Orders
 function initAdminOrders() {
     const tbody = document.querySelector('#orders-table tbody');
     let filter = 'All';
@@ -253,29 +258,18 @@ function initAdminOrders() {
         const list = filter === 'All' ? all : all.filter(x => x.status === filter);
         tbody.innerHTML = list.length ? list.map(o => {
             const idx = all.findIndex(x => x.id === o.id);
-            let c = o.status==='Pending'?'#ff9f43':o.status==='Delivered'?'#2ecc71':'#3498db';
-            return `<tr>
-                <td>${o.id}</td><td>${o.customer.name}</td><td>৳ ${o.total}</td>
-                <td><select onchange="upStat(${idx}, this.value)" style="color:${c}; background:#222; border:1px solid ${c};">
-                    <option ${o.status==='Pending'?'selected':''}>Pending</option>
-                    <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                    <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                    <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
-                </select></td>
-                <td><button onclick="viewOrd('${o.id}')" style="color:#fff; background:none; border:none; cursor:pointer;">View</button></td>
-            </tr>`;
+            let c = o.status==='Pending'?'#ff9f43':o.status==='Delivered'?'#2ecc71':o.status==='Cancelled'?'#e74c3c':'#3498db';
+            return `<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳ ${o.total}</td>
+                <td><select onchange="upStat(${idx}, this.value)" style="color:${c};background:#222;border:1px solid ${c}"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td>
+                <td><button onclick="viewOrd('${o.id}')" style="color:#fff;background:none;border:none;cursor:pointer;">View</button></td></tr>`;
         }).join('') : '<tr><td colspan="5" style="text-align:center;">No orders</td></tr>';
     };
     render();
     window.filterOrders = (s) => { filter = s; render(); };
     window.upStat = (i, s) => { const o = getStorage(KEY_ORDERS); o[i].status = s; setStorage(KEY_ORDERS, o); render(); };
-    window.viewOrd = (id) => {
-        const o = getStorage(KEY_ORDERS).find(x => x.id === id);
-        alert(`ID: ${o.id}\nCustomer: ${o.customer.name} (${o.customer.phone})\nAddress: ${o.customer.address}\nTotal: ৳ ${o.total}`);
-    };
+    window.viewOrd = (id) => { const o = getStorage(KEY_ORDERS).find(x => x.id === id); const its = o.items.map(i=>`- ${i.name} (x${i.qty})`).join('\n'); alert(`ID: ${o.id}\nItems:\n${its}\n\nTotal: ৳${o.total}`); };
 }
 
-// Admin Dashboard
 function initAdminDashboard() {
     const o = getStorage(KEY_ORDERS);
     const rev = o.filter(x => x.status === 'Delivered').reduce((s, i) => s + parseFloat(i.total), 0);
