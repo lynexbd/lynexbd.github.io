@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
+        /* (The complete Admin Styles from the previous response are assumed to be here or linked) */
         body { margin: 0; padding: 0; background-color: #f4f7f9; font-family: 'Montserrat', sans-serif; color: #333; }
         .admin-layout { display: flex; min-height: 100vh; }
         .sidebar { width: 250px; background-color: #2c3e50; color: #ecf0f1; padding-top: 20px; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); }
@@ -35,6 +36,21 @@
             background-color: #d10000; color: #fff; border: 2px solid #d10000;
         }
         .btn:hover { background-color: #a00000; border-color: #a00000; }
+
+        .add-product-form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .add-product-form-container input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 200px;
+        }
     </style>
 </head>
 <body>
@@ -49,65 +65,74 @@
             <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
             <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
             <li><a href="index.html"><i class="fas fa-globe"></i> View Website</a></li>
-            <li><a href="admin_login.html"><i class="fas fa-sign-out-alt"></i> Logout (Dummy)</a></li>
+            <li><a href="admin_login.html" onclick="sessionStorage.removeItem('adminLoggedIn');"><i class="fas fa-sign-out-alt"></i> Logout (Dummy)</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="dashboard-header">
-            <h1>Products Inventory (45 Items)</h1>
-            <a href="#" class="btn"><i class="fas fa-plus"></i> Add New Product</a>
+            <h1>Products Inventory</h1>
+        </div>
+        
+        <div class="add-product-form-container">
+            <h3>Add New Product (DUMMY)</h3>
+            <form id="add-product-form">
+                <input type="text" name="name" placeholder="Product Name" required>
+                <input type="number" name="price" placeholder="Price (৳)" required>
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Product</button>
+            </form>
+            <p style="margin-top: 10px; font-size: 0.85em; color: #d10000;">*This is a DUMMY function. Data will be lost on refresh.</p>
         </div>
 
         <div class="data-section">
-            <h3>Product List</h3>
-            <table>
+            <h3>Current Products (<span id="current-product-count">0</span> Items)</h3>
+            <table id="product-table">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
                         <th>Price (৳)</th>
-                        <th>Stock</th>
+                        <th>Stock (Dummy)</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>PRO001</td>
-                        <td>The Essential T-Shirt</td>
-                        <td>2500</td>
-                        <td>150</td>
-                        <td>
-                            <button class="action-btn"><i class="fas fa-edit"></i> Edit/Price</button>
-                            <button class="action-btn action-btn-delete"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
+                        <td colspan="5" style="text-align: center;">No products added yet.</td>
                     </tr>
-                    <tr>
-                        <td>PRO002</td>
-                        <td>Slim Fit Denim Jeans</td>
-                        <td>6500</td>
-                        <td>85</td>
-                        <td>
-                            <button class="action-btn"><i class="fas fa-edit"></i> Edit/Price</button>
-                            <button class="action-btn action-btn-delete"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>PRO003</td>
-                        <td>The Minimal Hoodie</td>
-                        <td>4800</td>
-                        <td>110</td>
-                        <td>
-                            <button class="action-btn"><i class="fas fa-edit"></i> Edit/Price</button>
-                            <button class="action-btn action-btn-delete"><i class="fas fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                    </tbody>
+                </tbody>
             </table>
         </div>
         
     </div>
 </div>
 
+<script src="script.js"></script>
+<script>
+    // DUMMY Product Display Logic
+    const productTableBody = document.querySelector('#product-table tbody');
+    const productCountElement = document.getElementById('current-product-count');
+    
+    productTableBody.innerHTML = '';
+    
+    if (productsData.length > 0) {
+        productsData.forEach(product => {
+            const row = productTableBody.insertRow();
+            row.innerHTML = `
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.price.toLocaleString()}</td>
+                <td>50</td> 
+                <td>
+                    <button class="action-btn"><i class="fas fa-edit"></i> Edit/Price</button>
+                    <button class="action-btn action-btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            `;
+        });
+    } else {
+         productTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No products added yet.</td></tr>`;
+    }
+    productCountElement.textContent = productsData.length;
+</script>
 </body>
 </html>
