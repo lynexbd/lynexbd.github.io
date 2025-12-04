@@ -1,68 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Checkout | LYNEX</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="logo"><a href="index.html"><span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span></a></div>
-            <nav class="nav">
-                <ul class="nav-list" id="nav-list">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="products.html">Products</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span></a></li>
-                </ul>
-                <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
-            </nav>
+<div style="background: #1e1e1e; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
+    <h3 style="margin-bottom: 20px; color: #fff;">Total: ৳ <span id="checkout-total">0</span></h3>
+    <p style="margin-bottom: 25px; color: #aaa; font-style: italic;">* ডেলিভারি চার্জ এবং সকল তথ্যের জন্যে আপনাকে কল করা হবে।</p>
+    
+    <form id="checkout-form">
+        <div>
+            <label style="color:#ccc;">Name</label>
+            <input type="text" name="name" required placeholder="আপনার নাম" style="width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; color: #fff; margin-bottom: 15px;">
         </div>
-    </header>
-
-    <div class="container" style="padding: 100px 20px;">
-        <h2 class="section-title">Checkout</h2>
-        <div style="background: #1e1e1e; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
-            <h3 style="margin-bottom: 20px; color: #fff;">Total: ৳ <span id="checkout-total">0</span></h3>
-            <p style="margin-bottom: 25px; color: #aaa; font-style: italic;">* ডেলিভারি চার্জ এবং সকল তথ্যের জন্যে আপনাকে কল করা হবে।</p>
-            
-            <form id="checkout-form">
-                <div><label>Name</label><input type="text" name="name" required></div>
-                <div><label>Phone Number</label><input type="text" name="phone" required></div>
-                <div><label>Address</label><textarea name="address" required rows="3"></textarea></div>
-                <button type="submit" class="btn primary-btn" style="width: 100%;">Confirm Order</button>
-            </form>
+        <div>
+            <label style="color:#ccc;">Phone Number</label>
+            <input type="text" name="phone" required placeholder="মোবাইল নাম্বার" style="width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; color: #fff; margin-bottom: 15px;">
         </div>
-    </div>
-
-    <footer class="footer">
-        <div class="container">
-            <h2 class="footer-brand" style="color:#ff9f43; font-size:2.5em; font-weight:900; margin-bottom:20px;">LYNEX</h2>
-            <p style="max-width:600px; margin:0 auto 40px; color:#ccc;">A glimpse into modern fashion, combining style and comfort for the trendsetters of tomorrow.</p>
-            
-            <h3 style="color:#ff9f43; margin-bottom:20px;">LINKS</h3>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:40px;">
-                <a href="index.html">Home</a>
-                <a href="products.html">Products</a>
-                <a href="about.html">About Us</a>
-                <a href="contact.html">Contact</a>
-                <a href="delivery.html">Delivery Info</a>
-                <a href="admin_login.html">Admin</a>
-            </div>
-
-            <div style="margin-bottom:40px;">
-                <a href="#" style="color:#ffcd75; font-size:1.5em; margin:0 15px;"><i class="fab fa-facebook"></i></a>
-                <a href="#" style="color:#ffcd75; font-size:1.5em; margin:0 15px;"><i class="fab fa-instagram"></i></a>
-            </div>
-
-            <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
+        <div>
+            <label style="color:#ccc;">Shipping Address</label>
+            <textarea name="address" required rows="3" placeholder="সম্পূর্ণ ঠিকানা" style="width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; color: #fff; margin-bottom: 15px;"></textarea>
         </div>
-    </footer>
-    <script src="script.js"></script>
-</body>
-</html>
+        <button type="submit" class="btn primary-btn" style="width: 100%; padding: 12px; font-weight: bold;">Confirm Order</button>
+    </form>
+</div>
