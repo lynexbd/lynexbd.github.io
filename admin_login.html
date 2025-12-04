@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | LYNEX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #2c3e50; /* Dark background for professional look */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container h2 {
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #d10000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
+        }
+        .btn:hover {
+            background-color: #a00000;
+        }
+        .dummy-info {
+            margin-top: 25px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: left;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .dummy-info strong {
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>LYNEX Admin Panel</h2>
+    <form id="admin-login-form">
+        <div class="form-group">
+            <label for="username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">LOGIN</button>
+    </form>
+    
+    <div class="dummy-info">
+        <p><strong>DUMMY Credentials (Frontend Test Only):</strong></p>
+        <p>Username: <strong>asadul_hasan</strong></p>
+        <p>Password: <strong>admin123</strong></p>
+    </div>
+    
+    <p style="margin-top: 20px;"><a href="index.html" style="color: #2c3e50; text-decoration: none;">&laquo; Back to Website</a></p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
