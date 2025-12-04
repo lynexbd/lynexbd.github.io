@@ -1,6 +1,5 @@
 // ======================================================
-// LYNEX MAIN SCRIPT (Fully Functional)
-// Includes: Website Logic, Cart, Checkout, Admin Panel
+// LYNEX MAIN SCRIPT (Final Complete Version)
 // ======================================================
 
 // --- LOCAL STORAGE KEYS ---
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const u = e.target.username.value;
             const p = e.target.password.value;
-            // Simple hardcoded credentials
+            
             if (u === 'admin' && p === '1234') {
                 sessionStorage.setItem(KEY_ADMIN_LOGGED, 'true');
                 window.location.href = 'admin_dashboard.html';
@@ -85,7 +84,7 @@ function setStorage(key, data) {
 
 function updateCartCount() {
     const cart = getStorage(KEY_CART);
-    // Count total quantity, not just unique items
+    // Count total quantity
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const badges = document.querySelectorAll('.cart-count');
     badges.forEach(el => el.innerText = `(${totalQty})`);
@@ -192,7 +191,6 @@ function loadCartDisplay() {
     if (cart.length === 0) {
         container.innerHTML = '<p style="text-align:center; padding:20px; color:#aaa;">Your cart is empty.</p>';
         if(totalEl) totalEl.innerText = '0';
-        // Hide checkout button if empty
         const btn = document.querySelector('.checkout-btn');
         if(btn) btn.style.display = 'none';
         return;
@@ -208,11 +206,11 @@ function loadCartDisplay() {
 
         return `
         <div class="cart-item">
-            <div style="display:flex; align-items:center; gap:15px;">
+            <div class="cart-item-info">
                 ${imgDisplay}
                 <div>
                     <h4 style="margin:0; font-size:1em; color:#fff;">${item.name}</h4>
-                    <p style="margin:5px 0; color:#aaa; font-size:0.9em;">৳ ${item.price}</p>
+                    <p style="margin:5px 0; color:#aaa; font-size:0.9em;">৳ ${item.price} x ${item.qty}</p>
                     <div class="qty-controls">
                         <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
                         <span style="color:#fff;">${item.qty}</span>
@@ -254,11 +252,10 @@ window.removeFromCart = function(index) {
     updateCartCount();
 };
 
-// 4. Checkout Logic
+// 4. Checkout Logic (Fixed)
 function handleCheckoutForm() {
     const form = document.getElementById('checkout-form');
     if (form) {
-        // Clone to remove old listeners
         const newForm = form.cloneNode(true);
         form.parentNode.replaceChild(newForm, form);
 
@@ -271,13 +268,11 @@ function handleCheckoutForm() {
                 return;
             }
 
-            // Generate Order ID (Sequential)
             let count = parseInt(localStorage.getItem(KEY_ORDER_COUNT)) || 0;
             count++;
             localStorage.setItem(KEY_ORDER_COUNT, count);
             const orderId = 'ORD-' + String(count).padStart(3, '0');
 
-            // Calculate Total
             const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
 
             const order = {
@@ -293,12 +288,10 @@ function handleCheckoutForm() {
                 status: 'Pending'
             };
 
-            // Save Order
             const orders = getStorage(KEY_ORDERS);
             orders.unshift(order);
             setStorage(KEY_ORDERS, orders);
 
-            // Clear Cart
             setStorage(KEY_CART, []);
             updateCartCount();
 
@@ -358,11 +351,9 @@ function initAdminDashboard() {
     const orders = getStorage(KEY_ORDERS);
     const products = getStorage(KEY_PRODUCTS);
 
-    // Filter Logic
     const delivered = orders.filter(o => o.status === 'Delivered');
     const revenue = delivered.reduce((sum, o) => sum + parseFloat(o.total), 0);
 
-    // Update UI
     const setVal = (id, v) => { if(document.getElementById(id)) document.getElementById(id).innerText = v; };
     
     setVal('stat-revenue', '৳ ' + revenue);
@@ -500,7 +491,7 @@ function initAdminOrders() {
         const orders = getStorage(KEY_ORDERS);
         orders[index].status = val;
         setStorage(KEY_ORDERS, orders);
-        render(); // Refresh for color update
+        render();
     };
 
     window.viewOrder = (id) => {
@@ -511,10 +502,10 @@ function initAdminOrders() {
     };
 }
 
-// 4. Admin Messages
+// 4. Admin Messages (New/Read Logic)
 function initAdminMessages() {
     const tbody = document.querySelector('#messages-table tbody');
-    let viewMode = 'New'; // Default
+    let viewMode = 'New'; 
 
     const render = () => {
         const allMsgs = getStorage(KEY_MESSAGES);
