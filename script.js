@@ -1,5 +1,6 @@
-// script.js - Final Fixed Logic
+// script.js - Final Fixed Version for Checkout & Features
 
+// --- KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
 const KEY_CART = 'lynex_cart';
 const KEY_ORDERS = 'lynex_orders';
@@ -9,23 +10,28 @@ const KEY_ORDER_COUNT = 'lynex_order_count';
 
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Navigation Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
     updateCartCount();
 
+    // Routing Logic
     const path = window.location.pathname;
     const page = path.split("/").pop(); 
 
-    // Page Routing
-    if (page === 'index.html' || page === '') loadProductsDisplay(true);
-    else if (page === 'products.html') loadProductsDisplay(false);
+    // Website Pages
+    if (page === 'index.html' || page === '') loadProductsDisplay(true); // Home: New Arrivals
+    else if (page === 'products.html') loadProductsDisplay(false); // All Products
     else if (page === 'cart.html') loadCartDisplay();
-    else if (page === 'checkout.html') { handleCheckoutForm(); loadCartSummary(); } // চেকআউট হ্যান্ডলার কল করা হয়েছে
+    else if (page === 'checkout.html') { 
+        handleCheckoutForm(); // চেকআউট ফর্ম হ্যান্ডলিং
+        loadCartSummaryForCheckout(); // কার্ট সামারি লোড
+    }
     else if (page === 'contact.html') handleContactForm();
     
-    // Admin Routing
+    // Admin Pages
     else if (page.includes('admin_') && !page.includes('login')) {
         checkAdminAuth();
         if (page.includes('dashboard')) initAdminDashboard();
@@ -34,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (page.includes('messages')) initAdminMessages();
     }
     
-    // Login Logic
+    // Login
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// --- HELPER ---
+// --- HELPER FUNCTIONS ---
 function getStorage(key) { return JSON.parse(localStorage.getItem(key)) || []; }
 function setStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 function updateCartCount() {
@@ -56,7 +62,9 @@ function updateCartCount() {
     document.querySelectorAll('.cart-count').forEach(el => el.innerText = `(${totalQty})`);
 }
 
-// --- WEBSITE ---
+// --- WEBSITE LOGIC ---
+
+// Product Display
 function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid');
     if (!grid) return;
@@ -80,14 +88,15 @@ function loadProductsDisplay(isHome) {
                 <h3>${p.name}</h3>
                 <div class="price-container">${priceHTML}</div>
                 <div class="product-actions">
-                    <button onclick="addToCart(${p.id})" class="btn secondary-btn">Add to Cart</button>
-                    <button onclick="buyNow(${p.id})" class="btn primary-btn">Buy Now</button>
+                    <button onclick="addToCart('${p.id}')" class="btn secondary-btn">Add to Cart</button>
+                    <button onclick="buyNow('${p.id}')" class="btn primary-btn">Buy Now</button>
                 </div>
             </div>
         </div>`;
     }).join('') : '<p style="text-align:center;width:100%;color:#777;">No products available.</p>';
 }
 
+// Cart Actions
 window.addToCart = (id) => {
     const products = getStorage(KEY_PRODUCTS);
     const product = products.find(p => p.id == id);
@@ -102,7 +111,7 @@ window.addToCart = (id) => {
 };
 window.buyNow = (id) => { window.addToCart(id); window.location.href = 'checkout.html'; };
 
-// Cart
+// Cart Display
 function loadCartDisplay() {
     const container = document.querySelector('.cart-items');
     const totalEl = document.getElementById('cart-total');
@@ -130,44 +139,64 @@ function loadCartDisplay() {
 window.upQty = (i, c) => { let cart=getStorage(KEY_CART); cart[i].qty+=c; if(cart[i].qty<=0) cart.splice(i,1); setStorage(KEY_CART,cart); loadCartDisplay(); updateCartCount(); };
 window.rmCart = (i) => { let cart=getStorage(KEY_CART); cart.splice(i,1); setStorage(KEY_CART,cart); loadCartDisplay(); updateCartCount(); };
 
-// [FIXED] Checkout Form Handling
+// [FIXED] CHECKOUT LOGIC
 function handleCheckoutForm() {
     const form = document.getElementById('checkout-form');
-    // ফর্ম সাবমিট ইভেন্ট ঠিকমতো ধরা হচ্ছে কিনা নিশ্চিত করা
     if (form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault(); // ডিফল্ট রিলোড বন্ধ করা
-            
+        // Remove old listeners to prevent duplicates (optional safety)
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        newForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             const cart = getStorage(KEY_CART);
-            if(cart.length === 0) { alert("Cart Empty"); return; }
+            
+            if(cart.length === 0) { 
+                alert("Cart is Empty! Please add products."); 
+                return; 
+            }
             
             let count = parseInt(localStorage.getItem(KEY_ORDER_COUNT)) || 0; 
             count++; 
             localStorage.setItem(KEY_ORDER_COUNT, count);
             
+            const totalAmount = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            
             const order = {
                 id: 'ORD-' + String(count).padStart(3, '0'),
                 date: new Date().toLocaleDateString(),
-                customer: { name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value },
+                customer: { 
+                    name: e.target.name.value, 
+                    phone: e.target.phone.value, 
+                    address: e.target.address.value 
+                },
                 items: cart,
-                total: cart.reduce((s, i) => s + (i.price * i.qty), 0),
-                status: 'Pending' // ডিফল্ট স্ট্যাটাস
+                total: totalAmount,
+                status: 'Pending'
             };
             
-            // অর্ডার সেভ করা
+            // Save Order
             const orders = getStorage(KEY_ORDERS); 
             orders.unshift(order); 
             setStorage(KEY_ORDERS, orders);
             
-            // কার্ট ক্লিয়ার করা
+            // Clear Cart
             setStorage(KEY_CART, []);
+            updateCartCount();
             
-            alert('Order Confirmed! ID: ' + order.id); 
-            window.location.href = 'index.html'; // হোম পেজে রিডাইরেক্ট
+            alert('Order Confirmed! Order ID: ' + order.id); 
+            window.location.href = 'index.html'; 
         });
     }
 }
-function loadCartSummary() { const el=document.getElementById('checkout-total'); if(el) { const c=getStorage(KEY_CART); el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); }}
+
+function loadCartSummaryForCheckout() { 
+    const el=document.getElementById('checkout-total'); 
+    if(el) { 
+        const c=getStorage(KEY_CART); 
+        el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); 
+    }
+}
 
 function handleContactForm() {
     const form = document.getElementById('contact-form');
@@ -187,7 +216,7 @@ function handleContactForm() {
 // --- ADMIN LOGIC ---
 function checkAdminAuth() { if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) window.location.href = 'admin_login.html'; }
 
-// Messages (Read/New)
+// Messages
 function initAdminMessages() {
     const tbody = document.querySelector('#messages-table tbody');
     let view = 'New';
@@ -197,10 +226,9 @@ function initAdminMessages() {
         tbody.innerHTML = list.length ? list.map((m) => {
             const idx = msgs.findIndex(x => x.id === m.id);
             return `<tr><td>${m.date}</td><td>${m.name}<br>${m.email}</td><td>${m.subject}</td><td>${m.text}</td>
-            <td>${!m.isRead ? `<button onclick="mkRead(${idx})" style="color:green;margin-right:5px;cursor:pointer;">Mark Read</button>`:''}
-            <button onclick="delMsg(${idx})" style="color:red;cursor:pointer;">Del</button></td></tr>`;
+            <td>${!m.isRead ? `<button onclick="mkRead(${idx})" style="color:green;margin-right:5px;cursor:pointer;background:none;border:1px solid green;">Mark Read</button>`:''}
+            <button onclick="delMsg(${idx})" style="color:red;cursor:pointer;background:none;border:none;">Del</button></td></tr>`;
         }).join('') : '<tr><td colspan="5" style="text-align:center;">No Messages</td></tr>';
-        
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.innerText.includes(view)));
     };
     render();
@@ -209,7 +237,7 @@ function initAdminMessages() {
     window.delMsg = (i) => { if(confirm('Del?')) { const m=getStorage(KEY_MESSAGES); m.splice(i,1); setStorage(KEY_MESSAGES, m); render(); }};
 }
 
-// Orders (Shipped Added)
+// Orders
 function initAdminOrders() {
     const tbody = document.querySelector('#orders-table tbody');
     let filter = 'All';
@@ -231,17 +259,15 @@ function initAdminOrders() {
     window.viewOrd = (id) => { const o = getStorage(KEY_ORDERS).find(x => x.id === id); const its = o.items.map(i=>`- ${i.name} x${i.qty} (৳${i.price})`).join('\n'); alert(`ID: ${o.id}\nInfo: ${o.customer.name}, ${o.customer.phone}\nAddr: ${o.customer.address}\n\nItems:\n${its}\n\nTotal: ৳${o.total}`); };
 }
 
-// [FIXED] Dashboard (Cancelled & Shipped Count)
+// Dashboard
 function initAdminDashboard() {
     const o = getStorage(KEY_ORDERS);
     const rev = o.filter(x => x.status === 'Delivered').reduce((s, i) => s + parseFloat(i.total), 0);
-    
-    // নির্দিষ্ট ID তে ডাটা বসানো
     if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = '৳ ' + rev;
     if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = o.filter(x => x.status === 'Pending').length;
     if(document.getElementById('stat-shipped')) document.getElementById('stat-shipped').innerText = o.filter(x => x.status === 'Shipped').length;
     if(document.getElementById('stat-delivered')) document.getElementById('stat-delivered').innerText = o.filter(x => x.status === 'Delivered').length;
-    if(document.getElementById('stat-cancelled')) document.getElementById('stat-cancelled').innerText = o.filter(x => x.status === 'Cancelled').length; // Cancelled Added
+    if(document.getElementById('stat-cancelled')) document.getElementById('stat-cancelled').innerText = o.filter(x => x.status === 'Cancelled').length;
     if(document.getElementById('stat-products')) document.getElementById('stat-products').innerText = getStorage(KEY_PRODUCTS).length;
 }
 
