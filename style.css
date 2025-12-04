@@ -1,6 +1,6 @@
 /* ======================================================
    LYNEX COMPLETE STYLESHEET 
-   Theme: Dark Mode with Orange Accents
+   Theme: Dark Mode with Orange/Yellow Accents
    ====================================================== */
 
 /* --- 1. BASE STYLES & RESET --- */
@@ -13,8 +13,8 @@
 body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
-    color: #e0e0e0;       /* হালকা ধূসর টেক্সট (ডার্ক মোডের জন্য) */
-    background-color: #121212; /* গাঢ় ব্যাকগ্রাউন্ড */
+    color: #e0e0e0;       /* টেক্সট কালার (হালকা ধূসর) */
+    background-color: #121212; /* মেইন ব্যাকগ্রাউন্ড (গাঢ় কালো) */
 }
 
 .container {
@@ -35,7 +35,7 @@ ul {
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
-    color: #ffffff; /* সব হেডিং সাদা */
+    color: #ffffff; /* হেডিং সাদা */
 }
 
 /* --- 2. HEADER & NAVIGATION --- */
@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-/* Logo Styling */
+/* Logo Styling (আপনার স্পেসিফিক কালার রিকোয়েস্ট অনুযায়ী) */
 .logo a {
     font-size: 2.2em;
     font-weight: 900;
@@ -68,8 +68,12 @@ h1, h2, h3, h4, h5, h6 {
     color: #ffffff; /* LYN - সাদা */
 }
 
-.logo-ex {
-    color: #ff9f43; /* EX - অরেঞ্জ */
+.logo-e {
+    color: #ffb347; /* E - হালকা কমলা */
+}
+
+.logo-x {
+    color: #ffffcc; /* X - হালকা হলুদ */
 }
 
 /* Nav Menu */
@@ -88,7 +92,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-list a:hover, 
 .nav-list a.active {
-    color: #ff9f43; /* হোভার কালার */
+    color: #ffb347; /* হোভার কালার */
 }
 
 .cart-icon {
@@ -97,12 +101,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .cart-count {
-    color: #ff9f43;
+    color: #ffb347;
     font-weight: bold;
 }
 
 .menu-toggle {
-    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
+    display: none;
     font-size: 1.5em;
     color: #fff;
     cursor: pointer;
@@ -122,8 +126,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-btn {
-    background-color: #ff9f43;
-    color: #000; /* বাটনের লেখা কালো */
+    background-color: #ff9f43; /* অরেঞ্জ বাটন */
+    color: #000; /* টেক্সট কালো */
     border: 2px solid #ff9f43;
 }
 
@@ -146,7 +150,7 @@ h1, h2, h3, h4, h5, h6 {
 /* --- 4. HERO SECTION --- */
 .hero-section {
     background-color: #1a1a1a;
-    /* ইমেজ না থাকলে ডিফল্ট ডার্ক ব্যাকগ্রাউন্ড দেখাবে */
+    /* ইমেজ না থাকলে ডিফল্ট ডার্ক ব্যাকগ্রাউন্ড */
     background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
@@ -188,17 +192,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .product-card {
-    background: #1e1e1e; /* কার্ডের ব্যাকগ্রাউন্ড */
+    background: #1e1e1e;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
     border: 1px solid #333;
+    position: relative; /* ব্যাজের জন্য */
+    overflow: hidden;
     transition: transform 0.3s, border-color 0.3s;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    border-color: #ff9f43; /* হোভার করলে বর্ডার অরেঞ্জ হবে */
+    border-color: #ff9f43;
 }
 
 .product-image {
@@ -209,6 +215,13 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     border-radius: 4px;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-card h3 {
@@ -217,11 +230,39 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
 }
 
-.product-card p {
-    color: #ff9f43; /* দামের কালার */
+/* Pricing Styles */
+.price-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.current-price {
+    color: #ff9f43;
     font-weight: 700;
     font-size: 1.1em;
-    margin-bottom: 15px;
+}
+
+.old-price {
+    color: #777;
+    text-decoration: line-through;
+    font-size: 0.9em;
+}
+
+/* Discount Badge */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #d10000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 10;
 }
 
 /* --- 6. CART & CHECKOUT --- */
@@ -254,7 +295,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #ff9f43;
 }
 
-/* Forms (Checkout & Login) */
+/* Forms (Checkout & Login & Add Product) */
 form label {
     display: block;
     margin-bottom: 8px;
@@ -276,6 +317,18 @@ form input, form textarea, form select {
 form input:focus, form textarea:focus {
     border-color: #ff9f43;
     outline: none;
+}
+
+/* Checkbox Style for Admin */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.checkbox-group input {
+    width: auto;
+    margin: 0;
 }
 
 /* --- 7. ADMIN PANEL STYLES --- */
@@ -337,7 +390,7 @@ form input:focus, form textarea:focus {
 /* Admin Widgets */
 .widget-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 25px;
     margin-bottom: 30px;
 }
@@ -346,7 +399,7 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 25px;
     border-radius: 8px;
-    border-left: 5px solid #ff9f43;
+    border-left: 5px solid #ff9f43; /* ডিফল্ট বর্ডার */
     border: 1px solid #333;
 }
 
@@ -362,7 +415,7 @@ form input:focus, form textarea:focus {
     color: #ff9f43;
 }
 
-/* Admin Tables */
+/* Admin Tables & Data Section */
 .data-section {
     background: #1e1e1e;
     padding: 25px;
@@ -375,6 +428,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    min-width: 600px;
 }
 
 th {
@@ -391,32 +445,28 @@ td {
     color: #e0e0e0;
 }
 
-/* Status Dropdown */
-.status-select {
-    padding: 5px 10px;
-    border-radius: 20px;
-    border: 1px solid #333;
-    background: #2a2a2a;
-    color: #fff;
-    cursor: pointer;
+/* Filter Buttons (Orders Page) */
+.filter-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-/* Action Buttons */
-.action-btn {
-    background: none;
-    border: 1px solid #555;
-    padding: 5px 10px;
+.filter-btn {
+    background: #1e1e1e;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px 15px;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 5px;
-    color: #fff;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
 
-.action-btn:hover {
-    background: #333;
+.filter-btn.active, .filter-btn:hover {
+    background: #ff9f43;
+    color: #000;
     border-color: #ff9f43;
-    color: #ff9f43;
 }
 
 /* --- 8. FOOTER --- */
@@ -491,6 +541,10 @@ td {
         display: block;
     }
 
+    .hero-content h1 {
+        font-size: 2.5em;
+    }
+
     /* Admin Panel Mobile */
     .admin-layout {
         flex-direction: column;
@@ -511,9 +565,5 @@ td {
     .sidebar ul li a {
         white-space: nowrap;
         margin-right: 15px;
-    }
-
-    .hero-content h1 {
-        font-size: 2.5em;
     }
 }
