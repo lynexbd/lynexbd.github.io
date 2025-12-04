@@ -37,9 +37,7 @@
             text-align: left;
         }
         .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            display: none; /* User/Pass label hidden as requested */
         }
         .form-group input {
             width: 100%;
@@ -65,16 +63,7 @@
             background-color: #a00000;
         }
         .dummy-info {
-            margin-top: 25px;
-            font-size: 0.9em;
-            color: #777;
-            text-align: left;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-        .dummy-info strong {
-            color: #1a1a1a;
+            display: none; /* DUMMY Info hidden as requested */
         }
     </style>
 </head>
@@ -84,20 +73,19 @@
     <h2>LYNEX Admin Panel</h2>
     <form id="admin-login-form">
         <div class="form-group">
-            <label for="username"><i class="fas fa-user"></i> Username</label>
-            <input type="text" id="username" name="username" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
         </div>
         <div class="form-group">
-            <label for="password"><i class="fas fa-lock"></i> Password</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
         </div>
         <button type="submit" class="btn">LOGIN</button>
     </form>
     
     <div class="dummy-info">
-        <p><strong>DUMMY Credentials (Frontend Test Only):</strong></p>
-        <p>Username: <strong>asadul_hasan</strong></p>
-        <p>Password: <strong>admin123</strong></p>
+        <p>Username: **asadul_hasan**</p>
+        <p>Password: **admin123**</p>
     </div>
     
     <p style="margin-top: 20px;"><a href="index.html" style="color: #2c3e50; text-decoration: none;">&laquo; Back to Website</a></p>
