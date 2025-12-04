@@ -1,4 +1,4 @@
-// script.js - The Brain of LYNEX
+// script.js - The Brain of LYNEX (Fully Functional)
 
 // --- LOCAL STORAGE KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
@@ -9,65 +9,64 @@ const KEY_ADMIN_LOGGED = 'lynex_admin_logged';
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', function() {
     
-    // 1. Navigation Logic (Mobile Menu)
+    // 1. Navigation Logic
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) {
         menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     }
     
-    // Initialize Cart Count on load
+    // Cart Count Update
     updateCartCount();
 
-    // 2. Routing Logic (কোন পেজে কি কাজ হবে)
+    // 2. Routing Logic
     const path = window.location.pathname;
+    const page = path.split("/").pop(); 
     
-    // --- WEBSITE PAGES ---
-    if (path.includes('index.html') || path.includes('products.html')) {
+    // Website Pages
+    if (page === 'index.html' || page === '' || page === 'products.html') {
         loadProductsDisplay();
     } 
-    else if (path.includes('cart.html')) {
+    else if (page === 'cart.html') {
         loadCartDisplay();
     } 
-    else if (path.includes('checkout.html')) {
+    else if (page === 'checkout.html') {
         handleCheckoutForm();
+        loadCartSummaryForCheckout();
     } 
     
-    // --- ADMIN PAGES ROUTING & SECURITY ---
-    // [FIXED] রিফ্রেশ সমস্যা সমাধান: যদি পেজটি admin হয় কিন্তু login পেজ না হয়, তবেই চেক করবে।
-    else if (path.includes('admin_') && !path.includes('login')) {
-        
+    // Admin Pages Logic
+    else if (page.includes('admin_') && !page.includes('login')) {
         checkAdminAuth(); // Security Check
-
-        // Load specific admin page functions
-        if (path.includes('dashboard')) loadAdminDashboard(); // ড্যাশবোর্ড লোড হবে (যদি থাকে)
-        if (path.includes('products')) loadAdminProducts();
-        if (path.includes('orders')) loadAdminOrders();
-        if (path.includes('customers')) loadAdminCustomers();
-        if (path.includes('analytics')) loadAdminAnalytics();
+        
+        // Load specific dashboard functions
+        if (page.includes('products')) {
+            initAdminProducts();
+        } else if (page.includes('orders')) {
+            initAdminOrders();
+        } else if (page.includes('dashboard')) {
+            initAdminDashboard();
+        }
     }
     
-    // --- ADMIN LOGIN HANDLER ---
+    // Admin Login Handler
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const user = e.target.username.value;
             const pass = e.target.password.value;
-
-            // Simple Credential Check
             if (user === 'admin' && pass === '1234') {
                 sessionStorage.setItem(KEY_ADMIN_LOGGED, 'true');
-                window.location.href = 'admin_products.html'; // লগইনের পর প্রোডাক্ট পেজে যাবে
+                window.location.href = 'admin_products.html';
             } else {
-                alert('ভুল ইউজারনেম বা পাসওয়ার্ড!');
+                alert('Login Failed!');
             }
         });
     }
 });
 
-// --- CORE FUNCTIONS (সাহায্যকারী ফাংশন) ---
-
+// --- HELPER FUNCTIONS ---
 function getStorage(key) {
     return JSON.parse(localStorage.getItem(key)) || [];
 }
@@ -78,13 +77,13 @@ function setStorage(key, data) {
 
 function updateCartCount() {
     const cart = getStorage(KEY_CART);
-    const icons = document.querySelectorAll('.cart-icon');
-    icons.forEach(icon => icon.innerHTML = `<i class="fas fa-shopping-cart"></i> (${cart.length})`);
+    const icons = document.querySelectorAll('.cart-count');
+    icons.forEach(el => el.innerText = `(${cart.length})`);
 }
 
-// --- WEBSITE LOGIC (Product & Cart) ---
+// --- WEBSITE FUNCTIONS ---
 
-// প্রোডাক্ট দেখানোর ফাংশন (Index & Products page)
+// Load Products on Website
 function loadProductsDisplay() {
     const grid = document.querySelector('.product-grid');
     if (!grid) return;
@@ -93,27 +92,26 @@ function loadProductsDisplay() {
     grid.innerHTML = '';
 
     if (products.length === 0) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; background: #fff; border-radius: 8px;"><h3>কোনো পণ্য নেই</h3><p>অ্যাডমিন প্যানেল থেকে পণ্য যুক্ত করুন।</p></div>';
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; background:#1e1e1e; border-radius:8px;"><h3>No Products Available</h3><p>Please add products from Admin Panel</p></div>';
         return;
     }
 
     products.forEach(p => {
         const card = document.createElement('div');
         card.className = 'product-card';
-        // Note: Image is dummy placeholder
         card.innerHTML = `
-            <div class="product-image" style="background:#f9f9f9; height:250px; display:flex; align-items:center; justify-content:center; margin-bottom:15px; border-radius:4px;">
-                <i class="fas fa-tshirt" style="font-size:3em; color:#ddd;"></i>
+            <div class="product-image">
+                <i class="fas fa-tshirt" style="font-size:3em; color:#555;"></i>
             </div>
             <h3>${p.name}</h3>
-            <p style="font-weight:bold; color:#d10000; font-size: 1.1em;">৳ ${p.price}</p>
-            <button onclick="addToCart('${p.id}')" class="btn primary-btn" style="margin-top:10px; width:100%;">Add to Cart</button>
+            <p>৳ ${p.price}</p>
+            <button onclick="addToCart(${p.id})" class="btn primary-btn" style="width:100%;">Add to Cart</button>
         `;
         grid.appendChild(card);
     });
 }
 
-// কার্টে প্রোডাক্ট যোগ করা
+// Add to Cart Logic
 window.addToCart = function(id) {
     const products = getStorage(KEY_PRODUCTS);
     const product = products.find(p => p.id == id);
@@ -122,14 +120,14 @@ window.addToCart = function(id) {
         cart.push(product);
         setStorage(KEY_CART, cart);
         updateCartCount();
-        alert('প্রোডাক্ট কার্টে যুক্ত হয়েছে!');
+        alert('Product added to cart!');
     }
 };
 
-// কার্ট পেজ লোড করা
+// Load Cart Page
 function loadCartDisplay() {
     const container = document.querySelector('.cart-items');
-    const summaryTotal = document.getElementById('cart-total');
+    const totalEl = document.getElementById('cart-total');
     if (!container) return;
 
     const cart = getStorage(KEY_CART);
@@ -137,8 +135,9 @@ function loadCartDisplay() {
     let total = 0;
 
     if (cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 20px;">আপনার কার্ট খালি।</p>';
-        if(summaryTotal) summaryTotal.innerText = '0';
+        container.innerHTML = '<p style="text-align:center;">Your cart is empty.</p>';
+        if(totalEl) totalEl.innerText = '0';
+        // Hide checkout button logic can be added here
         return;
     }
 
@@ -148,21 +147,16 @@ function loadCartDisplay() {
         div.className = 'cart-item';
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:15px;">
-                <div style="width:50px; height:50px; background:#eee; display:flex; align-items:center; justify-content:center;"><i class="fas fa-tshirt"></i></div>
-                <div>
-                    <h4 style="margin:0;">${item.name}</h4>
-                    <p style="margin:0; color:#777;">৳ ${item.price}</p>
-                </div>
+                <div style="width:50px; height:50px; background:#2a2a2a; display:flex; align-items:center; justify-content:center;"><i class="fas fa-tshirt"></i></div>
+                <div><h4>${item.name}</h4><p>৳ ${item.price}</p></div>
             </div>
-            <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;"><i class="fas fa-trash"></i></button>
+            <button onclick="removeFromCart(${index})" style="color:#ff9f43; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
         `;
         container.appendChild(div);
     });
-
-    if(summaryTotal) summaryTotal.innerText = total;
+    if(totalEl) totalEl.innerText = total;
 }
 
-// কার্ট থেকে রিমুভ করা
 window.removeFromCart = function(index) {
     const cart = getStorage(KEY_CART);
     cart.splice(index, 1);
@@ -171,28 +165,27 @@ window.removeFromCart = function(index) {
     updateCartCount();
 };
 
-// --- CHECKOUT LOGIC ---
+// Checkout Summary
+function loadCartSummaryForCheckout() {
+    const totalEl = document.getElementById('checkout-total');
+    if(!totalEl) return;
+    const cart = getStorage(KEY_CART);
+    const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+    totalEl.innerText = total;
+}
 
+// Handle Checkout
 function handleCheckoutForm() {
     const form = document.getElementById('checkout-form');
-    const cart = getStorage(KEY_CART);
-    const totalEl = document.getElementById('checkout-total');
-    
-    // Calculate Total
-    let total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-    if(totalEl) totalEl.innerText = total;
-
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            if(cart.length === 0) {
-                alert("কার্ট খালি! অর্ডার করা যাবে না।");
-                return;
-            }
+            const cart = getStorage(KEY_CART);
+            if(cart.length === 0) { alert("Cart is empty!"); return; }
 
+            const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
             const order = {
-                id: 'ORD-' + Math.floor(Math.random() * 10000), // Random ID
+                id: 'ORD-' + Math.floor(Math.random() * 100000),
                 date: new Date().toLocaleDateString(),
                 customer: {
                     name: e.target.name.value,
@@ -205,19 +198,17 @@ function handleCheckoutForm() {
             };
 
             const orders = getStorage(KEY_ORDERS);
-            orders.unshift(order); // Add new order to top
+            orders.unshift(order);
             setStorage(KEY_ORDERS, orders);
-
-            // Clear Cart
-            setStorage(KEY_CART, []);
+            setStorage(KEY_CART, []); // Clear cart
             
-            alert('অর্ডার সফল হয়েছে! ধন্যবাদ।');
+            alert('Order Placed Successfully!');
             window.location.href = 'index.html';
         });
     }
 }
 
-// --- ADMIN PANEL LOGIC (লগইন, প্রোডাক্ট, অর্ডার) ---
+// --- ADMIN FUNCTIONS ---
 
 function checkAdminAuth() {
     if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) {
@@ -225,18 +216,19 @@ function checkAdminAuth() {
     }
 }
 
-// 1. Admin Products Page Functions
-function loadAdminProducts() {
+// 1. ADMIN PRODUCTS LOGIC
+function initAdminProducts() {
     const form = document.getElementById('add-product-form');
     const tableBody = document.querySelector('#product-table tbody');
-
-    // টেবিল আপডেট করা
+    
+    // Function to render table
     const renderTable = () => {
         const products = getStorage(KEY_PRODUCTS);
         tableBody.innerHTML = '';
         
         if (products.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">কোনো পণ্য নেই</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No products found</td></tr>';
+            document.getElementById('current-product-count').innerText = 0;
             return;
         }
 
@@ -245,144 +237,108 @@ function loadAdminProducts() {
             row.innerHTML = `
                 <td>${p.name}</td>
                 <td>৳ ${p.price}</td>
-                <td><button onclick="deleteProduct(${index})" class="action-btn" style="color:red; border-color:red;"><i class="fas fa-trash"></i> Delete</button></td>
+                <td><button onclick="deleteProduct(${index})" class="action-btn" style="color:#ff9f43; border:1px solid #ff9f43; padding:5px 10px; background:none; cursor:pointer;">Delete</button></td>
             `;
         });
+        document.getElementById('current-product-count').innerText = products.length;
     };
+
+    // Initial render
     renderTable();
 
-    // নতুন পণ্য যোগ করা
+    // Add Product Event
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const newProduct = {
-                id: Date.now(),
-                name: e.target.name.value,
-                price: e.target.price.value
-            };
-            const products = getStorage(KEY_PRODUCTS);
-            products.push(newProduct);
-            setStorage(KEY_PRODUCTS, products);
-            e.target.reset();
-            alert('পণ্য যুক্ত হয়েছে!');
-            renderTable();
+            const name = e.target.name.value;
+            const price = e.target.price.value;
+
+            if(name && price) {
+                const newProduct = {
+                    id: Date.now(),
+                    name: name,
+                    price: price
+                };
+                
+                const products = getStorage(KEY_PRODUCTS);
+                products.push(newProduct);
+                setStorage(KEY_PRODUCTS, products);
+                
+                e.target.reset();
+                alert('Product Added Successfully!');
+                renderTable(); // Update table immediately
+            }
         });
     }
 
-    // পণ্য ডিলিট করা
+    // Global Delete Function
     window.deleteProduct = function(index) {
-        if(confirm('আপনি কি এই পণ্যটি ডিলিট করতে চান?')) {
+        if(confirm('Are you sure you want to delete this product?')) {
             const products = getStorage(KEY_PRODUCTS);
             products.splice(index, 1);
             setStorage(KEY_PRODUCTS, products);
-            renderTable();
+            renderTable(); // Update table immediately
         }
     };
 }
 
-// 2. Admin Orders Page Functions
-function loadAdminOrders() {
+// 2. ADMIN ORDERS LOGIC
+function initAdminOrders() {
     const tableBody = document.querySelector('#orders-table tbody');
     const orders = getStorage(KEY_ORDERS);
     
     tableBody.innerHTML = '';
-
+    
     if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো অর্ডার নেই</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders found</td></tr>';
         return;
     }
 
     orders.forEach((order, index) => {
         const row = tableBody.insertRow();
-        
-        // Status Color Coding
-        let statusColor = '#f39c12'; // Pending
-        if (order.status === 'Shipped') statusColor = '#2980b9';
-        if (order.status === 'Delivered') statusColor = '#27ae60';
-        if (order.status === 'Cancelled') statusColor = '#c0392b';
+        let color = '#ff9f43';
+        if(order.status === 'Shipped') color = '#3498db';
+        if(order.status === 'Delivered') color = '#2ecc71';
 
         row.innerHTML = `
             <td><small>${order.id}</small></td>
-            <td>
-                <strong>${order.customer.name}</strong><br>
-                <small>${order.customer.phone}</small>
-            </td>
+            <td>${order.customer.name}<br><small>${order.customer.phone}</small></td>
             <td>৳ ${order.total}</td>
             <td>
-                <select onchange="updateOrderStatus(${index}, this.value)" class="status-select" style="border-color:${statusColor}; color:${statusColor}; font-weight:bold;">
+                <select onchange="updateOrderStatus(${index}, this.value)" class="status-select" style="color:${color}; border-color:${color}; padding:5px; background:#2a2a2a;">
                     <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
                     <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
                     <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
                     <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                 </select>
             </td>
-            <td><button onclick="viewOrderDetails(${index})" class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+            <td><button onclick="viewOrderDetails(${index})" style="color:#fff; background:#333; border:none; padding:5px 10px; cursor:pointer;">View</button></td>
         `;
     });
 
     window.updateOrderStatus = function(index, newStatus) {
-        orders[index].status = newStatus;
-        setStorage(KEY_ORDERS, orders);
-        loadAdminOrders(); // Reload to update color
+        const currentOrders = getStorage(KEY_ORDERS);
+        currentOrders[index].status = newStatus;
+        setStorage(KEY_ORDERS, currentOrders);
+        initAdminOrders(); // Reload table
     };
 
     window.viewOrderDetails = function(index) {
         const o = orders[index];
-        const itemsList = o.items.map(i => `- ${i.name} (৳${i.price})`).join('\n');
-        alert(`অর্ডার ডিটেইলস:\n\nঠিকানা: ${o.customer.address}\n\nপণ্য:\n${itemsList}\n\nমোট: ৳${o.total}`);
+        const items = o.items.map(i => `- ${i.name} (৳${i.price})`).join('\n');
+        alert(`Order Details:\n\nCustomer: ${o.customer.name}\nAddress: ${o.customer.address}\n\nItems:\n${items}\n\nTotal: ৳${o.total}`);
     };
 }
 
-// 3. Admin Customers Page Functions
-function loadAdminCustomers() {
-    const tableBody = document.querySelector('#customers-table tbody');
+// 3. ADMIN DASHBOARD LOGIC
+function initAdminDashboard() {
     const orders = getStorage(KEY_ORDERS);
-    
-    // ফোন নাম্বার দিয়ে ইউনিক কাস্টমার বের করা
-    const customers = {};
-    orders.forEach(o => {
-        if (!customers[o.customer.phone]) {
-            customers[o.customer.phone] = {
-                name: o.customer.name,
-                phone: o.customer.phone,
-                address: o.customer.address,
-                ordersCount: 0,
-                totalSpent: 0
-            };
-        }
-        customers[o.customer.phone].ordersCount++;
-        customers[o.customer.phone].totalSpent += parseFloat(o.total);
-    });
-
-    tableBody.innerHTML = '';
-    const customerArray = Object.values(customers);
-
-    if (customerArray.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো কাস্টমার ডাটা নেই</td></tr>';
-        return;
-    }
-
-    customerArray.forEach(c => {
-        const row = tableBody.insertRow();
-        row.innerHTML = `
-            <td>${c.name}</td>
-            <td>${c.phone}</td>
-            <td>${c.address}</td>
-            <td>${c.ordersCount}</td>
-            <td>৳ ${c.totalSpent}</td>
-        `;
-    });
-}
-
-// 4. Admin Analytics Page Functions
-function loadAdminAnalytics() {
-    const orders = getStorage(KEY_ORDERS);
+    const products = getStorage(KEY_PRODUCTS);
     
     const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
-    const totalOrders = orders.length;
-    const deliveredOrders = orders.filter(o => o.status === 'Delivered').length;
+    const pendingCount = orders.filter(o => o.status === 'Pending').length;
     
     if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = '৳ ' + totalRevenue;
-    if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = totalOrders;
-    if(document.getElementById('stat-delivered')) document.getElementById('stat-delivered').innerText = deliveredOrders;
+    if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pendingCount;
+    if(document.getElementById('stat-products')) document.getElementById('stat-products').innerText = products.length;
 }
