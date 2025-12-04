@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
+        /* (The complete Admin Styles from the previous response are assumed to be here or linked) */
         body { margin: 0; padding: 0; background-color: #f4f7f9; font-family: 'Montserrat', sans-serif; color: #333; }
         .admin-layout { display: flex; min-height: 100vh; }
         .sidebar { width: 250px; background-color: #2c3e50; color: #ecf0f1; padding-top: 20px; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); }
@@ -52,13 +53,13 @@
             <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
             <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
             <li><a href="index.html"><i class="fas fa-globe"></i> View Website</a></li>
-            <li><a href="admin_login.html"><i class="fas fa-sign-out-alt"></i> Logout (Dummy)</a></li>
+            <li><a href="admin_login.html" onclick="sessionStorage.removeItem('adminLoggedIn');"><i class="fas fa-sign-out-alt"></i> Logout (Dummy)</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="dashboard-header">
-            <h1>Orders Management (12 Pending)</h1>
+            <h1>Orders Management (DUMMY)</h1>
             <div class="filter-bar">
                 <select style="padding: 8px; border-radius: 4px;">
                     <option>Filter by Status</option>
@@ -101,8 +102,7 @@
                         <td>9650</td>
                         <td><span class="status-badge status-shipped">Shipped</span></td>
                         <td>
-                            <button class="action-btn"><i class="fas fa-eye"></i> View</button>
-                            <button class="action-btn"><i class="fas fa-check"></i> Delivered</button>
+                            <button class="action-btn"><i class="fas fa-edit"></i> Edit Status</button>
                         </td>
                     </tr>
                     <tr>
@@ -115,12 +115,13 @@
                             <button class="action-btn"><i class="fas fa-eye"></i> View</button>
                         </td>
                     </tr>
-                    </tbody>
+                </tbody>
             </table>
         </div>
         
     </div>
 </div>
 
+<script src="script.js"></script>
 </body>
 </html>
