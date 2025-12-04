@@ -57,4 +57,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // 4. Admin Login DUMMY Check (for admin.html)
+    const adminLoginForm = document.getElementById('admin-login-form');
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = e.target.username.value;
+            const password = e.target.password.value;
+
+            // DUMMY Credentials
+            const DUMMY_USER = 'asadul_hasan';
+            const DUMMY_PASS = 'admin123'; 
+
+            if (username === DUMMY_USER && password === DUMMY_PASS) {
+                // Redirect to Dashboard (Assuming dashboard.html exists)
+                window.location.href = 'admin_dashboard.html'; 
+            } else {
+                alert('Login Failed: Incorrect Username or Password.');
+            }
+        });
+    }
 });
