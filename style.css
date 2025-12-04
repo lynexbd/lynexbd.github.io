@@ -1,7 +1,8 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Fixed Version)
+   LYNEX COMPLETE STYLESHEET (Updated Design)
    ====================================================== */
 
+/* --- 1. BASE STYLES --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Montserrat', sans-serif; line-height: 1.6; color: #e0e0e0; background-color: #121212; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
@@ -9,25 +10,15 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 ul { list-style: none; }
 h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 
-/* --- HEADER & LOGO --- */
+/* --- 2. HEADER --- */
 .header {
     background-color: #000000;
     box-shadow: 0 2px 10px rgba(255, 159, 67, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    padding: 15px 0;
-    border-bottom: 1px solid #333;
+    position: sticky; top: 0; z-index: 1000; padding: 15px 0; border-bottom: 1px solid #333;
 }
 .header .container { display: flex; justify-content: space-between; align-items: center; }
-
-/* Logo Colors */
 .logo a { font-size: 2.2em; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-.logo-lyn { color: #ffffff; }
-.logo-e { color: #ff9f43; }
-.logo-x { color: #ffcd75; }
-
-/* Navigation */
+.logo-lyn { color: #ffffff; } .logo-e { color: #ff9f43; } .logo-x { color: #ffcd75; }
 .nav-list { display: flex; gap: 25px; align-items: center; }
 .nav-list a { font-weight: 600; font-size: 0.9em; color: #ffffff; text-transform: uppercase; }
 .nav-list a:hover, .nav-list a.active { color: #ff9f43; }
@@ -35,60 +26,54 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 .cart-count { color: #ffcd75; font-weight: bold; }
 .menu-toggle { display: none; font-size: 1.5em; color: #fff; cursor: pointer; }
 
-/* --- HERO SECTION --- */
+/* --- 3. HERO SECTION (Small Box & Adjusted) --- */
 .hero-section {
     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-bg.jpg');
     background-color: #1a1a1a; background-size: cover; background-position: center;
-    height: 80vh; display: flex; align-items: center; padding-left: 10%;
+    height: 50vh; /* উচ্চতা কমানো হয়েছে */
+    display: flex; align-items: center; padding-left: 5%; /* বামে জায়গা কমানো */
 }
-.hero-content h1 { font-size: 3.5em; margin-bottom: 20px; }
-.subtitle { font-size: 1.1em; color: #ff9f43; margin-bottom: 10px; }
+.hero-content { 
+    max-width: 500px; /* বক্স ছোট করা হয়েছে */
+}
+.hero-content h1 { font-size: 2.8em; margin-bottom: 15px; } /* ফন্ট সাইজ কমানো */
+.subtitle { font-size: 1em; color: #ff9f43; margin-bottom: 8px; }
 
-/* --- PRODUCTS SECTION --- */
-.products-section { padding: 80px 20px; }
-.section-title, .page-title { font-size: 2.5em; text-align: center; margin-bottom: 50px; text-transform: uppercase; }
+/* --- 4. PRODUCTS --- */
+.products-section { padding: 40px 20px 80px; } /* উপরে প্যাডিং কমিয়ে উপরে উঠানো হয়েছে */
+.section-title, .page-title { font-size: 2.5em; text-align: center; margin-bottom: 40px; text-transform: uppercase; }
 
 .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
-.product-card {
-    background: #1e1e1e; padding: 10px; border-radius: 8px; border: 1px solid #333;
-    display: flex; flex-direction: column; height: 100%; position: relative;
-}
-.product-image {
-    height: 240px; width: 100%; margin-bottom: 10px; background: #2a2a2a; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-}
+.product-card { background: #1e1e1e; padding: 10px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; height: 100%; position: relative; }
+.product-image { height: 240px; width: 100%; margin-bottom: 10px; background: #2a2a2a; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .product-image img { width: 100%; height: 100%; object-fit: cover; }
 .product-info h3 { font-size: 1.1em; text-align: center; margin-bottom: 5px; color: #fff; }
-
 .price-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
 .current-price { color: #ff9f43; font-weight: 700; font-size: 1.1em; }
 .old-price { color: #777; text-decoration: line-through; font-size: 0.9em; }
-.discount-badge { position: absolute; top: 15px; left: 15px; background: #d10000; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; z-index: 5; }
+.discount-badge { position: absolute; top: 15px; left: 15px; background: #d10000; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; z-index: 5;}
 
 .product-actions { display: flex; gap: 10px; margin-top: auto; }
 .btn { padding: 10px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; text-align: center; font-size: 0.9em; flex: 1; }
 .primary-btn { background: #ff9f43; color: #000; } .primary-btn:hover { background: #e68a30; }
 .secondary-btn { background: transparent; border: 1px solid #ff9f43; color: #ff9f43; } .secondary-btn:hover { background: #ff9f43; color: #000; }
 
-/* --- CART & CHECKOUT --- */
-.cart-items { background: #1e1e1e; padding: 20px; border-radius: 8px; border: 1px solid #333; }
+/* --- 5. CART & OTHERS --- */
+.cart-items, .cart-summary { background: #1e1e1e; padding: 20px; border-radius: 8px; border: 1px solid #333; }
 .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding: 15px 0; }
 .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
 .qty-btn { background: #333; color: #fff; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
-.cart-summary { background: #1e1e1e; padding: 30px; border-radius: 8px; margin-top: 30px; border: 1px solid #333; }
-.summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #ddd; }
 .checkout-btn { width: 100%; display: block; margin-top: 20px; text-align: center; }
 
-/* --- ADMIN PANEL --- */
+/* --- 6. ADMIN PANEL --- */
 .admin-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 260px; background: #000; padding: 20px; border-right: 1px solid #333; flex-shrink: 0; }
 .sidebar h2 { color: #ff9f43; text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-.sidebar ul li a { display: block; color: #ccc; padding: 12px; border-radius: 4px; margin-bottom: 5px; }
-.sidebar ul li a:hover, .sidebar ul li a.admin-active { background: #1e1e1e; color: #ff9f43; border-left: 4px solid #ff9f43; }
+.sidebar a { display: block; color: #ccc; padding: 12px; border-radius: 4px; margin-bottom: 5px; }
+.sidebar a:hover, .sidebar a.admin-active { background: #1e1e1e; color: #ff9f43; border-left: 4px solid #ff9f43; }
 .main-content { flex: 1; padding: 30px; background: #121212; overflow-x: auto; }
 .dashboard-header { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333; }
 
-/* Admin Widgets & Tables */
 .widget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
 .widget { background: #1e1e1e; padding: 20px; border-left: 5px solid #ff9f43; border-radius: 8px; border: 1px solid #333; }
 .widget p { font-size: 2em; font-weight: 800; color: #ff9f43; }
@@ -102,19 +87,14 @@ td { padding: 12px; border-bottom: 1px solid #333; color: #ddd; }
 .filter-btn { background: #1e1e1e; color: #fff; border: 1px solid #333; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
 .filter-btn.active, .filter-btn:hover { background: #ff9f43; color: #000; border-color: #ff9f43; }
 
-/* Forms */
-form label { display: block; margin-bottom: 8px; font-weight: 600; color: #ccc; }
 form input, form textarea, form select { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; color: #fff; border-radius: 4px; margin-bottom: 15px; }
-form input:focus { border-color: #ff9f43; outline: none; }
-.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #ff9f43; }
-.checkbox-group input { width: auto; margin: 0; }
+.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #ff9f43; } .checkbox-group input { width: auto; margin: 0; }
 
-/* --- FOOTER --- */
-.footer { background: #000; padding: 60px 0 20px; margin-top: auto; border-top: 1px solid #333; }
+/* --- 7. FOOTER --- */
+.footer { background: #000; padding: 50px 0 20px; margin-top: auto; border-top: 1px solid #333; }
 .footer-content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; padding-bottom: 40px; border-bottom: 1px solid #333; }
-.footer-col h4 { color: #ff9f43; margin-bottom: 20px; text-transform: uppercase; }
-.footer-links a { display: block; color: #aaa; margin-bottom: 8px; } .footer-links a:hover { color: #ff9f43; padding-left: 5px; }
-.newsletter input { background: #222; border: 1px solid #444; }
+.footer-col h4 { color: #ff9f43; margin-bottom: 20px; }
+.footer-links a { display: block; color: #aaa; margin-bottom: 8px; } .footer-links a:hover { color: #ff9f43; }
 .copyright { text-align: center; padding-top: 20px; color: #777; font-size: 0.85em; }
 
 /* Responsive */
@@ -124,6 +104,5 @@ form input:focus { border-color: #ff9f43; outline: none; }
     .menu-toggle { display: block; }
     .admin-layout { flex-direction: column; }
     .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #333; }
-    .sidebar ul { display: flex; overflow-x: auto; padding-bottom: 10px; }
-    .sidebar ul li a { white-space: nowrap; margin-right: 10px; }
+    .sidebar ul { display: flex; overflow-x: auto; } .sidebar ul li { margin-right: 10px; }
 }
