@@ -1,0 +1,541 @@
+/* ======================================================
+LYNEX COMPLETE STYLESHEET
+Includes: Website, Admin Panel, Responsive Design
+======================================================
+*/
+
+/* --- 1. BASE STYLES & RESET --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background-color: #f4f7f9; /* খুব হালকা নীলচে-ধূসর ব্যাকগ্রাউন্ড */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: 0.3s;
+}
+
+ul {
+    list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: #000;
+}
+
+/* --- 2. HEADER & NAVIGATION --- */
+.header {
+    background-color: #000000; /* লোগো ফুটিয়ে তোলার জন্য কালো ব্যাকগ্রাউন্ড */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 15px 0;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LYNEX Logo Styling (আপনার কালার রিকোয়েস্ট অনুযায়ী) */
+.logo a {
+    font-size: 2.2em;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.logo-lyn {
+    color: #ffffff; /* LYN - সাদা */
+}
+
+.logo-e {
+    color: #ffb347; /* E - হালকা কমলা */
+}
+
+.logo-x {
+    color: #ffffcc; /* X - হালকা হলুদ */
+}
+
+/* Navigation Menu */
+.nav-list {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-list a {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #ffffff; /* কালো হেডারের উপর সাদা লেখা */
+    position: relative;
+}
+
+.nav-list a:hover, 
+.nav-list a.active {
+    color: #ffb347; /* হোভার করলে লোগোর কমলার মতো হবে */
+}
+
+.cart-icon {
+    color: #ffffff !important;
+    font-size: 1.1em;
+}
+
+.menu-toggle {
+    display: none; /* ডেস্কটপে লুকানো */
+    font-size: 1.5em;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* --- 3. BUTTONS --- */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.primary-btn {
+    background-color: #d10000; /* ব্র্যান্ড লাল রঙ */
+    color: #fff;
+    border: 2px solid #d10000;
+}
+
+.primary-btn:hover {
+    background-color: #a00000;
+    border-color: #a00000;
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: #000;
+    border: 2px solid #000;
+}
+
+.secondary-btn:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+/* --- 4. HERO SECTION --- */
+.hero-section {
+    background-color: #e0e0e0;
+    background-image: url('hero-model-placeholder.jpg'); /* আপনার ছবি থাকলে এখানে লিংক দিন */
+    background-size: cover;
+    background-position: center;
+    height: 80vh; /* স্ক্রিনের ৮০% উচ্চতা */
+    display: flex;
+    align-items: center;
+    padding-left: 10%;
+    position: relative;
+}
+
+.hero-content {
+    max-width: 600px;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* --- 5. PRODUCTS GRID & CARDS --- */
+.products-section {
+    padding: 80px 20px;
+}
+
+.section-title, .page-title {
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.product-image {
+    background-color: #eee;
+    height: 250px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+}
+
+.product-card h3 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.product-card p {
+    color: #d10000;
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+/* --- 6. CART & CHECKOUT PAGES --- */
+.cart-items {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-summary {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    margin-top: 30px;
+    max-width: 400px;
+    margin-left: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+/* Checkout Form Styles */
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 15px;
+}
+
+form input:focus, form textarea:focus {
+    border-color: #000;
+    outline: none;
+}
+
+/* --- 7. ADMIN PANEL STYLES --- */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: #2c3e50; /* গাঢ় নীল */
+    color: #fff;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 1.5em;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: #ecf0f1;
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+
+.sidebar ul li a:hover, 
+.sidebar ul li a.admin-active {
+    background-color: #34495e;
+    color: #ffb347; /* Active কমলা কালার */
+    font-weight: 700;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: #f4f7f9;
+    overflow-y: auto;
+}
+
+.dashboard-header {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Analytics Widgets */
+.widget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.widget {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-left: 5px solid #d10000; /* ডিফল্ট বর্ডার কালার */
+}
+
+.widget h3 {
+    font-size: 1.1em;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.widget p {
+    font-size: 2em;
+    font-weight: 800;
+    color: #2c3e50;
+}
+
+/* Data Tables (Products, Orders, Customers) */
+.data-section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 700;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #eee;
+}
+
+table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+}
+
+/* Status Badges & Selects */
+.status-select {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+/* Action Buttons in Table */
+.action-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 0.85em;
+}
+
+.action-btn:hover {
+    background: #f1f1f1;
+}
+
+/* --- 8. FOOTER --- */
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 60px 0 20px;
+    margin-top: auto;
+}
+
+.footer-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 40px;
+}
+
+.footer-col h4 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
+.footer-links a {
+    display: block;
+    color: #aaa;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.newsletter input {
+    border: none;
+    border-radius: 0;
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 0.85em;
+    color: #777;
+}
+
+/* --- 9. RESPONSIVE DESIGN (Mobile) --- */
+@media (max-width: 768px) {
+    /* Header & Nav */
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        width: 100%;
+        background-color: #000;
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    .nav-list.active {
+        display: flex;
+    }
+
+    .nav-list a {
+        padding: 10px 0;
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid #222;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Hero */
+    .hero-content h1 {
+        font-size: 2.5em;
+    }
+
+    /* Admin Panel */
+    .admin-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 10px;
+    }
+    
+    .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .sidebar ul li a {
+        white-space: nowrap;
+        margin-right: 10px;
+    }
+
+    /* Tables */
+    .data-section {
+        overflow-x: auto;
+    }
+    
+    table {
+        min-width: 600px; /* টেবিল স্ক্রল করার জন্য */
+    }
+}
