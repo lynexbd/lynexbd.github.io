@@ -1,4 +1,10 @@
-/* Base Styles */
+/*
+======================================================
+LYNEX E-COMMERCE: Main Style Sheet (style.css)
+======================================================
+*/
+
+/* Base Styles (রিসেট ও সাধারণ ফন্ট সেটআপ) */
 * {
     margin: 0;
     padding: 0;
@@ -38,7 +44,7 @@ ul {
     color: #000;
 }
 
-/* Buttons */
+/* Buttons (বাটন স্টাইল) */
 .btn {
     display: inline-block;
     padding: 12px 28px;
@@ -87,17 +93,20 @@ ul {
     padding: 18px 20px;
 }
 
-/* Logo Styling (Unique look based on user request) */
+/* --- LYNEX Logo Styling (Kala & Unique Design) --- */
 .logo a {
     font-size: 2.2em; 
     font-weight: 900;
     letter-spacing: 2px;
+    color: #000; /* লোগোর মূল রঙ কালো */
 }
 
 .logo-dot {
-    color: #d10000; /* Distinct color for uniqueness */
+    color: #000; /* ডটটিও কালো */
     font-size: 1.2em;
+    font-weight: 900;
 }
+/* ------------------------------------------------ */
 
 .nav-list {
     display: flex;
@@ -111,10 +120,11 @@ ul {
     position: relative;
     font-size: 0.95em;
     transition: color 0.3s;
+    color: #1a1a1a;
 }
 
 .nav-list a:hover, .nav-list a.active {
-    color: #d10000; /* Active/Hover state color */
+    color: #d10000; /* Active/Hover state (লাল) */
 }
 
 .cart-icon i {
@@ -131,6 +141,7 @@ ul {
 /* Hero Section */
 .hero-section {
     background-color: #f5f5f5; 
+    /* এখানে আপনার ব্র্যান্ডের একটি বড় ছবি ব্যবহার করুন */
     background-image: url('hero-model-placeholder.jpg'); 
     background-size: cover;
     background-position: center;
@@ -247,6 +258,21 @@ ul {
 
 .view-all i {
     margin-left: 8px;
+}
+
+/* Product Card - Empty State Styling (যখন কোনো পণ্য থাকবে না) */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    margin-top: 30px;
+    border: 1px solid #eee;
+}
+
+.empty-state h3 {
+    color: #555;
+    font-weight: 600;
 }
 
 /* Page Header for Products/Contact/About */
@@ -554,8 +580,21 @@ ul {
     color: #aaa;
 }
 
+/* ============================= */
+/* Admin Panel Login/Base Styles */
+/* ============================= */
 
-/* Responsive Design */
+/* (Note: Admin login and dashboard use inline CSS for simplicity,
+    but base elements are styled here.) */
+
+/* Admin Login Page Style Adjustment */
+.login-container .dummy-info {
+    display: none; /* লগইন ক্রেডেনশিয়াল লুকিয়ে রাখা হলো */
+}
+
+/* ============================= */
+/* Responsive Design (মোবাইল ও ছোট পর্দার জন্য) */
+/* ============================= */
 @media (max-width: 768px) {
     .hero-section {
         height: 60vh;
