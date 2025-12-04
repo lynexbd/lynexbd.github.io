@@ -12,7 +12,9 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <a href="index.html">LYNEX<span class="logo-dot">.</span></a>
+                <a href="index.html">
+                    <span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span>
+                </a>
             </div>
             <nav class="nav">
                 <ul class="nav-list" id="nav-list">
@@ -35,25 +37,19 @@
 
     <section class="cart-section container">
         <div class="cart-items">
-            <p style="text-align: center; padding: 50px 0;">Your cart is currently empty. <a href="products.html" style="color: #d10000; font-weight: 600;">Start Shopping!</a></p>
-        </div>
+            </div>
 
         <div class="cart-summary">
             <h3>Cart Summary</h3>
-            <div class="summary-row">
-                <p>Subtotal (0 items):</p>
-                <p>৳ 0</p>
-            </div>
-            <div class="summary-row">
-                <p>Shipping:</p>
-                <p>৳ 0</p>
-            </div>
-            <hr style="margin: 15px 0;">
+            
             <div class="summary-row">
                 <strong>Order Total:</strong>
-                <strong>৳ 0</strong>
+                <strong>৳ <span id="cart-total">0</span></strong>
             </div>
-            <a href="#" class="btn primary-btn checkout-btn" onclick="alert('Checkout is a DUMMY function.')">PROCEED TO CHECKOUT</a>
+            
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <a href="checkout.html" class="btn primary-btn checkout-btn">PROCEED TO CHECKOUT</a>
         </div>
     </section>
 
