@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | LYNEX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding: 50px 20px;">
+        <h2 class="section-title">Checkout</h2>
+        <div style="background: #fff; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+            <h3 style="margin-bottom: 20px;">Total Amount: ৳ <span id="checkout-total">0</span></h3>
+            
+            <form id="checkout-form">
+                <div style="margin-bottom: 15px;">
+                    <label>Full Name</label>
+                    <input type="text" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ddd;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" required style="width: 100%; padding: 10px; border: 1px solid #ddd;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Shipping Address</label>
+                    <textarea name="address" required rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd;"></textarea>
+                </div>
+                <button type="submit" class="btn primary-btn" style="width: 100%;">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
