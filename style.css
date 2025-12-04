@@ -1,7 +1,7 @@
 /* ======================================================
-LYNEX COMPLETE STYLESHEET (Dark Theme & Orange/White Accents)
-======================================================
-*/
+   LYNEX COMPLETE STYLESHEET 
+   Theme: Dark Mode with Orange Accents
+   ====================================================== */
 
 /* --- 1. BASE STYLES & RESET --- */
 * {
@@ -13,8 +13,8 @@ LYNEX COMPLETE STYLESHEET (Dark Theme & Orange/White Accents)
 body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
-    color: #e0e0e0; /* হালকা ধূসর টেক্সট */
-    background-color: #121212; /* গাঢ় কালো ব্যাকগ্রাউন্ড */
+    color: #e0e0e0;       /* হালকা ধূসর টেক্সট (ডার্ক মোডের জন্য) */
+    background-color: #121212; /* গাঢ় ব্যাকগ্রাউন্ড */
 }
 
 .container {
@@ -35,13 +35,13 @@ ul {
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
-    color: #ffffff; /* সাদা শিরোনাম */
+    color: #ffffff; /* সব হেডিং সাদা */
 }
 
 /* --- 2. HEADER & NAVIGATION --- */
 .header {
     background-color: #000000; /* সম্পূর্ণ কালো হেডার */
-    box-shadow: 0 2px 10px rgba(255, 165, 0, 0.1); /* হালকা কমলা শ্যাডো */
+    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); /* হালকা অরেঞ্জ শ্যাডো */
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-/* LYNEX Logo Styling (লোগোর কালার অনুযায়ী) */
+/* Logo Styling */
 .logo a {
     font-size: 2.2em;
     font-weight: 900;
@@ -64,17 +64,15 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
 }
 
-/* লোগোর প্রথম অংশ সাদা */
 .logo-lyn {
-    color: #ffffff;
+    color: #ffffff; /* LYN - সাদা */
 }
 
-/* লোগোর দ্বিতীয় অংশ কমলা */
 .logo-ex {
-    color: #ff9f43; /* লোগোর কমলা রঙ */
+    color: #ff9f43; /* EX - অরেঞ্জ */
 }
 
-/* Navigation Menu */
+/* Nav Menu */
 .nav-list {
     display: flex;
     gap: 30px;
@@ -90,7 +88,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-list a:hover, 
 .nav-list a.active {
-    color: #ff9f43; /* হোভার এবং অ্যাক্টিভ কালার কমলা */
+    color: #ff9f43; /* হোভার কালার */
 }
 
 .cart-icon {
@@ -104,7 +102,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .menu-toggle {
-    display: none;
+    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
     font-size: 1.5em;
     color: #fff;
     cursor: pointer;
@@ -124,13 +122,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-btn {
-    background-color: #ff9f43; /* কমলা বাটন */
-    color: #000; /* কালো টেক্সট */
+    background-color: #ff9f43;
+    color: #000; /* বাটনের লেখা কালো */
     border: 2px solid #ff9f43;
 }
 
 .primary-btn:hover {
-    background-color: #e68a30; /* একটু গাঢ় কমলা */
+    background-color: #e68a30;
     border-color: #e68a30;
 }
 
@@ -148,37 +146,30 @@ h1, h2, h3, h4, h5, h6 {
 /* --- 4. HERO SECTION --- */
 .hero-section {
     background-color: #1a1a1a;
-    /* আপনার হিরো ইমেজ এখানে দিন। ডার্ক থিমের সাথে মানানসই ছবি ব্যবহার করুন */
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-image.jpg'); 
+    /* ইমেজ না থাকলে ডিফল্ট ডার্ক ব্যাকগ্রাউন্ড দেখাবে */
+    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
     height: 80vh;
     display: flex;
     align-items: center;
     padding-left: 10%;
-    position: relative;
-}
-
-.hero-content {
-    max-width: 600px;
-    z-index: 2;
 }
 
 .hero-content h1 {
     font-size: 3.5em;
     margin-bottom: 20px;
     line-height: 1.2;
-    color: #fff;
 }
 
 .subtitle {
     font-size: 1.1em;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #ff9f43; /* কমলা সাবটাইটেল */
+    color: #ff9f43;
 }
 
-/* --- 5. PRODUCTS GRID & CARDS --- */
+/* --- 5. PRODUCTS SECTION --- */
 .products-section {
     padding: 80px 20px;
 }
@@ -188,7 +179,6 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     margin-bottom: 50px;
     text-transform: uppercase;
-    color: #fff;
 }
 
 .product-grid {
@@ -198,19 +188,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .product-card {
-    background: #1e1e1e; /* ডার্ক কার্ড ব্যাকগ্রাউন্ড */
+    background: #1e1e1e; /* কার্ডের ব্যাকগ্রাউন্ড */
     padding: 15px;
     border-radius: 8px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
     border: 1px solid #333;
+    transition: transform 0.3s, border-color 0.3s;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(255, 165, 0, 0.15); /* কমলা শ্যাডো */
-    border-color: #ff9f43;
+    border-color: #ff9f43; /* হোভার করলে বর্ডার অরেঞ্জ হবে */
 }
 
 .product-image {
@@ -220,7 +208,6 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #555;
     border-radius: 4px;
 }
 
@@ -231,18 +218,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .product-card p {
-    color: #ff9f43; /* কমলা দাম */
+    color: #ff9f43; /* দামের কালার */
     font-weight: 700;
     font-size: 1.1em;
     margin-bottom: 15px;
 }
 
-/* --- 6. CART & CHECKOUT PAGES --- */
-.cart-items {
+/* --- 6. CART & CHECKOUT --- */
+.cart-items, .cart-summary, .login-container {
     background: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     border: 1px solid #333;
 }
 
@@ -254,40 +240,26 @@ h1, h2, h3, h4, h5, h6 {
     padding: 15px 0;
 }
 
-.cart-item:last-child {
-    border-bottom: none;
-}
-
 .cart-item h4 { color: #fff; }
-.cart-item p { color: #ff9f43; }
-
-.cart-summary {
-    background: #1e1e1e;
-    padding: 30px;
-    border-radius: 8px;
-    margin-top: 30px;
-    max-width: 400px;
-    margin-left: auto;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    border: 1px solid #333;
-}
+.cart-item p { color: #aaa; }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 1.1em;
     color: #e0e0e0;
 }
 
-.summary-row strong { color: #ff9f43; }
+.summary-row strong {
+    color: #ff9f43;
+}
 
-/* Checkout Form Styles */
+/* Forms (Checkout & Login) */
 form label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #fff;
+    color: #ccc;
 }
 
 form input, form textarea, form select {
@@ -295,11 +267,10 @@ form input, form textarea, form select {
     padding: 12px;
     border: 1px solid #333;
     border-radius: 4px;
-    font-size: 1em;
-    font-family: 'Montserrat', sans-serif;
-    margin-bottom: 15px;
     background-color: #2a2a2a;
     color: #fff;
+    margin-bottom: 15px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 form input:focus, form textarea:focus {
@@ -316,20 +287,19 @@ form input:focus, form textarea:focus {
 /* Sidebar */
 .sidebar {
     width: 260px;
-    background-color: #000000; /* কালো সাইডবার */
-    color: #fff;
+    background-color: #000000;
     padding: 20px;
-    flex-shrink: 0;
     border-right: 1px solid #333;
+    flex-shrink: 0;
 }
 
 .sidebar h2 {
-    color: #ff9f43; /* কমলা শিরোনাম */
+    color: #ff9f43;
     text-align: center;
     margin-bottom: 40px;
-    font-size: 1.5em;
-    border-bottom: 1px solid rgba(255, 159, 67, 0.2);
+    border-bottom: 1px solid #333;
     padding-bottom: 20px;
+    font-size: 1.5em;
 }
 
 .sidebar ul li a {
@@ -338,18 +308,17 @@ form input:focus, form textarea:focus {
     padding: 12px 15px;
     margin-bottom: 5px;
     border-radius: 4px;
-    font-size: 0.95em;
 }
 
 .sidebar ul li a:hover, 
 .sidebar ul li a.admin-active {
     background-color: #1e1e1e;
-    color: #ff9f43; /* Active কমলা কালার */
-    font-weight: 700;
+    color: #ff9f43;
     border-left: 4px solid #ff9f43;
+    font-weight: 600;
 }
 
-/* Main Content Area */
+/* Main Admin Content */
 .main-content {
     flex: 1;
     padding: 30px;
@@ -361,17 +330,11 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     border: 1px solid #333;
 }
 
-.dashboard-header h1 { color: #fff; }
-
-/* Analytics Widgets */
+/* Admin Widgets */
 .widget-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -383,8 +346,7 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    border-left: 5px solid #ff9f43; /* কমলা বর্ডার */
+    border-left: 5px solid #ff9f43;
     border: 1px solid #333;
 }
 
@@ -400,12 +362,11 @@ form input:focus, form textarea:focus {
     color: #ff9f43;
 }
 
-/* Data Tables */
+/* Admin Tables */
 .data-section {
     background: #1e1e1e;
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     border: 1px solid #333;
     overflow-x: auto;
 }
@@ -416,33 +377,31 @@ table {
     margin-top: 20px;
 }
 
-table th {
+th {
     background-color: #2a2a2a;
     color: #fff;
-    font-weight: 700;
     padding: 15px;
     text-align: left;
     border-bottom: 2px solid #444;
 }
 
-table td {
+td {
     padding: 15px;
     border-bottom: 1px solid #333;
     color: #e0e0e0;
 }
 
-/* Status Badges & Selects */
+/* Status Dropdown */
 .status-select {
     padding: 5px 10px;
     border-radius: 20px;
     border: 1px solid #333;
     background: #2a2a2a;
     color: #fff;
-    font-size: 0.9em;
     cursor: pointer;
 }
 
-/* Action Buttons in Table */
+/* Action Buttons */
 .action-btn {
     background: none;
     border: 1px solid #555;
@@ -450,33 +409,19 @@ table td {
     border-radius: 4px;
     cursor: pointer;
     margin-right: 5px;
-    font-size: 0.85em;
     color: #fff;
+    font-size: 0.85em;
 }
 
 .action-btn:hover {
     background: #333;
     border-color: #ff9f43;
+    color: #ff9f43;
 }
-
-/* Admin Login Page Style */
-.login-container {
-    background-color: #1e1e1e;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    border: 1px solid #333;
-}
-.login-container h2 { color: #ff9f43; }
-.login-container .dummy-info { display: none; }
 
 /* --- 8. FOOTER --- */
 .footer {
     background-color: #000;
-    color: #fff;
     padding: 60px 0 20px;
     margin-top: auto;
     border-top: 1px solid #333;
@@ -493,7 +438,6 @@ table td {
 .footer-col h4 {
     color: #ff9f43;
     margin-bottom: 20px;
-    font-size: 1.1em;
     text-transform: uppercase;
 }
 
@@ -506,22 +450,19 @@ table td {
 
 .footer-links a:hover {
     color: #ff9f43;
-}
-
-.newsletter input {
-    border: none;
-    border-radius: 0;
+    text-decoration: underline;
 }
 
 .copyright {
     text-align: center;
     padding-top: 20px;
-    font-size: 0.85em;
     color: #777;
+    font-size: 0.85em;
 }
 
-/* --- 9. RESPONSIVE DESIGN (Mobile) --- */
+/* --- 9. RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
+    /* Mobile Navigation */
     .nav-list {
         display: none;
         flex-direction: column;
@@ -550,17 +491,13 @@ table td {
         display: block;
     }
 
-    .hero-content h1 {
-        font-size: 2.5em;
-    }
-
+    /* Admin Panel Mobile */
     .admin-layout {
         flex-direction: column;
     }
     
     .sidebar {
         width: 100%;
-        padding: 10px;
         border-right: none;
         border-bottom: 1px solid #333;
     }
@@ -573,6 +510,10 @@ table td {
     
     .sidebar ul li a {
         white-space: nowrap;
-        margin-right: 10px;
+        margin-right: 15px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5em;
     }
 }
