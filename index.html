@@ -1,155 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LYNEX – Coming Soon</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:'Poppins', sans-serif;
-    }
-
-    body{
-      background:#000;
-      color:white;
-      overflow:hidden;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      flex-direction:column;
-    }
-
-    /* Animated Background Glow */
-    .glow{
-      position:absolute;
-      width:600px;
-      height:600px;
-      background:radial-gradient(circle,#ff8c1a33,#000000);
-      filter:blur(90px);
-      animation:move 7s infinite alternate;
-      z-index:-1;
-    }
-
-    @keyframes move{
-      0%{ transform:translate(-150px,-100px); }
-      100%{ transform:translate(150px,120px); }
-    }
-
-    /* LOGO */
-    .logo{
-      font-size:70px;
-      font-weight:800;
-      letter-spacing:4px;
-      display:flex;
-      align-items:center;
-      margin-bottom:20px;
-    }
-
-    .lyn{
-      color:white;
-      display:flex;
-      gap:5px;
-    }
-
-    .lyn span{
-      display:inline-block;
-      animation:slide 1s forwards;
-      opacity:0;
-    }
-
-    .nex{
-      color:#ff8c1a;
-      animation:fade 1.4s ease-in-out forwards;
-      opacity:0;
-      margin-left:8px;
-    }
-
-    @keyframes slide{
-      0%{ transform:translateY(20px); opacity:0; }
-      100%{ transform:translateY(0); opacity:1; }
-    }
-
-    @keyframes fade{
-      0%{ opacity:0; transform:scale(0.8); }
-      100%{ opacity:1; transform:scale(1); }
-    }
-
-    /* LOADING TEXT */
-    .loading{
-      margin-top:10px;
-      font-size:18px;
-      color:#ff8c1a;
-      animation:blink 1.3s infinite alternate;
-    }
-
-    @keyframes blink{
-      0%{ opacity:0.4; }
-      100%{ opacity:1; }
-    }
-
-    /* Coming Soon Box */
-    .coming{
-      margin-top:25px;
-      font-size:20px;
-      opacity:0;
-      animation:fade 2.5s forwards;
-      text-align:center;
-    }
-
-    /* Button */
-    .btn{
-      margin-top:30px;
-      padding:12px 28px;
-      border:2px solid #ff8c1a;
-      color:#ff8c1a;
-      border-radius:40px;
-      text-decoration:none;
-      font-size:16px;
-      font-weight:600;
-      transition:0.3s;
-      opacity:0;
-      animation:fade 3s forwards;
-    }
-
-    .btn:hover{
-      background:#ff8c1a;
-      color:black;
-      box-shadow:0 0 15px #ff8c1a;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYNEX | Modern Clothing Brand</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
 
-  <div class="glow"></div>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">LYNEX<span class="logo-dot">.</span></a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list" id="nav-list">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> (0)</a></li>
+                </ul>
+                <div class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-  <!-- LOGO -->
-  <div class="logo">
-    <div class="lyn">
-      <span>L</span>
-      <span>Y</span>
-      <span>N</span>
-    </div>
-    <div class="nex">EX</div>
-  </div>
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <p class="subtitle">Designed by Asadul Islam Hasan</p>
+            <h1>Defining Modern Fashion.</h1>
+            <a href="products.html" class="btn primary-btn">SHOP NEW COLLECTION</a>
+        </div>
+    </section>
 
-  <div class="loading">Loading…</div>
+    <section id="latest-products" class="products-section container">
+        <h2 class="section-title">New Arrivals</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-image">[attachment_0](attachment)</div>
+                <h3 class="product-name">The Essential T-Shirt</h3>
+                <p class="product-price">$ 29.99</p>
+                <div class="product-actions">
+                    <button class="btn cart-btn">Add to Cart</button>
+                    <button class="btn buy-btn">Buy Now</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">[attachment_1](attachment)</div>
+                <h3 class="product-name">Slim Fit Denim Jeans</h3>
+                <p class="product-price">$ 79.99</p>
+                <div class="product-actions">
+                    <button class="btn cart-btn">Add to Cart</button>
+                    <button class="btn buy-btn">Buy Now</button>
+                </div>
+            </div>
 
-  <div class="coming">
-    Our official website is currently under development.<br>
-    Stay connected — something amazing is coming soon!
-  </div>
+            <div class="product-card">
+                <div class="product-image"></div>
+                <h3 class="product-name">The Minimal Hoodie</h3>
+                <p class="product-price">$ 59.50</p>
+                <div class="product-actions">
+                    <button class="btn cart-btn">Add to Cart</button>
+                    <button class="btn buy-btn">Buy Now</button>
+                </div>
+            </div>
+        </div>
 
-  <a class="btn" href="https://www.facebook.com/profile.php?id=61584469567461 target="_blank">
-    Follow Our Facebook Page
-  </a>
+        <div class="view-all">
+            <a href="products.html" class="btn secondary-btn">VIEW ALL PRODUCTS <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
 
+    <footer class="footer">
+        <div class="container footer-content-grid">
+            
+            <div class="footer-col brand-info">
+                <h4>LYNEX</h4>
+                <p>Fashion. Quality. Design.</p>
+                <div class="social-media">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col footer-links">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Store Locator</a></li>
+                    <li><a href="admin.html">Admin Login</a></li> 
+                </ul>
+            </div>
+            
+            <div class="footer-col footer-links">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Delivery & Shipping</a></li>
+                    <li><a href="#">Return & Exchange Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col newsletter">
+                <h4>Stay Updated</h4>
+                <form>
+                    <input type="email" placeholder="Your Email Address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 LYNEX. All Rights Reserved. Founded by **Asadul Islam Hasan**.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
