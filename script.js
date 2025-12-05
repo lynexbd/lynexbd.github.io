@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX MAIN SCRIPT (Fixed Order Details View)
+// LYNEX MAIN SCRIPT (IndexedDB & Fixed Labels)
 // ======================================================
 
 const KEY_PRODUCTS = 'lynex_products';
@@ -16,12 +16,64 @@ const PAGE_PRODUCTS = 'p_data_source_5.html';
 const PAGE_ORDERS = 'o_log_file_22.html';
 const PAGE_MESSAGES = 'm_feed_back_01.html';
 
-// --- LOGIN INFO ---
+// --- LOGIN CREDENTIALS ---
 const _u = "SysMaster_99";
 const _p = "L7n@x#Super!2025";
 
-document.addEventListener('DOMContentLoaded', function() {
+// --- INDEXED DB CONFIG (UNLIMITED STORAGE) ---
+const DB_NAME = "LynexDB_Final";
+const DB_VERSION = 1;
+let db;
+
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains('store')) {
+                db.createObjectStore('store');
+            }
+        };
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            resolve(db);
+        };
+        request.onerror = (e) => {
+            console.error("DB Error:", e.target.error);
+            reject("Database error");
+        };
+    });
+}
+
+// Async Storage Functions
+async function getStorage(key) {
+    return new Promise((resolve) => {
+        const transaction = db.transaction(['store'], 'readonly');
+        const store = transaction.objectStore('store');
+        const request = store.get(key);
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+    });
+}
+
+async function setStorage(key, data) {
+    return new Promise((resolve) => {
+        const transaction = db.transaction(['store'], 'readwrite');
+        const store = transaction.objectStore('store');
+        const request = store.put(data, key);
+        request.onsuccess = () => resolve(true);
+        request.onerror = (e) => {
+            alert("Error saving data: " + e.target.error.message);
+            resolve(false);
+        };
+    });
+}
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', async function() {
     
+    await initDB(); // Initialize Database first
+
     // Nav Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
@@ -29,27 +81,27 @@ document.addEventListener('DOMContentLoaded', function() {
         menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     }
     
-    updateCartCount();
+    await updateCartCount();
 
     const path = window.location.pathname;
     const page = path.split("/").pop(); 
 
     // --- PUBLIC PAGES ---
-    if (page === 'index.html' || page === '') loadProductsDisplay(true);
-    else if (page === 'products.html') loadProductsDisplay(false);
-    else if (page === 'cart.html') loadCartDisplay();
-    else if (page === 'checkout.html') { handleCheckoutForm(); loadCartSummaryForCheckout(); }
+    if (page === 'index.html' || page === '') await loadProductsDisplay(true);
+    else if (page === 'products.html') await loadProductsDisplay(false);
+    else if (page === 'cart.html') await loadCartDisplay();
+    else if (page === 'checkout.html') { handleCheckoutForm(); await loadCartSummaryForCheckout(); }
     else if (page === 'contact.html') handleContactForm();
     
     // --- ADMIN PAGES ---
     else if ([PAGE_DASHBOARD, PAGE_PRODUCTS, PAGE_ORDERS, PAGE_MESSAGES].includes(page)) {
         checkAdminAuth();
-        updateAdminSidebarBadges();
+        await updateAdminSidebarBadges();
         
-        if (page === PAGE_DASHBOARD) initAdminDashboard();
-        if (page === PAGE_PRODUCTS) initAdminProducts();
-        if (page === PAGE_ORDERS) initAdminOrders();
-        if (page === PAGE_MESSAGES) initAdminMessages();
+        if (page === PAGE_DASHBOARD) await initAdminDashboard();
+        if (page === PAGE_PRODUCTS) await initAdminProducts();
+        if (page === PAGE_ORDERS) await initAdminOrders();
+        if (page === PAGE_MESSAGES) await initAdminMessages();
     }
     
     // --- LOGIN ---
@@ -70,32 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // --- HELPER FUNCTIONS ---
-function getStorage(key) {
-    try { return JSON.parse(localStorage.getItem(key)) || []; } 
-    catch (e) { return []; }
-}
-
-function setStorage(key, data) {
-    try {
-        localStorage.setItem(key, JSON.stringify(data));
-        return true;
-    } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-            alert('Storage Full! Please use smaller images.');
-        }
-        return false;
-    }
-}
-
-function updateCartCount() {
-    const cart = getStorage(KEY_CART);
+async function updateCartCount() {
+    const cart = await getStorage(KEY_CART);
     const totalQty = cart.reduce((sum, item) => sum + (parseInt(item.qty)||0), 0);
     document.querySelectorAll('.cart-count').forEach(el => el.innerText = `(${totalQty})`);
 }
 
-function updateAdminSidebarBadges() {
-    const orders = getStorage(KEY_ORDERS);
-    const msgs = getStorage(KEY_MESSAGES);
+async function updateAdminSidebarBadges() {
+    const orders = await getStorage(KEY_ORDERS);
+    const msgs = await getStorage(KEY_MESSAGES);
+    
     const hasPending = orders.some(o => o.status === 'Pending');
     const hasUnread = msgs.some(m => !m.isRead);
     
@@ -118,13 +154,23 @@ function adminLogout() {
 }
 
 // --- WEBSITE LOGIC ---
-function loadProductsDisplay(isHome) {
+
+async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid');
     if (!grid) return;
-    let products = getStorage(KEY_PRODUCTS);
+    
+    let products = await getStorage(KEY_PRODUCTS);
+    
     if (isHome) products = products.filter(p => p.isNewArrival);
 
-    grid.innerHTML = products.length ? products.map(p => {
+    grid.innerHTML = '';
+
+    if (products.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; background:#1e1e1e; border-radius:8px; border:1px solid #333;"><h3 style="color:#fff;">No Products Found</h3></div>`;
+        return;
+    }
+
+    products.forEach(p => {
         let priceHTML = `<span class="current-price">৳ ${p.price}</span>`;
         let badgeHTML = '';
         if (p.originalPrice && p.originalPrice > p.price) {
@@ -136,8 +182,10 @@ function loadProductsDisplay(isHome) {
             ? `<img src="${p.image}" alt="${p.name}">` 
             : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;"><i class="fas fa-tshirt" style="font-size:3em;"></i></div>`;
 
-        return `
-        <div class="product-card">
+        // [UPDATED] Button Text: Add & Buy
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
             ${badgeHTML}
             <div class="product-image">${imgHTML}</div>
             <div class="product-info">
@@ -147,94 +195,99 @@ function loadProductsDisplay(isHome) {
                     <button onclick="addToCart('${p.id}')" class="btn secondary-btn">Add</button>
                     <button onclick="buyNow('${p.id}')" class="btn primary-btn">Buy</button>
                 </div>
-            </div>
-        </div>`;
-    }).join('') : '<p style="text-align:center;width:100%;color:#777;">No products available.</p>';
+            </div>`;
+        grid.appendChild(card);
+    });
 }
 
-window.addToCart = (id) => {
-    const p = getStorage(KEY_PRODUCTS).find(x => x.id == id);
-    if (p) { 
-        let c = getStorage(KEY_CART); 
-        let ex = c.find(x => x.id == id);
-        if(ex) ex.qty++; else c.push({...p, qty:1});
-        if(setStorage(KEY_CART, c)) { updateCartCount(); alert('Added to Cart!'); }
+// Made global for HTML access
+window.addToCart = async function(id) {
+    const products = await getStorage(KEY_PRODUCTS);
+    const product = products.find(p => p.id == id);
+    if (product) {
+        let cart = await getStorage(KEY_CART);
+        const exIdx = cart.findIndex(item => item.id == id);
+        if (exIdx > -1) cart[exIdx].qty += 1; else cart.push({ ...product, qty: 1 });
+        await setStorage(KEY_CART, cart);
+        await updateCartCount();
+        alert('Product Added!');
     }
 };
-window.buyNow = (id) => { window.addToCart(id); window.location.href = 'checkout.html'; };
+window.buyNow = async function(id) { await window.addToCart(id); window.location.href = 'checkout.html'; };
 
-function loadCartDisplay() {
+async function loadCartDisplay() {
     const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total');
-    if(!c) return; const cart = getStorage(KEY_CART);
-    if(cart.length===0) { c.innerHTML='<p style="text-align:center;color:#aaa;">Empty Cart</p>'; if(t) t.innerText='0'; document.querySelector('.checkout-btn').style.display='none'; return; }
+    if(!c) return; 
+    const cart = await getStorage(KEY_CART);
     
-    c.innerHTML = cart.map((item, i) => `
-        <div class="cart-item"><div style="display:flex;gap:10px;align-items:center"><img src="${item.image||''}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;background:#333;"><div><h4>${item.name}</h4><p>৳${item.price} x ${item.qty}</p><div class="qty-controls"><button class="qty-btn" onclick="upQty(${i},-1)">-</button><span>${item.qty}</span><button class="qty-btn" onclick="upQty(${i},1)">+</button></div></div></div><div style="text-align:right;"><p style="font-weight:bold;color:#ff9f43;">৳${item.price*item.qty}</p><button onclick="rmC(${i})" style="color:red;background:none;border:none;cursor:pointer;margin-top:5px;">Remove</button></div></div>`).join('');
-    if(t) t.innerText = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    if(cart.length===0) { 
+        c.innerHTML='<p style="text-align:center;color:#aaa;">Cart is empty.</p>'; 
+        if(t) t.innerText='0'; 
+        const btn = document.querySelector('.checkout-btn'); if(btn) btn.style.display='none';
+        return; 
+    }
+    
+    let total = 0;
+    c.innerHTML = cart.map((item, i) => {
+        total += (item.price * item.qty);
+        let img = item.image ? `<img src="${item.image}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;">` : `<div style="width:60px;height:60px;background:#333;"></div>`;
+        return `<div class="cart-item"><div class="cart-item-info">${img}<div><h4>${item.name}</h4><p>৳ ${item.price} x ${item.qty}</p><div class="qty-controls"><button class="qty-btn" onclick="upQty(${i},-1)">-</button><span style="color:#fff;">${item.qty}</span><button class="qty-btn" onclick="upQty(${i},1)">+</button></div></div></div><div style="text-align:right;"><p style="font-weight:bold;color:#ff9f43;">৳ ${item.price*item.qty}</p><button onclick="rmC(${i})" style="color:#e74c3c;background:none;border:none;cursor:pointer;margin-top:5px;">Remove</button></div></div>`;
+    }).join('');
+    if(t) t.innerText = total;
 }
-window.upQty = (i, v) => { let c=getStorage(KEY_CART); c[i].qty+=v; if(c[i].qty<1) { if(confirm("Remove?")) c.splice(i,1); else c[i].qty=1; } setStorage(KEY_CART, c); loadCartDisplay(); updateCartCount(); };
-window.rmC = (i) => { let c=getStorage(KEY_CART); c.splice(i,1); setStorage(KEY_CART, c); loadCartDisplay(); updateCartCount(); };
 
-// [CHECKOUT FIXED: Detailed Info]
+window.upQty = async (i, v) => { 
+    let c = await getStorage(KEY_CART); c[i].qty+=v; 
+    if(c[i].qty<1) { if(confirm("Remove?")) c.splice(i,1); else c[i].qty=1; } 
+    await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); 
+};
+window.rmC = async (i) => { 
+    let c = await getStorage(KEY_CART); c.splice(i,1); 
+    await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); 
+};
+
 function handleCheckoutForm() {
     const f = document.getElementById('checkout-form');
     if(f) {
-        f.onsubmit = (e) => {
+        f.onsubmit = async (e) => {
             e.preventDefault();
-            const c = getStorage(KEY_CART);
+            const c = await getStorage(KEY_CART);
             if(c.length===0) return alert('Cart Empty');
             
-            let cnt = parseInt(localStorage.getItem(KEY_ORDER_COUNT))||0; cnt++; 
-            localStorage.setItem(KEY_ORDER_COUNT, cnt);
+            let cnt = parseInt(localStorage.getItem(KEY_ORDER_COUNT))||0; cnt++; localStorage.setItem(KEY_ORDER_COUNT, cnt);
             const ordId = 'ORD-'+String(cnt).padStart(3,'0');
             const total = c.reduce((s,i)=>s+(i.price*i.qty),0);
             
-            const ord = { 
-                id: ordId, 
-                date: new Date().toLocaleDateString(), 
-                customer: {
-                    name: e.target.name.value, 
-                    phone: e.target.phone.value, 
-                    address: e.target.address.value
-                }, 
-                items: c, 
-                total: total, 
-                status: 'Pending' 
-            };
+            const ord = { id: ordId, date: new Date().toLocaleDateString(), customer: {name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value}, items: c, total: total, status: 'Pending' };
+            const orders = await getStorage(KEY_ORDERS); orders.unshift(ord); 
             
-            const orders = getStorage(KEY_ORDERS); 
-            orders.unshift(ord); 
-            
-            if(setStorage(KEY_ORDERS, orders)) {
-                setStorage(KEY_CART, []); updateCartCount();
-                
-                // Detailed Confirmation Alert
-                const itemsList = c.map(i => `- ${i.name} x${i.qty}`).join('\n');
-                alert(
-                    `অর্ডার কনফার্ম হয়েছে!\n------------------\n` +
-                    `অর্ডার আইডি: ${ordId}\n` +
-                    `তারিখ: ${ord.date}\n\n` +
-                    `গ্রাহকের তথ্য:\n` +
-                    `নাম: ${ord.customer.name}\n` +
-                    `ফোন: ${ord.customer.phone}\n` +
-                    `ঠিকানা: ${ord.customer.address}\n\n` +
-                    `পণ্য:\n${itemsList}\n\n` +
-                    `মোট বিল: ৳ ${total}\n\n` +
-                    `আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।`
-                );
-                window.location.href='index.html';
-            }
+            await setStorage(KEY_ORDERS, orders);
+            await setStorage(KEY_CART, []); await updateCartCount();
+            alert(`Order Confirmed!\nID: ${ordId}`); window.location.href='index.html';
         };
     }
 }
-function loadCartSummaryForCheckout() { const el=document.getElementById('checkout-total'); if(el) { const c=getStorage(KEY_CART); el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); }}
-function handleContactForm() { const f=document.getElementById('contact-form'); if(f) f.onsubmit=(e)=>{ e.preventDefault(); const m={id:Date.now(), date:new Date().toLocaleDateString(), name:e.target.name.value, email:e.target.email.value, subject:e.target.subject.value, text:e.target.message.value, isRead:false}; const ms=getStorage(KEY_MESSAGES); ms.unshift(m); if(setStorage(KEY_MESSAGES, ms)){ e.target.reset(); alert('Sent!'); } }; }
+async function loadCartSummaryForCheckout() { const el=document.getElementById('checkout-total'); if(el) { const c = await getStorage(KEY_CART); el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); } }
+
+function handleContactForm() {
+    const f=document.getElementById('contact-form');
+    if(f) {
+        f.onsubmit = async (e) => {
+            e.preventDefault();
+            const m={id:Date.now(), date:new Date().toLocaleDateString(), name:e.target.name.value, email:e.target.email.value, subject:e.target.subject.value, text:e.target.message.value, isRead:false};
+            const ms = await getStorage(KEY_MESSAGES); ms.unshift(m); 
+            await setStorage(KEY_MESSAGES, ms); e.target.reset(); alert('Sent!');
+        };
+    }
+}
 
 // --- ADMIN LOGIC ---
-function initAdminDashboard() {
-    const o = getStorage(KEY_ORDERS);
-    const p = getStorage(KEY_PRODUCTS);
+
+async function initAdminDashboard() {
+    const o = await getStorage(KEY_ORDERS);
+    const p = await getStorage(KEY_PRODUCTS);
     const rev = o.filter(x => x.status === 'Delivered').reduce((s, i) => s + parseFloat(i.total), 0);
+    
     const setT = (id, v) => { if(document.getElementById(id)) document.getElementById(id).innerText = v; };
     setT('stat-revenue', '৳ ' + rev);
     setT('stat-pending', o.filter(x => x.status === 'Pending').length);
@@ -246,60 +299,72 @@ function initAdminDashboard() {
 
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody');
-    const ren=()=>{ const p=getStorage(KEY_PRODUCTS); tb.innerHTML=p.length ? p.map((x,i)=>`<tr><td><img src="${x.image||''}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;"></td><td>${x.name} ${x.isNewArrival?'<span style="color:#2ecc71;">(New)</span>':''}</td><td>৳${x.price}</td><td><button onclick="delP(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;">Empty</td></tr>'; document.getElementById('current-product-count').innerText=p.length; };
-    ren();
+    const render = async () => {
+        const p = await getStorage(KEY_PRODUCTS);
+        if (p.length === 0) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;">Empty</td></tr>'; document.getElementById('current-product-count').innerText=0; return; }
+        tb.innerHTML = p.map((x, i) => `<tr><td><img src="${x.image||''}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;"></td><td>${x.name}</td><td>৳${x.price}</td><td><button onclick="delP(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`).join('');
+        document.getElementById('current-product-count').innerText = p.length;
+    };
+    render();
     if(f) {
         f.addEventListener('submit', (e) => {
             e.preventDefault();
             const file = e.target.image.files[0];
             const reader = new FileReader();
-            const save = (imgData) => {
-                const p = getStorage(KEY_PRODUCTS);
-                p.push({ id: Date.now(), name: e.target.name.value, price: parseFloat(e.target.price.value), originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null, isNewArrival: e.target.isNew.checked, image: imgData });
-                if(setStorage(KEY_PRODUCTS, p)) { e.target.reset(); ren(); alert('Added!'); }
+            const save = async (img) => {
+                const p = await getStorage(KEY_PRODUCTS);
+                p.push({ id: Date.now(), name: e.target.name.value, price: parseFloat(e.target.price.value), originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null, isNewArrival: e.target.isNew.checked, image: img });
+                await setStorage(KEY_PRODUCTS, p); e.target.reset(); render(); alert('Added!');
             };
             if(file) { reader.onload = (ev) => save(ev.target.result); reader.readAsDataURL(file); } else save(null);
         });
     }
-    window.delP = (i) => { if(confirm('Delete?')) { const p = getStorage(KEY_PRODUCTS); p.splice(i, 1); setStorage(KEY_PRODUCTS, p); ren(); } };
+    window.delP = async (i) => { if(confirm('Delete?')) { const p = await getStorage(KEY_PRODUCTS); p.splice(i, 1); await setStorage(KEY_PRODUCTS, p); render(); } };
 }
 
-// [ADMIN ORDERS: Detailed View Fixed]
 function initAdminOrders() {
     const tb=document.querySelector('#orders-table tbody'); let flt='All';
-    const ren=()=>{ const all=getStorage(KEY_ORDERS); const l=flt==='All'?all:all.filter(x=>x.status===flt);
-        tb.innerHTML=l.length ? l.map(o=>{ const ix=all.findIndex(x=>x.id===o.id); let c='#ff9f43'; if(o.status==='Shipped')c='#3498db'; if(o.status==='Delivered')c='#2ecc71'; if(o.status==='Cancelled')c='#e74c3c';
-        return `<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="upS(${ix},this.value)" style="color:${c};background:#222;border:1px solid ${c}"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" style="color:#fff;background:none;border:none;cursor:pointer;">View</button></td></tr>`; }).join('') : '<tr><td colspan="5" style="text-align:center;">No Orders</td></tr>';
-        document.querySelectorAll('.filter-btn').forEach(b => { if(b.innerText.includes(flt) || (flt==='All'&&b.innerText==='All')) b.classList.add('active'); else b.classList.remove('active'); });
+    const render = async () => {
+        const all = await getStorage(KEY_ORDERS);
+        const l = flt==='All' ? all : all.filter(x => x.status === flt);
+        
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            if(b.innerText.includes(flt) || (flt==='All'&&b.innerText==='All')) b.classList.add('active'); else b.classList.remove('active');
+        });
+
+        if (l.length === 0) { tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No Orders</td></tr>'; return; }
+        tb.innerHTML = l.map(o => {
+            const ix = all.findIndex(x => x.id === o.id);
+            let c='#ff9f43'; if(o.status==='Shipped')c='#3498db'; if(o.status==='Delivered')c='#2ecc71'; if(o.status==='Cancelled')c='#e74c3c';
+            return `<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="upS(${ix},this.value)" style="color:${c};background:#222;border:1px solid ${c}"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" style="color:#fff;background:none;border:none;cursor:pointer;">View</button></td></tr>`;
+        }).join('');
     };
-    ren();
-    window.filterOrders=(s)=>{flt=s; ren();}; window.upS=(i,v)=>{ const o=getStorage(KEY_ORDERS); o[i].status=v; setStorage(KEY_ORDERS,o); ren(); };
-    
-    // View Order Details
-    window.vOrd=(id)=>{ 
-        const o=getStorage(KEY_ORDERS).find(x=>x.id===id); 
-        if(!o) return; 
-        const items = o.items.map(i=>`- ${i.name} x${i.qty} (৳${i.price})`).join('\n'); 
-        alert(
-            `অর্ডার আইডি: ${o.id}\n` +
-            `তারিখ: ${o.date}\n` +
-            `স্ট্যাটাস: ${o.status}\n\n` +
-            `কাস্টমার তথ্য:\n` +
-            `নাম: ${o.customer.name}\n` +
-            `ফোন: ${o.customer.phone}\n` +
-            `ঠিকানা: ${o.customer.address}\n\n` +
-            `পণ্য:\n${items}\n\n` +
-            `মোট বিল: ৳${o.total}`
-        ); 
-    };
+    render();
+    window.filterOrders = (s) => { flt = s; render(); };
+    window.upS = async (i, v) => { const o = await getStorage(KEY_ORDERS); o[i].status = v; await setStorage(KEY_ORDERS, o); render(); };
+    window.vOrd = async (id) => { const o = (await getStorage(KEY_ORDERS)).find(x => x.id === id); if(!o) return; const its = o.items.map(i=>`- ${i.name} x${i.qty} (৳${i.price})`).join('\n'); alert(`ID: ${o.id}\nInfo: ${o.customer.name}\n${o.customer.phone}\n${o.customer.address}\n\nItems:\n${its}\nTotal: ৳${o.total}`); };
 }
 
 function initAdminMessages() {
     const tb=document.querySelector('#messages-table tbody'); let vm='New';
-    const ren=()=>{ const all=getStorage(KEY_MESSAGES); const l=vm==='New'?all.filter(x=>!x.isRead):all.filter(x=>x.isRead);
-        tb.innerHTML=l.length ? l.map(m=>{ const ix=all.findIndex(x=>x.id===m.id); return `<tr><td>${m.date}</td><td>${m.name}<br><small>${m.email}</small></td><td>${m.subject}</td><td>${m.text}</td><td>${!m.isRead?`<button onclick="mkR(${ix})" style="color:green;background:none;border:none;cursor:pointer;margin-right:5px;">Read</button>`:''}<button onclick="delMsg(${idx})" style="color:red;background:none;border:none;cursor:pointer;">Del</button></td></tr>`; }).join('') : '<tr><td colspan="5" style="text-align:center;">No Messages</td></tr>';
-        document.querySelectorAll('.filter-btn').forEach(b => { if(b.innerText.includes(vm)) b.classList.add('active'); else b.classList.remove('active'); });
+    const render = async () => {
+        const all = await getStorage(KEY_MESSAGES);
+        const l = vm==='New' ? all.filter(m => !m.isRead) : all.filter(m => m.isRead);
+        
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            if(b.innerText.includes(vm)) b.classList.add('active'); else b.classList.remove('active');
+        });
+
+        if (l.length === 0) { tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No Messages</td></tr>'; }
+        else {
+            tb.innerHTML = l.map(m => {
+                const idx = all.findIndex(x => x.id === m.id);
+                return `<tr><td>${m.date}</td><td>${m.name}<br><small>${m.email}</small></td><td>${m.subject}</td><td>${m.text}</td><td>${!m.isRead?`<button onclick="mkR(${idx})" style="color:green;background:none;border:none;cursor:pointer;">Read</button>`:''}<button onclick="delMsg(${idx})" style="color:red;background:none;border:none;cursor:pointer;">Del</button></td></tr>`;
+            }).join('');
+        }
     };
-    ren();
-    window.filterMsgs=(m)=>{vm=m;ren();}; window.mkR=(i)=>{const m=getStorage(KEY_MESSAGES); m[i].isRead=true; setStorage(KEY_MESSAGES,m); ren();}; window.delMsg=(i)=>{if(confirm('Del?')){const m=getStorage(KEY_MESSAGES); m.splice(i,1); setStorage(KEY_MESSAGES,m); ren();}};
+    render();
+    window.filterMsgs = (m) => { vm = m; render(); };
+    window.mkR = async (i) => { const m = await getStorage(KEY_MESSAGES); m[i].isRead = true; await setStorage(KEY_MESSAGES, m); render(); };
+    window.delMsg = async (i) => { if(confirm('Del?')) { const m = await getStorage(KEY_MESSAGES); m.splice(i, 1); await setStorage(KEY_MESSAGES, m); render(); }};
 }
