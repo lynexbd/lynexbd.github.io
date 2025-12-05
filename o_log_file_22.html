@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Log</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h2>CORE</h2>
+            <ul>
+                <li><a href="x_master_v9.html">Overview</a></li>
+                <li><a href="p_data_source_5.html">Inventory</a></li>
+                <li><a href="o_log_file_22.html" class="admin-active" id="nav-orders">Orders</a></li>
+                <li><a href="m_feed_back_01.html" id="nav-messages">Messages</a></li>
+                <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
+                <li><a href="#" onclick="adminLogout()">Disconnect</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="dashboard-header"><h1>Order Log</h1></div>
+            <div class="filter-tabs">
+                <button class="filter-btn active" onclick="filterOrders('All')">All</button>
+                <button class="filter-btn" onclick="filterOrders('Pending')">Pending</button>
+                <button class="filter-btn" onclick="filterOrders('Shipped')">Shipped</button>
+                <button class="filter-btn" onclick="filterOrders('Delivered')">Completed</button>
+                <button class="filter-btn" onclick="filterOrders('Cancelled')">Cancelled</button>
+            </div>
+            <div class="data-section">
+                <table id="orders-table"><thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Info</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
