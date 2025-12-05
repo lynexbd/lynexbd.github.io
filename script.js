@@ -1,7 +1,8 @@
 // ======================================================
-// LYNEX MAIN SCRIPT
+// LYNEX MAIN SCRIPT (Final Complete Version)
 // ======================================================
 
+// --- LOCAL STORAGE KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
 const KEY_CART = 'lynex_cart';
 const KEY_ORDERS = 'lynex_orders';
@@ -9,24 +10,29 @@ const KEY_MESSAGES = 'lynex_messages';
 const KEY_ADMIN_LOGGED = 'lynex_admin_logged';
 const KEY_ORDER_COUNT = 'lynex_order_count';
 
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', function() {
     
+    // 1. Mobile Navigation Toggle
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) {
         menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     }
     
+    // 2. Update Cart Count Badge
     updateCartCount();
 
+    // 3. Page Routing Logic
     const path = window.location.pathname;
-    const page = path.split("/").pop(); 
+    const page = path.split("/").pop(); // Get current filename
 
+    // --- PUBLIC PAGES ---
     if (page === 'index.html' || page === '') {
-        loadProductsDisplay(true); 
+        loadProductsDisplay(true); // true = Only New Arrivals
     } 
     else if (page === 'products.html') {
-        loadProductsDisplay(false); 
+        loadProductsDisplay(false); // false = All Products
     } 
     else if (page === 'cart.html') {
         loadCartDisplay();
@@ -39,8 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
         handleContactForm();
     }
     
+    // --- ADMIN PAGES ---
     else if (page.includes('admin_') && !page.includes('login')) {
-        checkAdminAuth();
+        checkAdminAuth(); // Security Check
+        updateAdminSidebarBadges(); // Notification Dots
         
         if (page.includes('dashboard')) initAdminDashboard();
         if (page.includes('products')) initAdminProducts();
@@ -48,35 +56,26 @@ document.addEventListener('DOMContentLoaded', function() {
         if (page.includes('messages')) initAdminMessages();
     }
     
+    // --- ADMIN LOGIN ---
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const u = e.target.username.value;
+            const p = e.target.password.value;
             
-            const _val1 = e.target.username.value;
-            const _val2 = e.target.password.value;
-            
-            const _a = "Sys";
-            const _b = "L7n";
-            const _c = "Master";
-            const _d = "@x#";
-            const _e = "_99";
-            const _f = "Super!";
-            const _g = "2025";
-
-            const _final1 = _a + _c + _e;
-            const _final2 = _b + _d + _f + _g;
-            
-            if (_val1 === _final1 && _val2 === _final2) {
+            // Credentials: admin / 1234
+            if (u === 'admin' && p === '1234') {
                 sessionStorage.setItem(KEY_ADMIN_LOGGED, 'true');
                 window.location.href = 'admin_dashboard.html';
             } else {
-                alert('Access Denied');
+                alert('Login Failed! Check username/password.');
             }
         });
     }
 });
 
+// --- HELPER FUNCTIONS ---
 function getStorage(key) {
     return JSON.parse(localStorage.getItem(key)) || [];
 }
@@ -87,17 +86,46 @@ function setStorage(key, data) {
 
 function updateCartCount() {
     const cart = getStorage(KEY_CART);
+    // Count total quantity
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const badges = document.querySelectorAll('.cart-count');
     badges.forEach(el => el.innerText = `(${totalQty})`);
 }
 
+// --- ADMIN SIDEBAR NOTIFICATIONS ---
+function updateAdminSidebarBadges() {
+    const orders = getStorage(KEY_ORDERS);
+    const msgs = getStorage(KEY_MESSAGES);
+    
+    const hasPending = orders.some(o => o.status === 'Pending');
+    const hasUnread = msgs.some(m => !m.isRead);
+    
+    const orderLink = document.getElementById('nav-orders');
+    const msgLink = document.getElementById('nav-messages');
+
+    // Add Red Dot if Pending Orders exist
+    if(hasPending && orderLink && !window.location.pathname.includes('admin_orders')) {
+        if(!orderLink.querySelector('.nav-badge')) orderLink.innerHTML += ' <span class="nav-badge"></span>';
+    }
+    
+    // Add Red Dot if Unread Messages exist
+    if(hasUnread && msgLink && !window.location.pathname.includes('admin_messages')) {
+        if(!msgLink.querySelector('.nav-badge')) msgLink.innerHTML += ' <span class="nav-badge"></span>';
+    }
+}
+
+// ==========================================
+//  WEBSITE LOGIC (Home, Products, Cart)
+// ==========================================
+
+// 1. Display Products
 function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid');
     if (!grid) return;
     
     let products = getStorage(KEY_PRODUCTS);
     
+    // Filter for Home Page (New Arrivals Only)
     if (isHome) {
         products = products.filter(p => p.isNewArrival);
     }
@@ -108,12 +136,13 @@ function loadProductsDisplay(isHome) {
         grid.innerHTML = `
             <div style="grid-column:1/-1; text-align:center; padding:50px; background:#1e1e1e; border:1px solid #333; border-radius:8px;">
                 <h3 style="color:#fff;">No Products Found</h3>
-                <p style="color:#aaa;">Please check back later.</p>
+                <p style="color:#aaa;">Please add products from the Admin Panel.</p>
             </div>`;
         return;
     }
 
     products.forEach(p => {
+        // Discount Logic
         let priceHTML = `<span class="current-price">৳ ${p.price}</span>`;
         let badgeHTML = '';
         
@@ -126,6 +155,7 @@ function loadProductsDisplay(isHome) {
             badgeHTML = `<span class="discount-badge">-${discount}%</span>`;
         }
 
+        // Image Logic
         let imgHTML = p.image 
             ? `<img src="${p.image}" alt="${p.name}">` 
             : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;"><i class="fas fa-tshirt" style="font-size:3em;"></i></div>`;
@@ -148,6 +178,7 @@ function loadProductsDisplay(isHome) {
     });
 }
 
+// 2. Cart Actions
 window.addToCart = function(id) {
     const products = getStorage(KEY_PRODUCTS);
     const product = products.find(p => p.id == id);
@@ -173,6 +204,7 @@ window.buyNow = function(id) {
     window.location.href = 'checkout.html';
 };
 
+// 3. Cart Page Display
 function loadCartDisplay() {
     const container = document.querySelector('.cart-items');
     const totalEl = document.getElementById('cart-total');
@@ -244,18 +276,21 @@ window.removeFromCart = function(index) {
     updateCartCount();
 };
 
+// 4. Checkout Logic (Fixed & Robust)
 function handleCheckoutForm() {
     const form = document.getElementById('checkout-form');
     if (form) {
+        // Using direct assignment to avoid duplicate listeners
         form.onsubmit = function(e) {
             e.preventDefault();
             
             const cart = getStorage(KEY_CART);
-            if(cart.length === 0) { 
-                alert("Your cart is empty!"); 
-                return; 
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
             }
-            
+
+            // Generate Order ID
             let count = parseInt(localStorage.getItem(KEY_ORDER_COUNT)) || 0;
             count++;
             localStorage.setItem(KEY_ORDER_COUNT, count);
@@ -283,7 +318,7 @@ function handleCheckoutForm() {
             setStorage(KEY_CART, []);
             updateCartCount();
 
-            alert(`Order Confirmed!\nOrder ID: ${orderId}`);
+            alert(`Order Confirmed!\nOrder ID: ${orderId}\nWe will contact you soon.`);
             window.location.href = 'index.html';
         };
     }
@@ -298,6 +333,7 @@ function loadCartSummaryForCheckout() {
     }
 }
 
+// 5. Contact Form
 function handleContactForm() {
     const form = document.getElementById('contact-form');
     if (form) {
@@ -323,12 +359,17 @@ function handleContactForm() {
     }
 }
 
+// ==========================================
+//  ADMIN PANEL LOGIC
+// ==========================================
+
 function checkAdminAuth() {
     if (!sessionStorage.getItem(KEY_ADMIN_LOGGED)) {
         window.location.href = 'admin_login.html';
     }
 }
 
+// 1. Admin Dashboard
 function initAdminDashboard() {
     const orders = getStorage(KEY_ORDERS);
     const products = getStorage(KEY_PRODUCTS);
@@ -346,6 +387,7 @@ function initAdminDashboard() {
     setVal('stat-products', products.length);
 }
 
+// 2. Admin Products
 function initAdminProducts() {
     const form = document.getElementById('add-product-form');
     const tbody = document.querySelector('#product-table tbody');
@@ -380,22 +422,16 @@ function initAdminProducts() {
             const reader = new FileReader();
 
             const save = (imgData) => {
-                const newProduct = {
+                const p = getStorage(KEY_PRODUCTS);
+                p.push({
                     id: Date.now(),
                     name: e.target.name.value,
                     price: parseFloat(e.target.price.value),
                     originalPrice: e.target.oldPrice.value ? parseFloat(e.target.oldPrice.value) : null,
                     isNewArrival: e.target.isNew.checked,
                     image: imgData
-                };
-                
-                const products = getStorage(KEY_PRODUCTS);
-                products.push(newProduct);
-                setStorage(KEY_PRODUCTS, products);
-                
-                e.target.reset();
-                renderTable();
-                alert('Product Added!');
+                });
+                setStorage(KEY_PRODUCTS, p); e.target.reset(); renderTable(); alert('Product Added!');
             };
 
             if (file) {
@@ -417,6 +453,7 @@ function initAdminProducts() {
     };
 }
 
+// 3. Admin Orders (Shipped, Cancelled, Filters)
 function initAdminOrders() {
     const tbody = document.querySelector('#orders-table tbody');
     let currentFilter = 'All';
@@ -481,6 +518,7 @@ function initAdminOrders() {
     };
 }
 
+// 4. Admin Messages (New/Read Tabs, Mark as Read)
 function initAdminMessages() {
     const tbody = document.querySelector('#messages-table tbody');
     let viewMode = 'New'; 
