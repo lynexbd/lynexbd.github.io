@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order Log</title>
+    <title>Orders</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="admin-layout">
         <div class="sidebar">
-            <h2>CORE</h2>
-            <ul>
+            <h2>LYNEX ADMIN</h2> <ul>
                 <li><a href="x_master_v9.html">Overview</a></li>
                 <li><a href="p_data_source_5.html">Inventory</a></li>
                 <li><a href="o_log_file_22.html" class="admin-active" id="nav-orders">Orders</a></li>
@@ -20,8 +20,7 @@
             </ul>
         </div>
         <div class="main-content">
-            <div class="dashboard-header"><h1>Order Log</h1></div>
-            <div class="filter-tabs">
+            <div class="dashboard-header"><h1>Orders Management</h1></div> <div class="filter-tabs">
                 <button class="filter-btn active" onclick="filterOrders('All')">All</button>
                 <button class="filter-btn" onclick="filterOrders('Pending')">Pending</button>
                 <button class="filter-btn" onclick="filterOrders('Shipped')">Shipped</button>
