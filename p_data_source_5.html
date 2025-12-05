@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h2>CORE</h2>
+            <ul>
+                <li><a href="x_master_v9.html">Overview</a></li>
+                <li><a href="p_data_source_5.html" class="admin-active">Inventory</a></li>
+                <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
+                <li><a href="m_feed_back_01.html" id="nav-messages">Messages</a></li>
+                <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
+                <li><a href="#" onclick="adminLogout()">Disconnect</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="dashboard-header"><h1>Inventory Management</h1></div>
+            <div class="data-section" style="margin-bottom:30px;">
+                <h3 style="color:#fff;margin-bottom:20px;">Add Item</h3>
+                <form id="add-product-form">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <input type="text" name="name" placeholder="Item Name" required>
+                        <input type="number" name="price" placeholder="Price" required>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <input type="number" name="oldPrice" placeholder="Old Price">
+                        <input type="file" name="image" accept="image/*">
+                    </div>
+                    <div class="checkbox-group"><input type="checkbox" id="isNew" name="isNew"><label for="isNew" style="color:#ff9f43;cursor:pointer;">Show as New Arrival</label></div>
+                    <button type="submit" class="btn primary-btn" style="width:100%;">Add Item</button>
+                </form>
+            </div>
+            <div class="data-section">
+                <h3 style="color:#fff;">Current Items (<span id="current-product-count">0</span>)</h3>
+                <table id="product-table"><thead><tr><th>Img</th><th>Name</th><th>Price</th><th>Act</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
