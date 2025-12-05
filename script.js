@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const p = e.target.password.value;
             
             // Hardcoded Credentials (In real app, this goes to server)
-            if (u === 'admin' && p === '1234') {
+            if (u === 'hasanbro' && p === 'hasanbro998800') {
                 const token = generateToken();
                 sessionStorage.setItem(KEY_ADMIN_TOKEN, token);
                 window.location.href = 'admin_dashboard.html';
