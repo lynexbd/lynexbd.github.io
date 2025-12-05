@@ -140,29 +140,32 @@ h1, h2, h3, h4, h5, h6 {
     color: #000;
 }
 
-/* --- 4. HERO SECTION --- */
+/* --- HERO SECTION (Smaller Height) --- */
 .hero-section {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-color: #1a1a1a;
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 50vh; /* উচ্চতা কমিয়ে দেওয়া হয়েছে */
+    
+    /* */
+    height: 35vh; 
+    min-height: 250px; /* মোবাইল ডিভাইসে যেন খুব বেশি ছোট না হয়ে যায় */
+    
     display: flex;
     align-items: center;
     padding-left: 5%;
 }
 
 .hero-content h1 {
-    font-size: 3em;
-    margin-bottom: 15px;
-    line-height: 1.2;
+    font-size: 2.5em; /* ফন্ট সাইজও একটু কমানো হলো সামঞ্জস্যের জন্য */
+    margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 1.1em;
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-size: 0.9em;
     color: #ff9f43;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
 }
 
 /* --- 5. PRODUCTS SECTION --- */
