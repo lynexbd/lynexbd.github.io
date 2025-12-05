@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | Admin</title>
+    <title>Dashboard | LYNEX Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="admin-layout">
@@ -13,21 +15,41 @@
             <ul>
                 <li><a href="admin_dashboard.html" class="admin-active">Dashboard</a></li>
                 <li><a href="admin_products.html">Products</a></li>
-                <li><a href="admin_orders.html">Orders</a></li>
-                <li><a href="admin_messages.html">Messages</a></li>
-                <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
+                <li><a href="admin_orders.html" id="nav-orders">Orders</a></li> <li><a href="admin_messages.html" id="nav-messages">Messages</a></li> <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
                 <li><a href="admin_login.html" onclick="sessionStorage.removeItem('lynex_admin_logged');">Logout</a></li>
             </ul>
         </div>
+
         <div class="main-content">
-            <div class="dashboard-header"><h1>Overview</h1></div>
+            <div class="dashboard-header">
+                <h1>Overview</h1>
+            </div>
+            
             <div class="widget-grid">
-                <div class="widget" style="border-color: #2ecc71;"><h3>Revenue</h3><p id="stat-revenue" style="color:#2ecc71;">৳ 0</p></div>
-                <div class="widget" style="border-color: #ff9f43;"><h3>Pending</h3><p id="stat-pending" style="color:#ff9f43;">0</p></div>
-                <div class="widget" style="border-color: #3498db;"><h3>Shipped</h3><p id="stat-shipped" style="color:#3498db;">0</p></div>
-                <div class="widget" style="border-color: #2ecc71;"><h3>Completed</h3><p id="stat-delivered" style="color:#2ecc71;">0</p></div>
-                <div class="widget" style="border-color: #e74c3c;"><h3>Cancelled</h3><p id="stat-cancelled" style="color:#e74c3c;">0</p></div>
-                <div class="widget"><h3>Products</h3><p id="stat-products">0</p></div>
+                <div class="widget" style="border-color: #2ecc71;">
+                    <h3>Revenue</h3>
+                    <p id="stat-revenue" style="color: #2ecc71;">৳ 0</p>
+                </div>
+                <div class="widget" style="border-color: #ff9f43;">
+                    <h3>Pending</h3>
+                    <p id="stat-pending" style="color: #ff9f43;">0</p>
+                </div>
+                <div class="widget" style="border-color: #3498db;">
+                    <h3>Shipped</h3>
+                    <p id="stat-shipped" style="color: #3498db;">0</p>
+                </div>
+                <div class="widget" style="border-color: #2ecc71;">
+                    <h3>Completed</h3>
+                    <p id="stat-delivered" style="color: #2ecc71;">0</p>
+                </div>
+                <div class="widget" style="border-color: #e74c3c;">
+                    <h3>Cancelled</h3>
+                    <p id="stat-cancelled" style="color: #e74c3c;">0</p>
+                </div>
+                <div class="widget">
+                    <h3>Products</h3>
+                    <p id="stat-products">0</p>
+                </div>
             </div>
         </div>
     </div>
