@@ -1,5 +1,5 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Version)
+   LYNEX COMPLETE STYLESHEET (Final Version - No Shadow Dots)
    Theme: Dark Mode | Accent: Orange (#ff9f43) & Gold (#ffcd75)
    ====================================================== */
 
@@ -236,18 +236,16 @@ h1, h2, h3, h4, h5, h6 {
     scroll-snap-stop: always;
 }
 
-/* Dots (Inside Image at Bottom - 8px) */
+/* Dots (Inside Image at Bottom - No Shadow) */
 .slider-dots {
     position: absolute;
-    bottom: 8px; /* [UPDATED: 8px] */
+    bottom: 5px; /* আরও নিচে নামানো হয়েছে (5px) */
     left: 0;
     width: 100%;
     text-align: center;
     z-index: 6;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-    padding-bottom: 5px;
-    padding-top: 10px;
+    /* ব্যাকগ্রাউন্ড শ্যাডো রিমুভ করা হয়েছে */
 }
 
 .dot {
