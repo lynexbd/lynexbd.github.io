@@ -15,6 +15,7 @@ body {
     line-height: 1.6;
     color: #e0e0e0;       /* টেক্সট কালার (হালকা ধূসর) */
     background-color: #121212; /* মেইন ব্যাকগ্রাউন্ড (গাঢ় কালো) */
+    overflow-x: hidden;
 }
 
 .container {
@@ -41,7 +42,7 @@ h1, h2, h3, h4, h5, h6 {
 /* --- 2. HEADER & NAVIGATION --- */
 .header {
     background-color: #000000;
-    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); /* হালকা অরেঞ্জ শ্যাডো */
+    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -64,9 +65,9 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
 }
 
-.logo-lyn { color: #ffffff; } /* LYN - সাদা */
-.logo-e { color: #ff9f43; }   /* E - কমলা */
-.logo-x { color: #ffcd75; }   /* X - গোল্ডেন/হলুদ */
+.logo-lyn { color: #ffffff; }
+.logo-e { color: #ff9f43; }
+.logo-x { color: #ffcd75; }
 
 /* Navigation Menu */
 .nav-list {
@@ -85,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-list a:hover, 
 .nav-list a.active {
-    color: #ff9f43; /* হোভার কালার */
+    color: #ff9f43;
 }
 
 .cart-icon {
@@ -99,7 +100,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .menu-toggle {
-    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
+    display: none;
     font-size: 1.5em;
     color: #fff;
     cursor: pointer;
@@ -120,8 +121,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-btn {
-    background-color: #ff9f43; /* অরেঞ্জ বাটন */
-    color: #000; /* টেক্সট কালো */
+    background-color: #ff9f43;
+    color: #000;
     border: 1px solid #ff9f43;
 }
 
@@ -146,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
     background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 40vh; /* উচ্চতা */
+    height: 40vh;
     display: flex;
     align-items: center;
     padding-left: 5%;
@@ -246,8 +247,11 @@ h1, h2, h3, h4, h5, h6 {
     user-select: none;
     background-color: rgba(0,0,0,0.3);
     z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.next { right: 0; border-radius: 3px 0 0 3px; }
+.next { right: 10px; }
 .prev { left: 10px; }
 .prev:hover, .next:hover { background-color: #ff9f43; color: #000; }
 
@@ -257,7 +261,7 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 10px;
     width: 100%;
     text-align: center;
-    z-index: 10;
+    z-index: 6;
 }
 
 .dot {
@@ -410,9 +414,9 @@ form label {
 form input, form textarea, form select {
     width: 100%;
     padding: 12px;
-    background-color: #2a2a2a; /* ডার্ক ইনপুট */
-    border: 1px solid #444;
-    color: #fff; /* সাদা টেক্সট */
+    background-color: #2a2a2a;
+    border: 1px solid #333;
+    color: #fff;
     border-radius: 4px;
     margin-bottom: 15px;
     font-family: 'Montserrat', sans-serif;
@@ -448,13 +452,13 @@ form input:focus, form textarea:focus {
 
 /* Sidebar */
 .sidebar {
-    width: 260px;
+    width: 300px;
     background-color: #000000;
     padding: 20px;
     border-right: 1px solid #333;
     flex-shrink: 0;
-    height: 100vh; /* Full height */
-    position: fixed; /* Fixed position */
+    height: 100vh;
+    position: fixed;
     top: 0;
     left: 0;
     overflow-y: auto;
@@ -472,9 +476,10 @@ form input:focus, form textarea:focus {
 .sidebar ul li a {
     display: block;
     color: #ccc;
-    padding: 12px 15px;
+    padding: 15px;
     margin-bottom: 5px;
     border-radius: 4px;
+    font-size: 1em;
 }
 
 .sidebar ul li a:hover, 
@@ -487,11 +492,11 @@ form input:focus, form textarea:focus {
 
 /* Admin Content */
 .main-content {
-    margin-left: 260px; /* Push content right */
+    margin-left: 300px;
     flex: 1;
     padding: 30px;
     background-color: #121212;
-    width: calc(100% - 260px);
+    width: calc(100% - 300px);
     min-height: 100vh;
     overflow-x: auto;
 }
@@ -516,7 +521,7 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    border-left: 5px solid #ff9f43; /* ডিফল্ট */
+    border-left: 5px solid #ff9f43;
     border: 1px solid #333;
 }
 
@@ -551,14 +556,14 @@ table {
 th {
     background-color: #2a2a2a;
     color: #fff;
-    padding: 12px;
+    padding: 15px;
     text-align: left;
     border-bottom: 2px solid #444;
     white-space: nowrap;
 }
 
 td {
-    padding: 12px;
+    padding: 15px;
     border-bottom: 1px solid #333;
     color: #e0e0e0;
     vertical-align: middle;
@@ -732,18 +737,30 @@ td {
     
     .sidebar {
         width: 100%;
+        height: auto;
+        position: relative;
         border-right: none;
         border-bottom: 1px solid #333;
+        display: flex;
+        overflow-x: auto;
+        padding: 10px;
     }
     
     .sidebar ul {
         display: flex;
-        overflow-x: auto;
-        padding-bottom: 10px;
+    }
+    
+    .sidebar ul li {
+        margin-right: 15px;
     }
     
     .sidebar ul li a {
         white-space: nowrap;
-        margin-right: 15px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
     }
 }
