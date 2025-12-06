@@ -1,18 +1,17 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Version)
+   LYNEX COMPLETE STYLESHEET (Fixed Price & Design)
    Theme: Dark Mode | Accent: Orange (#ff9f43)
    ====================================================== */
 
-/* --- 1. BASE STYLES & RESET --- */
+/* --- 1. BASE STYLES --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Montserrat', sans-serif; line-height: 1.6; color: #e0e0e0; background-color: #121212; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 a { text-decoration: none; color: inherit; transition: 0.3s; }
 ul { list-style: none; }
-h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 
-/* --- 2. HEADER & NAV --- */
-.header { background-color: #000; box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); position: sticky; top: 0; z-index: 1000; padding: 15px 0; border-bottom: 1px solid #333; }
+/* --- 2. HEADER --- */
+.header { background-color: #000; box-shadow: 0 2px 10px rgba(255, 159, 67, 0.2); position: sticky; top: 0; z-index: 1000; padding: 15px 0; border-bottom: 1px solid #333; }
 .header .container { display: flex; justify-content: space-between; align-items: center; }
 .logo a { font-size: 2.2em; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
 .logo-lyn { color: #fff; } .logo-e { color: #ff9f43; } .logo-x { color: #ffcd75; }
@@ -22,38 +21,54 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 .cart-count { color: #ffcd75; font-weight: bold; }
 .menu-toggle { display: none; font-size: 1.5em; color: #fff; cursor: pointer; }
 
-/* --- 3. BUTTONS --- */
-.btn { padding: 10px 20px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; text-align: center; font-size: 0.85em; transition: 0.3s; }
-.primary-btn { background: #ff9f43; color: #000; border: 1px solid #ff9f43; } .primary-btn:hover { background: #e68a30; }
-.secondary-btn { background: transparent; border: 1px solid #ff9f43; color: #ff9f43; } .secondary-btn:hover { background: #ff9f43; color: #000; }
-
-/* --- 4. HERO SECTION --- */
-.hero-section { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg'); background-color: #1a1a1a; background-size: cover; height: 40vh; display: flex; align-items: center; padding-left: 5%; }
-.hero-content h1 { font-size: 2.8em; margin-bottom: 15px; }
-.subtitle { font-size: 1em; color: #ff9f43; margin-bottom: 8px; }
-
-/* --- 5. PRODUCTS --- */
+/* --- 3. PRODUCTS & PRICE STYLING (UPDATED) --- */
 .products-section { padding: 40px 20px; }
 .section-title, .page-title { font-size: 2.5em; text-align: center; margin-bottom: 40px; text-transform: uppercase; }
 .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
 
-/* Product Card */
 .product-card { background: #1e1e1e; padding: 10px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; height: 100%; position: relative; transition: transform 0.3s; }
 .product-card:hover { transform: translateY(-5px); border-color: #ff9f43; }
 .product-image { height: 240px; width: 100%; margin-bottom: 10px; background: #2a2a2a; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .product-image img { width: 100%; height: 100%; object-fit: cover; }
 .product-info h3 { font-size: 1.1em; text-align: center; margin-bottom: 8px; color: #fff; }
 
-/* Price Styling */
-.price-container { display: flex; gap: 10px; justify-content: center; align-items: baseline; margin-bottom: 15px; }
-.current-price { color: #ff9f43; font-weight: 800; font-size: 1.2em; }
-.old-price { color: #777; text-decoration: line-through; font-size: 0.9em; font-weight: 500; }
-.discount-badge { position: absolute; top: 15px; left: 15px; background: #d10000; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+/* [NEW] Price Container - Vertical Stack */
+.price-container {
+    display: flex;
+    flex-direction: column; /* উপরে নিচে থাকবে */
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+/* [NEW] Old Price Style */
+.old-price {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-color: #e74c3c; /* লাল দাগ */
+    text-decoration-thickness: 2px;
+    font-size: 0.9em; /* ছোট ফন্ট */
+    font-weight: 500;
+}
+
+.current-price {
+    color: #ff9f43;
+    font-weight: 800;
+    font-size: 1.2em;
+}
+
+.discount-badge { position: absolute; top: 15px; left: 15px; background: #d10000; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
 .product-actions { display: flex; gap: 10px; margin-top: auto; }
-.product-actions .btn { flex: 1; padding: 10px 5px; white-space: nowrap; }
+.btn { padding: 10px 5px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; text-align: center; font-size: 0.85em; flex: 1; white-space: nowrap; }
+.primary-btn { background: #ff9f43; color: #000; border: 1px solid #ff9f43; } .primary-btn:hover { background: #e68a30; }
+.secondary-btn { background: transparent; border: 1px solid #ff9f43; color: #ff9f43; } .secondary-btn:hover { background: #ff9f43; color: #000; }
 
-/* --- 6. CART & FORMS --- */
+/* --- 4. HERO & OTHERS --- */
+.hero-section { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg'); background-color: #1a1a1a; background-size: cover; height: 40vh; display: flex; align-items: center; padding-left: 5%; }
+.hero-content h1 { font-size: 2.8em; margin-bottom: 15px; } .subtitle { font-size: 1em; color: #ff9f43; margin-bottom: 8px; }
+
 .cart-items, .cart-summary, .login-container { background: #1e1e1e; padding: 25px; border-radius: 8px; border: 1px solid #333; }
 .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding: 15px 0; }
 .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
@@ -61,12 +76,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 .checkout-btn { width: 100%; display: block; margin-top: 20px; text-align: center; }
 .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #e0e0e0; } .summary-row strong { color: #ff9f43; }
 
+/* Forms */
 form label { display: block; margin-bottom: 8px; color: #ccc; }
 form input, form textarea, form select { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; color: #fff; border-radius: 4px; margin-bottom: 15px; }
 form input:focus { border-color: #ff9f43; outline: none; }
 .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #ff9f43; } .checkbox-group input { width: auto; margin: 0; }
 
-/* --- 7. ADMIN PANEL --- */
+/* Admin */
 .admin-layout { display: flex; min-height: 100vh; }
 .sidebar { width: 260px; background: #000; padding: 20px; border-right: 1px solid #333; flex-shrink: 0; }
 .sidebar h2 { color: #ff9f43; text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
@@ -81,8 +97,6 @@ form input:focus { border-color: #ff9f43; outline: none; }
 table { width: 100%; border-collapse: collapse; min-width: 600px; margin-top: 15px; }
 th { background: #2a2a2a; color: #fff; padding: 12px; text-align: left; }
 td { padding: 12px; border-bottom: 1px solid #333; color: #ddd; }
-
-/* Filters & Badge */
 .filter-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 1px solid #333; padding-bottom: 10px; }
 .filter-btn { background: transparent; color: #888; border: none; border-bottom: 3px solid transparent; padding: 8px 15px; cursor: pointer; font-weight: 600; transition: 0.3s; }
 .filter-btn:hover { color: #fff; }
@@ -90,7 +104,7 @@ td { padding: 12px; border-bottom: 1px solid #333; color: #ddd; }
 .nav-badge { display: inline-block; width: 10px; height: 10px; background-color: #e74c3c; border-radius: 50%; margin-left: 10px; box-shadow: 0 0 5px rgba(231, 76, 60, 0.8); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(231, 76, 60, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); } }
 
-/* --- 8. POPUP --- */
+/* Popup */
 .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .custom-popup-overlay.active { opacity: 1; visibility: visible; }
 .custom-popup-box { background: #1e1e1e; width: 90%; max-width: 450px; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; transform: scale(0.8); transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,159,67,0.15); }
@@ -101,7 +115,7 @@ td { padding: 12px; border-bottom: 1px solid #333; color: #ddd; }
 .popup-msg { color: #ccc; margin-bottom: 25px; font-size: 0.95em; line-height: 1.6; text-align: left; }
 .popup-btn { width: 100%; padding: 12px; border-radius: 6px; font-size: 1em; margin-top: 10px; }
 
-/* --- 9. FOOTER --- */
+/* Footer */
 .footer { background: #000; padding: 80px 20px 40px; margin-top: auto; border-top: 1px solid #333; text-align: center; }
 .footer-brand { font-size: 2.5em; font-weight: 900; color: #ff9f43; margin-bottom: 20px; letter-spacing: 2px; }
 .footer-desc { max-width: 600px; margin: 0 auto 40px; color: #ccc; }
