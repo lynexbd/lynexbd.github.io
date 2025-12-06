@@ -42,16 +42,80 @@ h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 .hero-content h1 { font-size: 2.8em; margin-bottom: 15px; } 
 .subtitle { font-size: 1em; color: #ff9f43; margin-bottom: 8px; letter-spacing: 1px; }
 
-/* --- 4. PRODUCT CARDS & SLIDER --- */
-.products-section { padding: 40px 20px; }
-.section-title { font-size: 2.5em; text-align: center; margin-bottom: 40px; text-transform: uppercase; }
-.product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
-
-.product-card { 
-    background: #1e1e1e; padding: 10px; border-radius: 8px; border: 1px solid #333; 
-    display: flex; flex-direction: column; height: 100%; position: relative; overflow: hidden; 
+/* --- PRODUCT CARD & SLIDER (Fixed Dots Inside Image) --- */
+.product-card {
+    background: #1e1e1e;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
 }
-.product-card:hover { border-color: #ff9f43; transform: translateY(-5px); transition: 0.3s; }
+
+/* Wrapper for Image & Dots */
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 260px; /* ছবির ফিক্সড হাইট */
+    margin-bottom: 10px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Scrollable Container */
+.slider-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    scroll-behavior: smooth;
+}
+.slider-container::-webkit-scrollbar { display: none; } /* Chrome */
+
+.slider-image {
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scroll-snap-align: start;
+}
+
+/* Dots Positioned Inside Image (Bottom) */
+.slider-dots {
+    position: absolute;
+    bottom: 10px; /* নিচ থেকে ১০px উপরে */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none; /* ডটের আশেপাশের জায়গা ক্লিকেবল থাকবে না */
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); /* হালকা ছায়া যাতে ডট দেখা যায় */
+    padding-bottom: 5px;
+}
+
+.dot {
+    height: 8px;
+    width: 8px;
+    margin: 0 4px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto; /* বাটন কাজ করবে */
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+.dot.active {
+    background-color: #ff9f43;
+    transform: scale(1.4);
+    border: 1px solid #fff;
+    opacity: 1;
+}
 
 /* Slider */
 .slider-container { 
