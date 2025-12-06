@@ -1,5 +1,5 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Always Left Sidebar)
+   LYNEX COMPLETE STYLESHEET (Final Version)
    Theme: Dark Mode | Accent: Orange (#ff9f43) & Gold (#ffcd75)
    ====================================================== */
 
@@ -13,8 +13,8 @@
 body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
-    color: #e0e0e0;       
-    background-color: #121212; 
+    color: #e0e0e0;       /* টেক্সট কালার (হালকা ধূসর) */
+    background-color: #121212; /* মেইন ব্যাকগ্রাউন্ড (গাঢ় কালো) */
 }
 
 .container {
@@ -35,13 +35,13 @@ ul {
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
-    color: #ffffff;
+    color: #ffffff; /* হেডিং সাদা */
 }
 
-/* --- 2. HEADER & NAVIGATION (WEBSITE) --- */
+/* --- 2. HEADER & NAVIGATION --- */
 .header {
     background-color: #000000;
-    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15);
+    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); /* হালকা অরেঞ্জ শ্যাডো */
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -55,6 +55,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
+/* Logo Styling */
 .logo a {
     font-size: 2.2em;
     font-weight: 900;
@@ -63,10 +64,11 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
 }
 
-.logo-lyn { color: #ffffff; } 
-.logo-e { color: #ff9f43; }   
-.logo-x { color: #ffcd75; }   
+.logo-lyn { color: #ffffff; } /* LYN - সাদা */
+.logo-e { color: #ff9f43; }   /* E - কমলা */
+.logo-x { color: #ffcd75; }   /* X - গোল্ডেন/হলুদ */
 
+/* Navigation Menu */
 .nav-list {
     display: flex;
     gap: 30px;
@@ -83,7 +85,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-list a:hover, 
 .nav-list a.active {
-    color: #ff9f43; 
+    color: #ff9f43; /* হোভার কালার */
 }
 
 .cart-icon {
@@ -97,7 +99,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .menu-toggle {
-    display: none; 
+    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
     font-size: 1.5em;
     color: #fff;
     cursor: pointer;
@@ -118,8 +120,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-btn {
-    background-color: #ff9f43; 
-    color: #000; 
+    background-color: #ff9f43; /* অরেঞ্জ বাটন */
+    color: #000; /* টেক্সট কালো */
     border: 1px solid #ff9f43;
 }
 
@@ -144,7 +146,7 @@ h1, h2, h3, h4, h5, h6 {
     background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 40vh; 
+    height: 40vh; /* উচ্চতা */
     display: flex;
     align-items: center;
     padding-left: 5%;
@@ -183,6 +185,7 @@ h1, h2, h3, h4, h5, h6 {
     gap: 30px;
 }
 
+/* Product Card Design */
 .product-card {
     background: #1e1e1e;
     padding: 10px;
@@ -193,6 +196,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     height: 100%;
     transition: transform 0.3s;
+    overflow: hidden;
 }
 
 .product-card:hover {
@@ -200,6 +204,7 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #ff9f43;
 }
 
+/* --- IMAGE SLIDER STYLES --- */
 .slider-container {
     position: relative;
     width: 100%;
@@ -224,51 +229,57 @@ h1, h2, h3, h4, h5, h6 {
 
 @keyframes fade { from {opacity: .6} to {opacity: 1} }
 
+/* Navigation Arrows */
 .prev, .next {
     cursor: pointer;
     position: absolute;
     top: 50%;
-    width: auto;
-    padding: 10px;
-    margin-top: -22px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0,0,0,0.5);
     color: white;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
+    border-radius: 50%;
+    border: none;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: 0.3s;
-    border-radius: 0 3px 3px 0;
-    user-select: none;
-    background-color: rgba(0,0,0,0.3);
-    z-index: 5;
 }
-.next { right: 0; border-radius: 3px 0 0 3px; }
+.next { right: 10px; }
+.prev { left: 10px; }
 .prev:hover, .next:hover { background-color: #ff9f43; color: #000; }
 
+/* Slider Dots */
 .slider-dots {
-    text-align: center;
     position: absolute;
     bottom: 10px;
     width: 100%;
-    z-index: 6;
+    text-align: center;
+    z-index: 10;
 }
 
 .dot {
     cursor: pointer;
     height: 8px;
     width: 8px;
-    margin: 0 4px;
-    background-color: #ccc;
+    margin: 0 3px;
+    background-color: rgba(255,255,255,0.5);
     border-radius: 50%;
     display: inline-block;
     transition: all 0.3s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .dot.active {
     background-color: #ff9f43;
-    transform: scale(1.6);
-    border: 2px solid #fff;
+    transform: scale(1.3);
+    opacity: 1;
 }
 
+/* Hide controls for single image */
 .single-slide .prev, .single-slide .next, .single-slide .slider-dots {
     display: none;
 }
@@ -280,6 +291,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
 }
 
+/* Price & Badge */
 .price-container {
     display: flex;
     gap: 10px;
@@ -297,7 +309,7 @@ h1, h2, h3, h4, h5, h6 {
 .old-price {
     color: #777;
     text-decoration: line-through;
-    text-decoration-color: #e74c3c;
+    text-decoration-color: #e74c3c; /* লাল দাগ */
     text-decoration-thickness: 2px;
     font-size: 0.9em;
     font-weight: 500;
@@ -317,6 +329,7 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
+/* Product Buttons */
 .product-actions {
     display: flex;
     gap: 10px;
@@ -348,6 +361,7 @@ h1, h2, h3, h4, h5, h6 {
 .cart-item h4 { color: #fff; font-size: 1em; }
 .cart-item p { color: #aaa; font-size: 0.9em; }
 
+/* Quantity Buttons */
 .qty-controls {
     display: flex;
     align-items: center;
@@ -387,7 +401,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
-/* --- 7. FORMS --- */
+/* --- 7. FORMS (Global Style) --- */
 form label {
     display: block;
     margin-bottom: 8px;
@@ -398,9 +412,9 @@ form label {
 form input, form textarea, form select {
     width: 100%;
     padding: 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #333;
-    color: #fff;
+    background-color: #2a2a2a; /* ডার্ক ইনপুট */
+    border: 1px solid #444;
+    color: #fff; /* সাদা টেক্সট */
     border-radius: 4px;
     margin-bottom: 15px;
     font-family: 'Montserrat', sans-serif;
@@ -420,27 +434,29 @@ form input:focus, form textarea:focus {
 }
 .checkbox-group input { width: auto; margin: 0; }
 
-#image-list-container { margin-top: 10px; background: #2a2a2a; padding: 10px; border-radius: 4px; }
-.img-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #444; color: #ccc; font-size: 0.9em; }
-.img-remove-btn { color: #e74c3c; cursor: pointer; font-weight: bold; margin-left: 10px; }
+/* Image Preview List (Admin) */
+#image-preview-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-/* --- 8. ADMIN PANEL STYLES (ALWAYS LEFT SIDEBAR) --- */
+/* --- 8. ADMIN PANEL STYLES (FIXED SIDEBAR) --- */
 .admin-layout {
     display: flex;
     min-height: 100vh;
     width: 100%;
-    overflow-x: hidden;
 }
 
-/* Sidebar (Fixed Width: 300px) */
+/* Sidebar */
 .sidebar {
-    width: 300px; /* সাইজ বাড়ানো হয়েছে */
+    width: 260px;
     background-color: #000000;
     padding: 20px;
     border-right: 1px solid #333;
-    flex-shrink: 0; /* ছোট হবে না */
-    height: 100vh;
-    position: fixed; /* সবসময় বামে ফিক্সড */
+    flex-shrink: 0;
+    height: 100vh; /* Full height */
+    position: fixed; /* Fixed position */
     top: 0;
     left: 0;
     overflow-y: auto;
@@ -458,11 +474,9 @@ form input:focus, form textarea:focus {
 .sidebar ul li a {
     display: block;
     color: #ccc;
-    padding: 15px 20px; /* প্যাডিং বাড়ানো হয়েছে */
+    padding: 12px 15px;
     margin-bottom: 5px;
     border-radius: 4px;
-    font-size: 1em; /* ফন্ট সাইজ ঠিক আছে */
-    white-space: nowrap; /* লেখা নিচে নামবে না */
 }
 
 .sidebar ul li a:hover, 
@@ -473,14 +487,14 @@ form input:focus, form textarea:focus {
     font-weight: 600;
 }
 
-/* Main Content (Adjusted margin for Sidebar) */
+/* Admin Content */
 .main-content {
-    margin-left: 300px; /* সাইডবারের সমান মার্জিন */
+    margin-left: 260px; /* Push content right */
     flex: 1;
     padding: 30px;
     background-color: #121212;
-    overflow-y: auto;
-    width: calc(100% - 300px);
+    width: calc(100% - 260px);
+    min-height: 100vh;
 }
 
 .dashboard-header {
@@ -503,45 +517,54 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    border-left: 5px solid #ff9f43;
+    border-left: 5px solid #ff9f43; /* ডিফল্ট */
     border: 1px solid #333;
 }
 
-.widget h3 { font-size: 1em; color: #aaa; margin-bottom: 10px; }
-.widget p { font-size: 2em; font-weight: 800; color: #fff; }
+.widget h3 {
+    font-size: 1em;
+    color: #aaa;
+    margin-bottom: 10px;
+}
 
-/* Tables (Scrollable) */
+.widget p {
+    font-size: 2em;
+    font-weight: 800;
+    color: #fff;
+}
+
+/* Admin Tables (Scrollable & Wide) */
 .data-section {
     background: #1e1e1e;
     padding: 25px;
     border-radius: 8px;
     border: 1px solid #333;
-    overflow-x: auto; /* মোবাইলে টেবিল স্ক্রল হবে */
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-    min-width: 800px; /* ডেস্কটপ ভিউ ধরে রাখতে মিনিমাম উইডথ */
+    min-width: 800px; /* Force desktop view */
 }
 
 th {
     background-color: #2a2a2a;
     color: #fff;
-    padding: 15px;
+    padding: 12px;
     text-align: left;
     border-bottom: 2px solid #444;
     white-space: nowrap;
 }
 
 td {
-    padding: 15px;
+    padding: 12px;
     border-bottom: 1px solid #333;
     color: #e0e0e0;
 }
 
-/* Filters */
+/* Filters & Actions */
 .filter-tabs {
     display: flex;
     gap: 10px;
@@ -561,10 +584,16 @@ td {
     font-size: 1em;
     font-weight: 600;
     transition: 0.3s;
+    border-radius: 5px 5px 0 0;
 }
 
-.filter-btn:hover { color: #fff; }
-.filter-btn.active { color: #ff9f43; border-bottom: 3px solid #ff9f43; background-color: #1e1e1e; border-radius: 5px 5px 0 0; }
+.filter-btn:hover { color: #fff; background: #252525; }
+
+.filter-btn.active {
+    color: #ff9f43;
+    border-bottom: 3px solid #ff9f43;
+    background-color: #1e1e1e;
+}
 
 .status-select {
     padding: 5px;
@@ -575,7 +604,7 @@ td {
     cursor: pointer;
 }
 
-/* Notification */
+/* Notification Badge */
 .nav-badge {
     display: inline-block;
     width: 10px;
@@ -586,9 +615,12 @@ td {
     box-shadow: 0 0 5px rgba(231, 76, 60, 0.8);
     animation: pulse 2s infinite;
 }
-@keyframes pulse { 0% { transform: scale(0.95); } 70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(231, 76, 60, 0); } 100% { transform: scale(0.95); } }
 
-/* --- 9. POPUP --- */
+@keyframes pulse {
+    0% { transform: scale(0.95); } 70% { transform: scale(1); } 100% { transform: scale(0.95); }
+}
+
+/* --- 9. POPUP STYLE --- */
 .custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .custom-popup-overlay.active { opacity: 1; visibility: visible; }
 .custom-popup-box { background: #1e1e1e; width: 90%; max-width: 450px; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; transform: scale(0.8); transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,159,67,0.15); }
@@ -600,42 +632,123 @@ td {
 .popup-btn { width: 100%; padding: 12px; border-radius: 6px; font-size: 1em; margin-top: 10px; }
 
 /* --- 10. FOOTER --- */
-.footer { background: #000; padding: 80px 20px 40px; margin-top: auto; border-top: 1px solid #333; text-align: center; }
-.footer-brand { font-size: 2.5em; font-weight: 900; color: #ff9f43; margin-bottom: 20px; letter-spacing: 2px; }
-.footer-desc { max-width: 600px; margin: 0 auto 40px; color: #ccc; font-size: 0.95em; }
-.footer-links-title { color: #ff9f43; font-size: 1.5em; font-weight: 800; margin-bottom: 20px; }
-.footer-nav { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
-.footer-nav a { color: #e0e0e0; font-weight: 500; } .footer-nav a:hover { color: #ff9f43; }
-.social-icons { margin-bottom: 40px; } .social-icons a { color: #ffcd75; font-size: 1.5em; margin: 0 15px; }
-.copyright { border-top: 1px solid #333; padding-top: 30px; color: #777; font-size: 0.85em; }
+.footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 20px 40px;
+    margin-top: auto;
+    border-top: 1px solid #333;
+    text-align: center;
+}
 
-/* --- 11. MOBILE RESPONSIVE (Sidebar Stays Left) --- */
+.footer-brand {
+    font-size: 2.5em;
+    font-weight: 900;
+    color: #ff9f43;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.footer-desc {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    color: #ccc;
+    font-size: 0.95em;
+}
+
+.footer-links-title {
+    color: #ff9f43;
+    font-size: 1.5em;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.footer-nav a {
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.footer-nav a:hover {
+    color: #ff9f43;
+}
+
+.social-icons {
+    margin-bottom: 40px;
+}
+
+.social-icons a {
+    color: #ffcd75;
+    font-size: 1.5em;
+    margin: 0 15px;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.social-icons a:hover {
+    color: #ff9f43;
+    transform: translateY(-3px);
+}
+
+.copyright {
+    border-top: 1px solid #333;
+    padding-top: 30px;
+    color: #777;
+    font-size: 0.85em;
+}
+
+/* --- 11. RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
-    .nav-list { display: none; position: absolute; top: 60px; right: 0; width: 100%; background: #000; flex-direction: column; padding: 20px; }
-    .nav-list.active { display: flex; } 
-    .menu-toggle { display: block; }
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 100%;
+        background-color: #000;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 2px solid #ff9f43;
+    }
+
+    .nav-list.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Admin Layout Mobile */
+    .admin-layout {
+        flex-direction: column;
+    }
     
-    /* Admin Sidebar Fixed on Mobile Too */
-    .admin-layout { display: flex; flex-direction: row; } /* Row বজায় রাখা */
-    .sidebar { 
-        width: 240px; /* একটু ছোট করা হয়েছে মোবাইলের জন্য */
-        position: fixed; 
-        height: 100vh; 
+    /* Sidebar remains fixed on mobile */
+    .sidebar {
+        width: 220px;
         z-index: 2000;
-        display: flex; /* সবসময় দেখাবে */
     }
-    .main-content { 
-        margin-left: 240px; /* সাইডবারের জন্য জায়গা */
-        width: calc(100% - 240px); 
-        padding: 15px; 
+
+    .main-content {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+        padding: 15px;
     }
-    
-    /* যদি খুব ছোট স্ক্রিন হয়, তাহলে সাইডবার আইকন মোডে আনা যেতে পারে */
+
+    /* Very Small Screens */
     @media (max-width: 500px) {
-        .sidebar { width: 60px; padding: 10px 5px; }
+        .sidebar { width: 60px; padding: 15px 5px; }
         .sidebar h2 { display: none; }
-        .sidebar ul li a span { display: none; } /* টেক্সট হাইড, শুধু আইকন */
-        .sidebar ul li a { justify-content: center; padding: 15px 0; }
+        .sidebar ul li a span { display: none; } /* Hide Text */
+        .sidebar ul li a { justify-content: center; }
         .main-content { margin-left: 60px; width: calc(100% - 60px); }
     }
 }
