@@ -1,8 +1,7 @@
 // ======================================================
-// LYNEX MAIN SCRIPT (Version 2.0 - Fixed)
+// LYNEX MAIN SCRIPT (Final Complete)
 // ======================================================
 
-// --- KEYS ---
 const KEY_PRODUCTS = 'lynex_products';
 const KEY_CART = 'lynex_cart';
 const KEY_ORDERS = 'lynex_orders';
@@ -10,19 +9,17 @@ const KEY_MESSAGES = 'lynex_messages';
 const KEY_ADMIN_TOKEN = 'lynex_secure_token_v99';
 const KEY_ORDER_COUNT = 'lynex_order_counter';
 
-// --- PAGE NAMES ---
 const PAGE_LOGIN = 'k7_entry_point.html';
 const PAGE_DASHBOARD = 'x_master_v9.html';
 const PAGE_PRODUCTS = 'p_data_source_5.html';
 const PAGE_ORDERS = 'o_log_file_22.html';
 const PAGE_MESSAGES = 'm_feed_back_01.html';
 
-// --- LOGIN CREDENTIALS ---
 const _u = "SysMaster_99";
 const _p = "L7n@x#Super!2025";
 
-// --- DATABASE SETUP (V2) ---
-const DB_NAME = "LynexDB_V2"; // ভার্সন ২ (পুরানো ডাটা রিসেট ফিক্সের জন্য)
+// --- INDEXEDDB SETUP ---
+const DB_NAME = "LynexDB_Ultima";
 const DB_VERSION = 1;
 let db;
 
@@ -34,7 +31,7 @@ function initDB() {
             if(!db.objectStoreNames.contains('store')) db.createObjectStore('store');
         };
         req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-        req.onerror = (e) => { console.error("DB Error", e); resolve(null); };
+        req.onerror = (e) => { console.error(e); resolve(null); };
     });
 }
 
@@ -54,44 +51,35 @@ async function setStorage(key, data) {
         const tx = db.transaction(['store'], 'readwrite');
         const req = tx.objectStore('store').put(data, key);
         req.onsuccess = () => resolve(true);
-        req.onerror = (e) => { alert("Error saving: " + e.target.error); resolve(false); };
+        req.onerror = (e) => { alert("Error: " + e.target.error); resolve(false); };
     });
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    await initDB(); // ডাটাবেস কানেক্ট
-    createPopupHTML(); // পপআপ তৈরি
+    await initDB();
+    createPopupHTML();
 
-    // মেনু টগল
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
     await updateCartCount();
-    
-    // রাউটিং
     const path = window.location.pathname;
     const page = path.split("/").pop(); 
 
-    // পাবলিক পেজ
     if (page === 'index.html' || page === '') await loadProductsDisplay(true);
     else if (page === 'products.html') await loadProductsDisplay(false);
     else if (page === 'cart.html') await loadCartDisplay();
     else if (page === 'checkout.html') { handleCheckoutForm(); await loadCartSummaryForCheckout(); }
-    else if (page === 'feedback.html' || page === 'contact.html') handleContactForm();
-    
-    // অ্যাডমিন পেজ
+    else if (page === 'contact.html' || page === 'feedback.html') handleContactForm();
     else if ([PAGE_DASHBOARD, PAGE_PRODUCTS, PAGE_ORDERS, PAGE_MESSAGES].includes(page)) {
-        checkAdminAuth(); 
-        await updateAdminSidebarBadges();
-        
+        checkAdminAuth(); await updateAdminSidebarBadges();
         if (page === PAGE_DASHBOARD) await initAdminDashboard();
         if (page === PAGE_PRODUCTS) await initAdminProducts();
         if (page === PAGE_ORDERS) await initAdminOrders();
         if (page === PAGE_MESSAGES) await initAdminMessages();
     }
     
-    // লগইন পেজ
     const loginForm = document.getElementById('secure-login-form');
     if (loginForm) {
         if(sessionStorage.getItem(KEY_ADMIN_TOKEN)) window.location.href = PAGE_DASHBOARD;
@@ -105,57 +93,41 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// --- HELPER FUNCTIONS ---
-function createPopupHTML() {
-    if(!document.querySelector('.custom-popup-overlay')) {
-        const p = document.createElement('div'); p.className = 'custom-popup-overlay';
-        p.innerHTML = `<div class="custom-popup-box"><i class="fas fa-info-circle popup-icon"></i><h3 class="popup-title"></h3><p class="popup-msg"></p><button class="btn primary-btn popup-btn">OK</button></div>`;
-        document.body.appendChild(p);
-        p.querySelector('.popup-btn').addEventListener('click', () => {
-            p.classList.remove('active');
-            if(window.popupRedirect) { window.location.href = window.popupRedirect; window.popupRedirect = null; }
-        });
-    }
-}
-function showPopup(title, msg, type='info', redirect=null) {
-    const overlay = document.querySelector('.custom-popup-overlay');
-    const icon = overlay.querySelector('.popup-icon');
-    overlay.querySelector('.popup-title').innerText = title;
-    overlay.querySelector('.popup-msg').innerHTML = msg.replace(/\n/g, '<br>');
-    if(type==='success') icon.className='fas fa-check-circle popup-icon popup-success';
-    else if(type==='error') icon.className='fas fa-times-circle popup-icon popup-error';
-    else icon.className='fas fa-info-circle popup-icon popup-info';
-    if(redirect) window.popupRedirect = redirect;
-    overlay.classList.add('active');
-}
+// --- SLIDER ---
+window.slideIndex = {}; 
+window.changeSlide = (n, prodId) => {
+    let slides = document.querySelectorAll(`#slider-${prodId} .slider-image`);
+    let dots = document.querySelectorAll(`#slider-${prodId} .dot`);
+    let current = window.slideIndex[prodId] || 0;
+    if(slides.length <= 1) return;
+    slides[current].classList.remove('active');
+    if(dots.length) dots[current].classList.remove('active');
+    current += n;
+    if (current >= slides.length) current = 0;
+    if (current < 0) current = slides.length - 1;
+    slides[current].classList.add('active');
+    if(dots.length) dots[current].classList.add('active');
+    window.slideIndex[prodId] = current;
+};
+window.goToSlide = (n, prodId) => {
+    let slides = document.querySelectorAll(`#slider-${prodId} .slider-image`);
+    let dots = document.querySelectorAll(`#slider-${prodId} .dot`);
+    let current = window.slideIndex[prodId] || 0;
+    slides[current].classList.remove('active');
+    if(dots.length) dots[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    if(dots.length) dots[current].classList.add('active');
+    window.slideIndex[prodId] = current;
+};
 
-async function updateCartCount() {
-    const c = await getStorage(KEY_CART);
-    const t = c.reduce((s, i) => s + (parseInt(i.qty)||0), 0);
-    document.querySelectorAll('.cart-count').forEach(e => e.innerText = `(${t})`);
-}
-
-async function updateAdminSidebarBadges() {
-    const o = await getStorage(KEY_ORDERS); const m = await getStorage(KEY_MESSAGES);
-    if(o.some(x=>x.status==='Pending') && document.getElementById('nav-orders') && !location.pathname.includes(PAGE_ORDERS)) 
-        document.getElementById('nav-orders').innerHTML += ' <span class="nav-badge"></span>';
-    if(m.some(x=>!x.isRead) && document.getElementById('nav-messages') && !location.pathname.includes(PAGE_MESSAGES)) 
-        document.getElementById('nav-messages').innerHTML += ' <span class="nav-badge"></span>';
-}
-
-function checkAdminAuth() { if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) window.location.replace(PAGE_LOGIN); }
-function adminLogout() { sessionStorage.removeItem(KEY_ADMIN_TOKEN); window.location.href = PAGE_LOGIN; }
-
-// --- WEBSITE LOGIC ---
-
-// প্রোডাক্ট লোড
+// --- WEBSITE ---
 async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid'); if (!grid) return;
     let p = await getStorage(KEY_PRODUCTS);
     if (isHome) p = p.filter(x => x.isNewArrival);
 
     grid.innerHTML = p.length ? p.map(i => {
-        // প্রাইস লজিক
         let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
         let badgeHTML = '';
         if (i.originalPrice && parseFloat(i.originalPrice) > parseFloat(i.price)) {
@@ -164,60 +136,33 @@ async function loadProductsDisplay(isHome) {
             badgeHTML = `<span class="discount-badge">-${d}% OFF</span>`;
         }
 
-        // স্লাইডার লজিক
-        let images = Array.isArray(i.images) && i.images.length ? i.images : (i.image ? [i.image] : []);
-        if(!images.length) images = [''];
-        
+        let images = Array.isArray(i.images) ? i.images : (i.image ? [i.image] : []);
+        if(images.length === 0) images = [''];
+
         let slidesHTML = images.map((img, idx) => `<img src="${img}" class="slider-image ${idx===0?'active':''}" alt="${i.name}">`).join('');
         let dotsHTML = images.length > 1 ? `<div class="slider-dots">${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}</div>` : '';
-        let arrowsHTML = images.length > 1 ? `<a class="prev" onclick="changeSlide(-1,'${i.id}')">&#10094;</a><a class="next" onclick="changeSlide(1,'${i.id}')">&#10095;</a>` : '';
-        window.slideIndex = window.slideIndex || {}; window.slideIndex[i.id] = 0;
+        let arrowsHTML = images.length > 1 ? `<a class="prev" onclick="changeSlide(-1, '${i.id}')">&#10094;</a><a class="next" onclick="changeSlide(1, '${i.id}')">&#10095;</a>` : '';
+        window.slideIndex[i.id] = 0;
 
-        return `
-        <div class="product-card">
-            ${badgeHTML}
-            <div class="slider-container" id="slider-${i.id}">
-                ${slidesHTML}${arrowsHTML}${dotsHTML}
-            </div>
-            <div class="product-info">
-                <h3>${i.name}</h3>
-                <div class="price-container">${priceHTML}</div>
-                <div class="product-actions">
-                    <button onclick="addToCart('${i.id}')" class="btn secondary-btn">Add to Cart</button>
-                    <button onclick="buyNow('${i.id}')" class="btn primary-btn">Buy Now</button>
-                </div>
-            </div>
-        </div>`;
+        return `<div class="product-card">${badgeHTML}<div class="slider-container ${images.length > 1 ? '' : 'single-slide'}" id="slider-${i.id}">${slidesHTML}${arrowsHTML}${dotsHTML}</div><div class="product-info"><h3>${i.name}</h3><div class="price-container">${priceHTML}</div><div class="product-actions"><button onclick="addToCart('${i.id}')" class="btn secondary-btn">Add to Cart</button><button onclick="buyNow('${i.id}')" class="btn primary-btn">Buy Now</button></div></div></div>`;
     }).join('') : '<p style="text-align:center;width:100%;color:#777;">No products available.</p>';
 }
 
-// স্লাইডার কন্ট্রোল
-window.changeSlide = (n, id) => { let s=document.querySelectorAll(`#slider-${id} .slider-image`), d=document.querySelectorAll(`#slider-${id} .dot`), c=window.slideIndex[id]||0; if(s.length<=1)return; s[c].classList.remove('active'); if(d.length)d[c].classList.remove('active'); c+=n; if(c>=s.length)c=0; if(c<0)c=s.length-1; s[c].classList.add('active'); if(d.length)d[c].classList.add('active'); window.slideIndex[id]=c; };
-window.goToSlide = (n, id) => { let s=document.querySelectorAll(`#slider-${id} .slider-image`), d=document.querySelectorAll(`#slider-${id} .dot`); if(s.length<=1)return; s[window.slideIndex[id]].classList.remove('active'); if(d.length)d[window.slideIndex[id]].classList.remove('active'); window.slideIndex[id]=n; s[n].classList.add('active'); if(d.length)d[n].classList.add('active'); };
-
-// কার্ট ও চেকআউট
-window.addToCart = async (id) => {
-    const p = (await getStorage(KEY_PRODUCTS)).find(x => x.id == id);
-    if (p) {
-        let c = await getStorage(KEY_CART); let ex = c.find(x => x.id == id);
-        if(ex) ex.qty++; else c.push({...p, qty: 1});
-        await setStorage(KEY_CART, c); await updateCartCount(); showPopup('Success', 'Added to Cart!', 'success');
-    }
-};
+window.addToCart = async (id) => { const p=(await getStorage(KEY_PRODUCTS)).find(x=>x.id==id); if(p) { let c=await getStorage(KEY_CART); let ex=c.find(x=>x.id==id); if(ex) ex.qty++; else c.push({...p, qty:1}); await setStorage(KEY_CART, c); await updateCartCount(); showPopup('Success', 'Product Added!', 'success'); } };
 window.buyNow = async (id) => { await window.addToCart(id); setTimeout(()=>window.location.href='checkout.html', 500); };
 
 async function loadCartDisplay() {
     const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); if(!c) return;
     const cart = await getStorage(KEY_CART);
-    if(cart.length===0) { c.innerHTML='<p style="text-align:center;color:#aaa;">Cart is empty.</p>'; if(t) t.innerText='0'; if(document.querySelector('.checkout-btn')) document.querySelector('.checkout-btn').style.display='none'; return; }
-    c.innerHTML = cart.map((item, i) => {
-        let thumb = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : (item.image || '');
-        return `<div class="cart-item"><div class="cart-item-info"><img src="${thumb}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;"><div><h4>${item.name}</h4><p>৳${item.price} x ${item.qty}</p><div class="qty-controls"><button class="qty-btn" onclick="upQty(${i},-1)">-</button><span>${item.qty}</span><button class="qty-btn" onclick="upQty(${i},1)">+</button></div></div></div><div style="text-align:right;"><p style="font-weight:bold;color:#ff9f43;">৳${item.price*item.qty}</p><button onclick="rmC(${i})" style="color:#e74c3c;background:none;border:none;cursor:pointer;margin-top:5px;">Remove</button></div></div>`;
+    if(cart.length===0) { c.innerHTML='<p style="text-align:center;color:#aaa;">Empty Cart</p>'; if(t) t.innerText='0'; if(document.querySelector('.checkout-btn')) document.querySelector('.checkout-btn').style.display='none'; return; }
+    c.innerHTML = cart.map((x,i)=> {
+        let thumb = Array.isArray(x.images) && x.images.length > 0 ? x.images[0] : (x.image || '');
+        return `<div class="cart-item"><div class="cart-item-info"><img src="${thumb}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;background:#333;"><div><h4>${x.name}</h4><p>৳${x.price} x ${x.qty}</p><div class="qty-controls"><button class="qty-btn" onclick="upQty(${i},-1)">-</button><span>${x.qty}</span><button class="qty-btn" onclick="upQty(${i},1)">+</button></div></div></div><div style="text-align:right;"><p style="font-weight:bold;color:#ff9f43;">৳${x.price*x.qty}</p><button onclick="rmC(${i})" style="color:#e74c3c;background:none;border:none;cursor:pointer;margin-top:5px;">Remove</button></div></div>`;
     }).join('');
     if(t) t.innerText = cart.reduce((s, i) => s + (i.price * i.qty), 0);
 }
-window.upQty = async (i, v) => { let c = await getStorage(KEY_CART); c[i].qty+=v; if(c[i].qty<1) { if(confirm("Remove?")) c.splice(i,1); else c[i].qty=1; } await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); };
-window.rmC = async (i) => { let c = await getStorage(KEY_CART); c.splice(i,1); await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); };
+window.upQty = async (i, v) => { let c=await getStorage(KEY_CART); c[i].qty+=v; if(c[i].qty<1) { if(confirm("Remove?")) c.splice(i,1); else c[i].qty=1; } await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); };
+window.rmC = async (i) => { let c=await getStorage(KEY_CART); c.splice(i,1); await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount(); };
 
 function handleCheckoutForm() {
     const f = document.getElementById('checkout-form');
@@ -226,28 +171,14 @@ function handleCheckoutForm() {
             e.preventDefault();
             const c = await getStorage(KEY_CART);
             if(c.length===0) return showPopup('Error', 'Cart Empty', 'error');
-            
             let cnt = parseInt(await getStorage(KEY_ORDER_COUNT))||0; cnt++; await setStorage(KEY_ORDER_COUNT, cnt);
             const ordId = 'ORD-'+String(cnt).padStart(3,'0');
             const total = c.reduce((s,i)=>s+(i.price*i.qty),0);
-            
-            const ord = { 
-                id: ordId, 
-                date: new Date().toLocaleDateString(), 
-                customer: { name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value }, 
-                items: c, 
-                total: total, 
-                status: 'Pending' 
-            };
-            
+            const ord = { id: ordId, date: new Date().toLocaleDateString(), customer: { name: e.target.name.value, phone: e.target.phone.value, address: e.target.address.value }, items: c, total: total, status: 'Pending' };
             const orders = await getStorage(KEY_ORDERS); orders.unshift(ord); 
-            await setStorage(KEY_ORDERS, orders); 
-            await setStorage(KEY_CART, []); 
-            await updateCartCount();
-            
-            // বিস্তারিত পপআপ মেসেজ
+            await setStorage(KEY_ORDERS, orders); await setStorage(KEY_CART, []); await updateCartCount();
             const itemsList = c.map(i => `- ${i.name} (x${i.qty})`).join('\n');
-            showPopup('Order Confirmed!', `ID: ${ordId}\nName: ${ord.customer.name}\nPhone: ${ord.customer.phone}\nAddress: ${ord.customer.address}\n\nItems:\n${itemsList}\n\nTotal: ৳${total}\n\n* ডেলিভারি চার্জ এবং সকল তথ্যের জন্যে আপনাকে কল করা হবে।`, 'success', 'index.html');
+            showPopup('Order Confirmed!', `ID: ${ordId}\nName: ${ord.customer.name}\nPhone: ${ord.customer.phone}\nAddress: ${ord.customer.address}\n\n${itemsList}\n\nTotal: ৳${total}\n\n* ডেলিভারি চার্জ এবং সকল তথ্যের জন্যে আপনাকে কল করা হবে।`, 'success', 'index.html');
         };
     }
 }
@@ -264,17 +195,16 @@ async function initAdminDashboard() {
     setT('stat-cancelled', o.filter(x => x.status === 'Cancelled').length); setT('stat-products', p.length);
 }
 
-// Product Upload (Unlimited Images)
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody');
     const input = document.getElementById('imageInput');
-    
+
     const render = async () => {
         const p = await getStorage(KEY_PRODUCTS);
         if (p.length === 0) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;">Empty</td></tr>'; document.getElementById('current-product-count').innerText=0; return; }
         tb.innerHTML = p.map((x,i)=> {
             let thumb = Array.isArray(x.images) && x.images.length > 0 ? x.images[0] : (x.image || '');
-            return `<tr><td><img src="${thumb}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;"></td><td>${x.name}</td><td>৳${x.price}</td><td><button onclick="delP(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`;
+            return `<tr><td><img src="${thumb}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;"></td><td>${x.name} ${x.isNewArrival?'<span style="color:#2ecc71;">(New)</span>':''}</td><td>৳${x.price}</td><td><button onclick="delP(${i})" style="color:red;border:none;background:none;cursor:pointer;">Del</button></td></tr>`;
         }).join('');
         document.getElementById('current-product-count').innerText=p.length;
     };
@@ -313,11 +243,7 @@ function initAdminOrders() {
     };
     ren();
     window.filterOrders=(s)=>{flt=s; ren();}; window.upS=async(i,v)=>{ const o=await getStorage(KEY_ORDERS); o[i].status=v; await setStorage(KEY_ORDERS,o); ren(); };
-    window.vOrd=async(id)=>{ 
-        const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id); if(!o)return; 
-        const items=o.items.map(i=>`- ${i.name} x${i.qty} (৳${i.price})`).join('\n'); 
-        showPopup('Order Details', `ID: ${o.id}\nName: ${o.customer.name}\nPhone: ${o.customer.phone}\nAddress: ${o.customer.address}\n\nItems:\n${items}\n\nTotal: ৳${o.total}\n\n* Call customer for details.`, 'info'); 
-    };
+    window.vOrd=async(id)=>{ const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id); if(!o)return; const items=o.items.map(i=>`- ${i.name} x${i.qty} (৳${i.price})`).join('\n'); showPopup('Order Details', `ID: ${o.id}\nName: ${o.customer.name}\nPhone: ${o.customer.phone}\nAddress: ${o.customer.address}\n\n${items}\n\nTotal: ৳${o.total}`, 'info'); };
 }
 
 function initAdminMessages() {
@@ -331,3 +257,10 @@ function initAdminMessages() {
     ren();
     window.filterMsgs=(m)=>{vm=m;ren();}; window.mkR=async(i)=>{const m=await getStorage(KEY_MESSAGES); m[i].isRead=true; await setStorage(KEY_MESSAGES, m); ren();}; window.delMsg=async(i)=>{if(confirm('Delete?')){const m=await getStorage(KEY_MESSAGES); m.splice(i,1); await setStorage(KEY_MESSAGES, m); ren();}};
 }
+
+// POPUP & HELPERS
+function createPopupHTML() { if(!document.querySelector('.custom-popup-overlay')) { const p=document.createElement('div'); p.className='custom-popup-overlay'; p.innerHTML=`<div class="custom-popup-box"><i class="fas fa-check-circle popup-icon"></i><h3 class="popup-title"></h3><p class="popup-msg"></p><button class="btn primary-btn popup-btn">OK</button></div>`; document.body.appendChild(p); p.querySelector('.popup-btn').addEventListener('click', () => { p.classList.remove('active'); if(window.popupRedirect) { window.location.href=window.popupRedirect; window.popupRedirect=null; } }); } }
+function showPopup(title, msg, type='info', url=null) { const o=document.querySelector('.custom-popup-overlay'); const i=o.querySelector('.popup-icon'); o.querySelector('.popup-title').innerText=title; o.querySelector('.popup-msg').innerHTML=msg.replace(/\n/g, '<br>'); if(type==='success') i.className='fas fa-check-circle popup-icon popup-success'; else if(type==='error') i.className='fas fa-times-circle popup-icon popup-error'; else i.className='fas fa-info-circle popup-icon popup-info'; if(url) window.popupRedirect=url; o.classList.add('active'); }
+function updateAdminSidebarBadges() { const o = getStorage(KEY_ORDERS); const m = getStorage(KEY_MESSAGES); if(o.some(x=>x.status==='Pending') && document.getElementById('nav-orders') && !location.pathname.includes(PAGE_ORDERS)) document.getElementById('nav-orders').innerHTML += ' <span class="nav-badge"></span>'; if(m.some(x=>!x.isRead) && document.getElementById('nav-messages') && !location.pathname.includes(PAGE_MESSAGES)) document.getElementById('nav-messages').innerHTML += ' <span class="nav-badge"></span>'; }
+function checkAdminAuth() { if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) window.location.replace(PAGE_LOGIN); }
+function adminLogout() { sessionStorage.removeItem(KEY_ADMIN_TOKEN); window.location.href = PAGE_LOGIN; }
