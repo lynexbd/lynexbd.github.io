@@ -121,3 +121,93 @@ td { padding: 15px; border-bottom: 1px solid #333; color: #ddd; vertical-align: 
     .sidebar ul { display: flex; } .sidebar ul li { margin-right: 15px; }
     .main-content { margin-left: 0; width: 100%; }
 }
+/* ======================================================
+   COMPACT HERO SECTION STYLES
+   ====================================================== */
+
+.hero-section {
+    /* উচ্চতা অনেক কমিয়ে দেওয়া হয়েছে (আগে 40vh বা বেশি ছিল) */
+    height: 250px; 
+    
+    /* ব্যাকগ্রাউন্ড ইমেজ সেটিংস */
+    background-size: cover;
+    background-position: center center;
+    
+    /* ফ্লেক্সবক্স ব্যবহার করে সবকিছু মাঝখানে আনা */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    /* প্যাডিং কমানো হয়েছে */
+    padding: 20px;
+    color: #ffffff;
+}
+
+/* Hero Content Container */
+.hero-content {
+    max-width: 800px; /* লেখা যাতে বেশি ছড়িয়ে না যায় */
+    width: 100%;
+}
+
+/* সাবটাইটেল (Welcome to Lynex) ছোট করা */
+.hero-content .subtitle {
+    font-size: 0.85em; /* ফন্ট সাইজ ছোট */
+    letter-spacing: 2px;
+    margin-bottom: 5px; /* নিচের গ্যাপ কমানো */
+    color: #ff9f43; /* আপনার থিম কালার (অরেঞ্জ) */
+    font-weight: 600;
+}
+
+/* মেইন টাইটেল (Defining Modern Fashion) এক লাইনে ও ছোট করা */
+.hero-content h1 {
+    font-size: 1.8em; /* ফন্ট সাইজ অনেক ছোট করা হয়েছে */
+    font-weight: 800;
+    margin: 0; /* ডিফল্ট মার্জিন রিমুভ */
+    margin-bottom: 15px; /* বাটনের সাথে গ্যাপ */
+    line-height: 1.2;
+    white-space: nowrap; /* জোর করে এক লাইনে রাখা (যদি স্ক্রিন খুব ছোট না হয়) */
+}
+
+/* বাটন কন্টেইনার */
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* কম্প্যাক্ট বাটন স্টাইল (একদম কম জায়গা নেওয়া বাটন) */
+.compact-btn {
+    padding: 8px 20px !important; /* প্যাডিং কমিয়ে বাটন ছোট করা হয়েছে */
+    font-size: 0.85em !important; /* বাটনের লেখার সাইজ ছোট */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    /* আপনার প্রাইমারি বাটন কালার ঠিক রাখা হয়েছে */
+    background-color: #ff9f43;
+    color: #000;
+    border: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.compact-btn:hover {
+    background-color: #e68a30; /* হোভার ইফেক্ট */
+    transform: translateY(-2px);
+}
+
+/* --- রেসপনসিভ ফিক্স (খুব ছোট মোবাইলের জন্য) --- */
+@media (max-width: 480px) {
+    .hero-section {
+        height: 220px; /* মোবাইলে উচ্চতা আরও একটু কমানো */
+    }
+    .hero-content h1 {
+        font-size: 1.4em; /* মোবাইলে ফন্ট আরও ছোট */
+        white-space: normal; /* খুব ছোট স্ক্রিনে প্রয়োজনে দুই লাইনে হবে, কিন্তু ছোট দেখাবে */
+    }
+    .hero-content .subtitle {
+        font-size: 0.75em;
+    }
+}
+
