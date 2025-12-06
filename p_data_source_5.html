@@ -15,7 +15,8 @@
             <h2>LYNEX ADMIN</h2>
             <ul>
                 <li><a href="x_master_v9.html">Dashboard</a></li>
-                <li><a href="p_data_source_5.html" class="admin-active">Inventory</a></li> <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
+                <li><a href="p_data_source_5.html" class="admin-active">Inventory</a></li>
+                <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
                 <li><a href="m_feed_back_01.html" id="nav-messages">Feedback</a></li>
                 <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
                 <li><a href="#" onclick="adminLogout()">Disconnect</a></li>
@@ -49,10 +50,8 @@
                         </div>
                         <div>
                             <label>Images (Max 3)</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="file" id="imageInput" accept="image/*" multiple style="padding: 7px; flex: 1; cursor: pointer;">
-                                <button type="button" onclick="previewImages()" class="btn secondary-btn">Preview</button>
-                            </div>
+                            <input type="file" id="imageInput" accept="image/*" multiple style="padding: 7px; width: 100%; cursor: pointer;" onchange="previewImages()">
+                            <p style="color:#777; font-size:0.8em; margin-top:5px;">Hold 'Ctrl' to select multiple images.</p>
                         </div>
                     </div>
 
@@ -89,8 +88,7 @@
                                 <th style="text-align: right;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
