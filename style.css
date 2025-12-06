@@ -195,3 +195,110 @@ td { padding: 12px; border-bottom: 1px solid #333; color: #ddd; }
     display: none;
 }
 
+/* --- PRODUCT CARD & SLIDER STYLES --- */
+.product-card {
+    background: #1e1e1e;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Slider Container */
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 250px; /* হাইট ফিক্সড */
+    margin-bottom: 10px;
+    background: #2a2a2a;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Images */
+.slider-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* সব ছবি লুকিয়ে রাখা */
+    animation: fade 0.5s;
+}
+
+.slider-image.active {
+    display: block; /* শুধু অ্যাক্টিভ ছবি দেখাবে */
+}
+
+/* Animation */
+@keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+}
+
+/* Next & Previous Buttons */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 8px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.3s;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(0,0,0,0.4);
+    border: none;
+    z-index: 5;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background-color: #ff9f43;
+    color: #000;
+}
+
+/* Dots Container */
+.slider-dots {
+    text-align: center;
+    margin-top: -30px; /* ছবির উপরে ডট ভাসানোর জন্য */
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 6;
+}
+
+/* The Dots */
+.dot {
+    cursor: pointer;
+    height: 8px;
+    width: 8px;
+    margin: 0 3px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Active Dot (Yellow/Orange & Bold/Big) */
+.dot.active, .dot:hover {
+    background-color: #ff9f43; /* হলুদ/কমলা */
+    transform: scale(1.5); /* একটু বড় হবে */
+    border: 1px solid #fff;
+}
+
+/* Hide buttons/dots if only 1 image */
+.single-slide .prev, 
+.single-slide .next, 
+.single-slide .slider-dots {
+    display: none;
+}
