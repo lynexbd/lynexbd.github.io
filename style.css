@@ -234,7 +234,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Dots (Updated Position: Inside Image at Bottom) */
 .slider-dots {
     position: absolute;
-    bottom: 25px; /* একটু উপরে উঠানো হয়েছে */
+    bottom: 40px; /* একটু উপরে উঠানো হয়েছে */
     left: 0;
     width: 100%;
     text-align: center;
