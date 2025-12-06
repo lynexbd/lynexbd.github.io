@@ -1,789 +1,44 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Version)
-   Theme: Dark Mode | Accent: Orange (#ff9f43) & Gold (#ffcd75)
+   LYNEX COMPLETE STYLESHEET (Fixed Admin Layout)
    ====================================================== */
 
-/* --- 1. BASE STYLES & RESET --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* --- 1. BASE STYLES --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Montserrat', sans-serif; line-height: 1.6; color: #e0e0e0; background-color: #121212; }
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+ul { list-style: none; }
+h1, h2, h3, h4, h5, h6 { font-weight: 700; color: #ffffff; }
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    line-height: 1.6;
-    color: #e0e0e0;       /* টেক্সট কালার (হালকা ধূসর) */
-    background-color: #121212; /* মেইন ব্যাকগ্রাউন্ড (গাঢ় কালো) */
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: 0.3s;
-}
-
-ul {
-    list-style: none;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    color: #ffffff; /* হেডিং সাদা */
-}
-
-/* --- 2. HEADER & NAVIGATION --- */
-.header {
-    background-color: #000000;
-    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); /* হালকা অরেঞ্জ শ্যাডো */
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    padding: 15px 0;
-    border-bottom: 1px solid #333;
-}
-
-.header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Logo Styling */
-.logo a {
-    font-size: 2.2em;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    display: inline-block;
-}
-
-.logo-lyn { color: #ffffff; } /* LYN - সাদা */
-.logo-e { color: #ff9f43; }   /* E - কমলা */
-.logo-x { color: #ffcd75; }   /* X - গোল্ডেন/হলুদ */
-
-/* Navigation Menu */
-.nav-list {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-}
-
-.nav-list a {
-    font-weight: 600;
-    font-size: 0.9em;
-    color: #ffffff;
-    text-transform: uppercase;
-    position: relative;
-}
-
-.nav-list a:hover, 
-.nav-list a.active {
-    color: #ff9f43; /* হোভার কালার */
-}
-
-.cart-icon {
-    color: #ffffff !important;
-    font-size: 1.1em;
-}
-
-.cart-count {
-    color: #ff9f43;
-    font-weight: bold;
-}
-
-.menu-toggle {
-    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
-    font-size: 1.5em;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* --- 3. BUTTONS --- */
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-size: 0.85em;
-    border: none;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.primary-btn {
-    background-color: #ff9f43; /* অরেঞ্জ বাটন */
-    color: #000; /* টেক্সট কালো */
-    border: 1px solid #ff9f43;
-}
-
-.primary-btn:hover {
-    background-color: #e68a30;
-}
-
-.secondary-btn {
-    background-color: transparent;
-    color: #ff9f43;
-    border: 1px solid #ff9f43;
-}
-
-.secondary-btn:hover {
-    background-color: #ff9f43;
-    color: #000;
-}
-
-/* --- 4. HERO SECTION --- */
-.hero-section {
-    background-color: #1a1a1a;
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 40vh; /* উচ্চতা */
-    display: flex;
-    align-items: center;
-    padding-left: 5%;
-}
-
-.hero-content h1 {
-    font-size: 2.8em;
-    margin-bottom: 15px;
-    line-height: 1.2;
-}
-
-.subtitle {
-    font-size: 1em;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #ff9f43;
-    letter-spacing: 1px;
-}
-
-/* --- 5. PRODUCTS SECTION --- */
-.products-section {
-    padding: 60px 20px;
-}
-
-.section-title, .page-title {
-    font-size: 2.5em;
-    text-align: center;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-    color: #fff;
-}
-
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
-}
-
-/* Product Card Design */
-.product-card {
-    background: #1e1e1e;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    transition: transform 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    border-color: #ff9f43;
-}
-
-/* Slider Container in Card */
-.slider-container {
-    position: relative;
-    width: 100%;
-    height: 260px;
-    margin-bottom: 10px;
-    background: #2a2a2a;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.slider-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-    animation: fade 0.5s;
-}
-
-.slider-image.active {
-    display: block;
-}
-
-@keyframes fade { from {opacity: .6} to {opacity: 1} }
-
-/* Slider Arrows */
-.prev, .next {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    width: auto;
-    padding: 10px;
-    margin-top: -22px;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    transition: 0.3s;
-    border-radius: 0 3px 3px 0;
-    user-select: none;
-    background-color: rgba(0,0,0,0.3);
-    z-index: 5;
-}
-.next { right: 0; border-radius: 3px 0 0 3px; }
-.prev:hover, .next:hover { background-color: #ff9f43; color: #000; }
-
-/* Slider Dots */
-.slider-dots {
-    text-align: center;
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    z-index: 6;
-}
-
-.dot {
-    cursor: pointer;
-    height: 8px;
-    width: 8px;
-    margin: 0 4px;
-    background-color: #ccc;
-    border-radius: 50%;
-    display: inline-block;
-    transition: all 0.3s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-
-.dot.active {
-    background-color: #ff9f43;
-    transform: scale(1.6);
-    border: 2px solid #fff;
-}
-
-/* Hide controls for single image */
-.single-slide .prev, .single-slide .next, .single-slide .slider-dots {
-    display: none;
-}
-
-.product-info h3 {
-    font-size: 1.1em;
-    text-align: center;
-    margin-bottom: 8px;
-    color: #fff;
-}
-
-/* Price Styling */
-.price-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: baseline;
-    margin-bottom: 15px;
-}
-
-.current-price {
-    color: #ff9f43;
-    font-weight: 800;
-    font-size: 1.2em;
-}
-
-.old-price {
-    color: #777;
-    text-decoration: line-through;
-    text-decoration-color: #e74c3c;
-    text-decoration-thickness: 2px;
-    font-size: 0.9em;
-    font-weight: 500;
-}
-
-.discount-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background-color: #d10000;
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: bold;
-    z-index: 5;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-.product-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: auto;
-}
-
-.product-actions .btn {
-    flex: 1;
-    padding: 10px 5px;
-    white-space: nowrap;
-}
-
-/* --- 6. CART & CHECKOUT --- */
-.cart-items, .cart-summary, .login-container {
-    background: #1e1e1e;
-    padding: 25px;
-    border-radius: 8px;
-    border: 1px solid #333;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #333;
-    padding: 15px 0;
-}
-
-.cart-item h4 { color: #fff; font-size: 1em; }
-.cart-item p { color: #aaa; font-size: 0.9em; }
-
-/* Quantity Buttons */
-.qty-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.qty-btn {
-    background: #333;
-    color: #fff;
-    border: none;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.qty-btn:hover {
-    background: #ff9f43;
-    color: #000;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    color: #e0e0e0;
-}
-
-.summary-row strong { color: #ff9f43; }
-
-.checkout-btn {
-    width: 100%;
-    display: block;
-    margin-top: 20px;
-    text-align: center;
-}
-
-/* --- 7. FORMS (Global Style) --- */
-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #ccc;
-}
-
-form input, form textarea, form select {
-    width: 100%;
-    padding: 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #333;
-    color: #fff;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-form input:focus, form textarea:focus {
-    border-color: #ff9f43;
-    outline: none;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    color: #ff9f43;
-}
-.checkbox-group input { width: auto; margin: 0; }
-
-/* Image Preview List */
-#image-list-container { margin-top: 10px; background: #2a2a2a; padding: 10px; border-radius: 4px; }
-.img-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #444; color: #ccc; font-size: 0.9em; }
-.img-remove-btn { color: #e74c3c; cursor: pointer; font-weight: bold; margin-left: 10px; }
-
-/* --- 8. ADMIN PANEL STYLES --- */
+/* --- 2. ADMIN LAYOUT (SIDEBAR FIXED LEFT) --- */
 .admin-layout {
     display: flex;
     min-height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 260px;
-    background-color: #000000;
-    padding: 20px;
-    border-right: 1px solid #333;
-    flex-shrink: 0;
-}
-
-.sidebar h2 {
-    color: #ff9f43;
-    text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 20px;
-}
-
-.sidebar ul li a {
-    display: block;
-    color: #ccc;
-    padding: 12px 15px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-}
-
-.sidebar ul li a:hover, 
-.sidebar ul li a.admin-active {
-    background-color: #1e1e1e;
-    color: #ff9f43;
-    border-left: 4px solid #ff9f43;
-    font-weight: 600;
-}
-
-/* Admin Content */
-.main-content {
-    flex: 1;
-    padding: 30px;
-    background-color: #121212;
-    overflow-y: auto;
-}
-
-.dashboard-header {
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    border: 1px solid #333;
-}
-
-/* Widgets */
-.widget-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.widget {
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid #ff9f43;
-    border: 1px solid #333;
-}
-
-.widget h3 {
-    font-size: 1em;
-    color: #aaa;
-    margin-bottom: 10px;
-}
-
-.widget p {
-    font-size: 2em;
-    font-weight: 800;
-    color: #fff;
-}
-
-/* --- ADMIN TABLES (FIXED DESKTOP VIEW) --- */
-.data-section {
-    background: #1e1e1e;
-    padding: 25px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    
-    /* This ensures table scrolls horizontally on small screens, 
-       but keeps desktop layout intact */
-    overflow-x: auto; 
-}
-
-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    /* Minimum width prevents squashing */
-    min-width: 900px; 
+    overflow-x: hidden; /* হরাইজন্টাল স্ক্রল বন্ধ */
 }
 
-th {
-    background-color: #2a2a2a;
-    color: #fff;
-    padding: 15px;
-    text-align: left;
-    border-bottom: 2px solid #444;
-    white-space: nowrap; /* Headers won't wrap */
-}
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid #333;
-    color: #e0e0e0;
-    vertical-align: middle;
-}
-
-/* Filters & Actions */
-.filter-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-}
-
-.filter-btn {
-    background: transparent;
-    color: #888;
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 8px 15px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    transition: 0.3s;
-    border-radius: 5px 5px 0 0;
-}
-
-.filter-btn:hover { color: #fff; background: #252525; }
-
-.filter-btn.active {
-    color: #ff9f43;
-    border-bottom: 3px solid #ff9f43;
-    background-color: #1e1e1e;
-}
-
-.status-select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #333;
-    background: #2a2a2a;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* Notification Badge */
-.nav-badge {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: #e74c3c;
-    border-radius: 50%;
-    margin-left: 10px;
-    box-shadow: 0 0 5px rgba(231, 76, 60, 0.8);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(231, 76, 60, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-}
-
-/* --- 9. POPUP STYLE --- */
-.custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-.custom-popup-overlay.active { opacity: 1; visibility: visible; }
-.custom-popup-box { background: #1e1e1e; width: 90%; max-width: 450px; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; transform: scale(0.8); transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,159,67,0.15); }
-.custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
-.popup-icon { font-size: 3em; margin-bottom: 15px; display: block; }
-.popup-success { color: #2ecc71; } .popup-error { color: #e74c3c; } .popup-info { color: #ff9f43; }
-.popup-title { color: #fff; font-size: 1.5em; margin-bottom: 10px; }
-.popup-msg { color: #ccc; margin-bottom: 25px; font-size: 0.95em; line-height: 1.6; text-align: left; }
-.popup-btn { width: 100%; padding: 12px; border-radius: 6px; font-size: 1em; margin-top: 10px; }
-
-/* --- 10. FOOTER --- */
-.footer {
-    background-color: #000000;
-    color: #ffffff;
-    padding: 80px 20px 40px;
-    margin-top: auto;
-    border-top: 1px solid #333;
-    text-align: center;
-}
-
-.footer-brand {
-    font-size: 2.5em;
-    font-weight: 900;
-    color: #ff9f43;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-}
-
-.footer-desc {
-    max-width: 600px;
-    margin: 0 auto 40px;
-    color: #ccc;
-    font-size: 0.95em;
-}
-
-.footer-links-title {
-    color: #ff9f43;
-    font-size: 1.5em;
-    font-weight: 800;
-    margin-bottom: 20px;
-}
-
-.footer-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 40px;
-}
-
-.footer-nav a {
-    color: #e0e0e0;
-    font-weight: 500;
-}
-
-.footer-nav a:hover {
-    color: #ff9f43;
-}
-
-.social-icons {
-    margin-bottom: 40px;
-}
-
-.social-icons a {
-    color: #ffcd75;
-    font-size: 1.5em;
-    margin: 0 15px;
-    transition: 0.3s;
-    display: inline-block;
-}
-
-.social-icons a:hover {
-    color: #ff9f43;
-    transform: translateY(-3px);
-}
-
-.copyright {
-    border-top: 1px solid #333;
-    padding-top: 30px;
-    color: #777;
-    font-size: 0.85em;
-}
-
-/* --- 11. RESPONSIVE DESIGN --- */
-@media (max-width: 768px) {
-    .nav-list {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 100%;
-        background-color: #000;
-        padding: 20px;
-        text-align: center;
-        border-bottom: 2px solid #ff9f43;
-    }
-
-    .nav-list.active {
-        display: flex;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .admin-layout {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #333;
-    }
-    
-    .sidebar ul {
-        display: flex;
-        overflow-x: auto;
-        padding-bottom: 10px;
-    }
-    
-    .sidebar ul li a {
-        white-space: nowrap;
-        margin-right: 15px;
-    }
-    
-    /* Table Scroll for Mobile */
-    .data-section {
-        overflow-x: auto;
-    }
-}
-/* ======================================================
-   LYNEX ADMIN PANEL STYLES (Professional Dashboard Look)
-   ====================================================== */
-
-/* Admin Layout Container */
-.admin-layout {
-    display: flex;
-    min-height: 100vh;
-    background-color: #121212; /* Dark Background */
-    color: #e0e0e0;
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* Sidebar Styling */
+/* Sidebar Style */
 .sidebar {
     width: 260px;
     background-color: #000000;
     border-right: 1px solid #333;
-    display: flex;
-    flex-direction: column;
-    position: fixed; /* Fixed Sidebar */
-    height: 100%;
+    height: 100vh; /* পুরো উচ্চতা */
+    position: fixed; /* ফিক্সড পজিশন */
     top: 0;
     left: 0;
     z-index: 1000;
     padding: 20px;
+    overflow-y: auto; /* সাইডবার স্ক্রল হবে যদি আইটেম বেশি হয় */
 }
 
 .sidebar h2 {
-    color: #ff9f43; /* Orange Accent */
-    font-size: 1.8em;
+    color: #ff9f43;
     text-align: center;
     margin-bottom: 40px;
-    letter-spacing: 2px;
-    border-bottom: 1px solid #333;
     padding-bottom: 15px;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
+    border-bottom: 1px solid #333;
+    letter-spacing: 2px;
+    font-size: 1.5em;
 }
 
 .sidebar ul li {
@@ -794,114 +49,95 @@ td {
     display: flex;
     align-items: center;
     color: #b0b0b0;
-    text-decoration: none;
     padding: 12px 15px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: 6px;
+    font-size: 0.95em;
     font-weight: 500;
+    transition: all 0.3s;
 }
 
-.sidebar ul li a i {
-    margin-right: 10px;
-    width: 20px;
-    text-align: center;
-}
-
+/* Active & Hover State */
 .sidebar ul li a:hover, 
 .sidebar ul li a.admin-active {
     background-color: #1e1e1e;
     color: #ff9f43;
     border-left: 4px solid #ff9f43;
-    padding-left: 11px; /* Adjust for border width */
+    padding-left: 11px;
 }
 
-/* Main Content Area */
+/* Icons in Sidebar */
+.sidebar ul li a i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+/* --- 3. MAIN CONTENT (RIGHT SIDE) --- */
 .main-content {
-    margin-left: 260px; /* Same as sidebar width */
-    flex: 1;
+    margin-left: 260px; /* সাইডবারের সমান জায়গা ছাড়া হলো */
+    flex: 1; /* বাকি জায়গা নিবে */
     padding: 30px;
     background-color: #121212;
-    min-height: 100vh;
+    width: calc(100% - 260px); /* ফিক্সড উইডথ ক্যালকুলেশন */
 }
 
-/* Dashboard Header */
 .dashboard-header {
+    background: #1e1e1e;
+    padding: 20px 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #333;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #333;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.dashboard-header h1 {
-    margin: 0;
-    font-size: 1.8em;
-    color: #fff;
-}
-
-/* Stats Widgets */
+/* --- 4. WIDGETS & CARDS --- */
 .widget-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 25px;
     margin-bottom: 30px;
 }
 
 .widget {
-    background-color: #1e1e1e;
+    background: #1e1e1e;
     padding: 25px;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
+    border-left: 5px solid #ff9f43; /* ডিফল্ট বর্ডার */
+    transition: transform 0.3s;
 }
 
-.widget:hover {
-    transform: translateY(-5px);
-}
+.widget:hover { transform: translateY(-5px); }
 
-.widget h3 {
-    font-size: 1em;
-    color: #888;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
+.widget h3 { font-size: 0.9em; color: #aaa; margin-bottom: 10px; text-transform: uppercase; }
+.widget p { font-size: 2em; font-weight: 800; color: #fff; margin: 0; }
 
-.widget p {
-    font-size: 2.2em;
-    font-weight: 700;
-    margin: 0;
-}
-
-/* Data Tables & Sections */
+/* --- 5. DATA TABLES --- */
 .data-section {
-    background-color: #1e1e1e;
+    background: #1e1e1e;
     padding: 25px;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    overflow-x: auto;
+    overflow-x: auto; /* টেবিল বড় হলে স্ক্রল হবে */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
-    white-space: nowrap;
+    min-width: 700px; /* মিনিমাম সাইজ যাতে মোবাইলে না ভাঙ্গে */
+    margin-top: 10px;
 }
 
 th {
     background-color: #252525;
-    color: #ff9f43;
+    color: #fff;
     padding: 15px;
     text-align: left;
+    border-bottom: 2px solid #444;
     font-size: 0.9em;
     text-transform: uppercase;
-    border-bottom: 2px solid #444;
 }
 
 td {
@@ -911,90 +147,91 @@ td {
     vertical-align: middle;
 }
 
-tr:hover {
-    background-color: #2a2a2a;
-}
-
-/* Form Styles inside Admin */
-.admin-form input, .admin-form select {
-    background-color: #2a2a2a !important;
-    border: 1px solid #444 !important;
-    color: #fff !important;
-    padding: 12px;
-    border-radius: 6px;
+/* --- 6. FORMS & INPUTS --- */
+form label { display: block; margin-bottom: 8px; color: #ccc; font-weight: 500; }
+form input, form textarea, form select {
     width: 100%;
-    margin-bottom: 15px;
-}
-
-.admin-form input:focus, .admin-form select:focus {
-    border-color: #ff9f43 !important;
-    outline: none;
-}
-
-.admin-form label {
-    color: #ccc;
-    margin-bottom: 8px;
-    display: block;
-    font-weight: 500;
-}
-
-/* Tabs */
-.filter-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 15px;
-}
-
-.filter-btn {
-    background: transparent;
-    border: none;
-    color: #888;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-.filter-btn:hover {
-    color: #fff;
+    padding: 12px;
     background: #2a2a2a;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
 }
+form input:focus { border-color: #ff9f43; outline: none; }
 
-.filter-btn.active {
-    background-color: #ff9f43;
-    color: #000;
-}
+/* Buttons */
+.btn { padding: 12px 25px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9em; display: inline-block; text-align: center; }
+.primary-btn { background: #ff9f43; color: #000; } .primary-btn:hover { background: #e68a30; }
+.secondary-btn { background: transparent; border: 1px solid #ff9f43; color: #ff9f43; }
 
-/* Mobile Responsiveness for Admin */
+/* --- 7. TABS & NOTIFICATIONS --- */
+.filter-tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; border-bottom: 1px solid #333; padding-bottom: 10px; }
+.filter-btn { background: transparent; color: #888; border: none; border-bottom: 3px solid transparent; padding: 8px 20px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.filter-btn:hover { color: #fff; }
+.filter-btn.active { color: #ff9f43; border-bottom: 3px solid #ff9f43; }
+
+.nav-badge { display: inline-block; width: 8px; height: 8px; background-color: #e74c3c; border-radius: 50%; margin-left: auto; }
+
+/* --- 8. HEADER & WEBSITE STYLES (Mixed) --- */
+.header { background-color: #000; position: sticky; top: 0; z-index: 1000; padding: 15px 0; border-bottom: 1px solid #333; }
+.header .container { display: flex; justify-content: space-between; align-items: center; }
+.logo a { font-size: 2.2em; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+.logo-lyn { color: #fff; } .logo-e { color: #ff9f43; } .logo-x { color: #ffcd75; }
+
+.nav-list { display: flex; gap: 25px; }
+.nav-list a { color: #fff; font-weight: 600; font-size: 0.9em; text-transform: uppercase; }
+.nav-list a:hover, .nav-list a.active { color: #ff9f43; }
+.menu-toggle { display: none; color: #fff; font-size: 1.5em; cursor: pointer; }
+
+/* Footer */
+.footer { background: #000; padding: 60px 0 20px; border-top: 1px solid #333; text-align: center; margin-top: auto; }
+.footer-brand { font-size: 2.5em; font-weight: 900; color: #ff9f43; margin-bottom: 20px; }
+.footer-desc { max-width: 600px; margin: 0 auto 40px; color: #ccc; }
+.footer-nav { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
+.footer-nav a { color: #ddd; } .footer-nav a:hover { color: #ff9f43; }
+.social-icons a { color: #ffcd75; margin: 0 15px; font-size: 1.5em; }
+.copyright { border-top: 1px solid #333; padding-top: 20px; color: #777; font-size: 0.85em; }
+
+/* --- 9. POPUP --- */
+.custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.custom-popup-overlay.active { opacity: 1; visibility: visible; }
+.custom-popup-box { background: #1e1e1e; width: 90%; max-width: 450px; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; transform: scale(0.8); transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,159,67,0.15); }
+.custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
+.popup-icon { font-size: 3em; margin-bottom: 15px; display: block; }
+.popup-success { color: #2ecc71; } .popup-error { color: #e74c3c; } .popup-info { color: #ff9f43; }
+.popup-title { color: #fff; font-size: 1.5em; margin-bottom: 10px; }
+.popup-msg { color: #ccc; margin-bottom: 25px; line-height: 1.6; }
+.popup-btn { width: 100%; padding: 12px; border-radius: 6px; }
+
+/* --- 10. RESPONSIVE DESIGN --- */
 @media (max-width: 992px) {
-    .sidebar {
-        width: 70px; /* Collapsed sidebar for tablets */
-        padding: 20px 10px;
-    }
+    .sidebar { width: 70px; padding: 20px 10px; }
     .sidebar h2 { display: none; }
-    .sidebar ul li a span { display: none; } /* Hide text, show icons */
-    .sidebar ul li a i { margin: 0; font-size: 1.2em; }
-    .main-content { margin-left: 70px; }
+    .sidebar ul li a span { display: none; } /* শুধু আইকন দেখাবে */
+    .sidebar ul li a { justify-content: center; padding: 15px 0; }
+    .sidebar ul li a i { margin: 0; font-size: 1.4em; }
+    .main-content { margin-left: 70px; width: calc(100% - 70px); }
 }
 
 @media (max-width: 768px) {
+    /* Admin Mobile */
     .admin-layout { flex-direction: column; }
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 10px;
-        justify-content: space-between;
+    .sidebar { 
+        width: 100%; height: auto; position: relative; 
+        flex-direction: row; overflow-x: auto; 
+        padding: 10px; justify-content: space-between; 
+        border-right: none; border-bottom: 1px solid #333;
     }
-    .sidebar ul { display: flex; gap: 10px; }
+    .sidebar ul { display: flex; width: 100%; justify-content: space-around; }
     .sidebar ul li { margin: 0; }
-    .main-content { margin-left: 0; padding: 15px; }
-    .widget-grid { grid-template-columns: 1fr; }
+    .sidebar ul li a span { display: none; }
+    .main-content { margin-left: 0; width: 100%; padding: 15px; }
+    
+    /* Website Mobile */
+    .nav-list { display: none; position: absolute; top: 60px; right: 0; width: 100%; background: #000; flex-direction: column; padding: 20px; }
+    .nav-list.active { display: flex; }
+    .menu-toggle { display: block; }
+    .hero-content h1 { font-size: 2.5em; }
 }
-
