@@ -10,12 +10,12 @@
 </head>
 <body>
     <div class="admin-layout">
-        
         <div class="sidebar">
             <h2>LYNEX ADMIN</h2>
             <ul>
                 <li><a href="x_master_v9.html">Dashboard</a></li>
-                <li><a href="p_data_source_5.html" class="admin-active">Inventory</a></li> <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
+                <li><a href="p_data_source_5.html" class="admin-active">Inventory</a></li>
+                <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
                 <li><a href="m_feed_back_01.html" id="nav-messages">Feedback</a></li>
                 <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
                 <li><a href="#" onclick="adminLogout()">Disconnect</a></li>
@@ -23,73 +23,37 @@
         </div>
 
         <div class="main-content">
-            <div class="dashboard-header">
-                <h1>Inventory Management</h1>
-            </div>
-
-            <div class="data-section" style="margin-bottom: 30px;">
-                <h3 style="color: #fff; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">Add New Item</h3>
-                
+            <div class="dashboard-header"><h1>Inventory Management</h1></div>
+            <div class="data-section" style="margin-bottom:30px;">
+                <h3 style="color:#fff;margin-bottom:20px;">Add New Item</h3>
                 <form id="add-product-form">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <label>Product Name</label>
-                            <input type="text" name="name" placeholder="e.g. Black Denim Jacket" required>
-                        </div>
-                        <div>
-                            <label>Sale Price (৳)</label>
-                            <input type="number" name="price" placeholder="Current Price (e.g. 1200)" required>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <input type="text" name="name" placeholder="Product Name" required>
+                        <input type="number" name="price" placeholder="Sale Price" required>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <input type="number" name="oldPrice" placeholder="Old Price (Optional)">
+                        <div style="display:flex; gap:10px;">
+                            <input type="file" id="imageInput" accept="image/*" style="flex:1; padding:7px;">
+                            <button type="button" id="addImageBtn" class="btn secondary-btn" style="width:auto;">Add</button>
                         </div>
                     </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <label>Original Price (Optional)</label>
-                            <input type="number" name="oldPrice" placeholder="Old Price (e.g. 1500)">
-                        </div>
-                        <div>
-                            <label>Product Images (Select Multiple)</label>
-                            <input type="file" name="image" accept="image/*" multiple style="padding: 9px; cursor: pointer;">
-                        </div>
-                    </div>
+                    
+                    <div id="image-list-container" style="margin-bottom:15px;"></div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="isNew" name="isNew">
-                        <label for="isNew" style="color: #ff9f43; cursor: pointer; margin-bottom: 0; font-weight: 600;">
-                            Mark as "New Arrival" (Show on Home Page)
-                        </label>
+                        <label for="isNew" style="color:#ff9f43;cursor:pointer;">Mark as New Arrival</label>
                     </div>
-                    
-                    <button type="submit" class="btn primary-btn" style="width: 100%; padding: 12px; font-size: 1em;">
-                        <i class="fas fa-plus-circle"></i> Add Product
-                    </button>
+                    <button type="submit" class="btn primary-btn" style="width:100%;">Save Product</button>
                 </form>
             </div>
-
             <div class="data-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: #fff;">Current Stock</h3>
-                    <span style="background: #ff9f43; color: #000; padding: 5px 10px; border-radius: 4px; font-weight: bold;">
-                        Total Items: <span id="current-product-count">0</span>
-                    </span>
-                </div>
-                
-                <table id="product-table">
-                    <thead>
-                        <tr>
-                            <th>Thumbnail</th>
-                            <th>Name & Status</th>
-                            <th>Price Info</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+                <h3 style="color:#fff;">Product List (<span id="current-product-count">0</span>)</h3>
+                <table id="product-table"><thead><tr><th>Thumbnail</th><th>Name</th><th>Price</th><th>Action</th></tr></thead><tbody></tbody></table>
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
