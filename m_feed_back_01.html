@@ -2,31 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Feedback</title>
+    <title>Feedback | LYNEX Admin</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="admin-layout">
         <div class="sidebar">
-            <h2>LYNEX ADMIN</h2> <ul>
-                <li><a href="x_master_v9.html">Overview</a></li>
-                <li><a href="p_data_source_5.html">Inventory</a></li>
-                <li><a href="o_log_file_22.html" id="nav-orders">Orders</a></li>
-                <li><a href="m_feed_back_01.html" class="admin-active" id="nav-messages">Feedback</a></li>
-                <li><a href="index.html" style="margin-top: 50px;">Go to Website</a></li>
-                <li><a href="#" onclick="adminLogout()">Disconnect</a></li>
+            <h2>LYNEX</h2>
+            <ul>
+                <li><a href="x_master_v9.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="p_data_source_5.html"><i class="fas fa-box"></i> <span>Products</span></a></li>
+                <li><a href="o_log_file_22.html" id="nav-orders"><i class="fas fa-shopping-cart"></i> <span>Orders</span></a></li>
+                <li><a href="m_feed_back_01.html" class="admin-active" id="nav-messages"><i class="fas fa-comment-dots"></i> <span>Feedback</span></a></li>
+                <li><a href="index.html" target="_blank"><i class="fas fa-globe"></i> <span>Visit Site</span></a></li>
+                <li><a href="#" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </ul>
         </div>
+
         <div class="main-content">
-            <div class="dashboard-header"><h1>Feedback</h1></div>
-            <div class="filter-tabs">
-                <button class="filter-btn active" onclick="filterMsgs('New')">New</button>
-                <button class="filter-btn" onclick="filterMsgs('Read')">Read</button>
+            <div class="dashboard-header">
+                <h1>Customer Feedback</h1>
             </div>
+
+            <div class="filter-tabs">
+                <button class="filter-btn active" onclick="filterMsgs('New')">New Messages</button>
+                <button class="filter-btn" onclick="filterMsgs('Read')">Read Messages</button>
+            </div>
+
             <div class="data-section">
-                <table id="messages-table"><thead><tr><th>Date</th><th>From</th><th>Subject</th><th>Msg</th><th>Act</th></tr></thead><tbody></tbody></table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>From</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messages-table">
+                        </tbody>
+                </table>
             </div>
         </div>
     </div>
