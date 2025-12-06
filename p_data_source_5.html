@@ -24,33 +24,50 @@
 
         <div class="main-content">
             <div class="dashboard-header"><h1>Inventory Management</h1></div>
+            
             <div class="data-section" style="margin-bottom:30px;">
                 <h3 style="color:#fff;margin-bottom:20px;">Add New Item</h3>
                 <form id="add-product-form">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
-                        <input type="text" name="name" placeholder="Product Name" required>
-                        <input type="number" name="price" placeholder="Sale Price" required>
-                    </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
-                        <input type="number" name="oldPrice" placeholder="Old Price (Optional)">
-                        <div style="display:flex; gap:10px;">
-                            <input type="file" id="imageInput" accept="image/*" style="flex:1; padding:7px;">
-                            <button type="button" id="addImageBtn" class="btn secondary-btn" style="width:auto;">Add</button>
+                        <div>
+                            <label>Product Name</label>
+                            <input type="text" name="name" placeholder="Item Name" required>
+                        </div>
+                        <div>
+                            <label>Sale Price (৳)</label>
+                            <input type="number" name="price" placeholder="Price" required>
                         </div>
                     </div>
                     
-                    <div id="image-list-container" style="margin-bottom:15px;"></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <div>
+                            <label>Original Price (Optional)</label>
+                            <input type="number" name="oldPrice" placeholder="Old Price">
+                        </div>
+                        <div>
+                            <label style="color:#ff9f43;">Select Images (Max 3)</label>
+                            <input type="file" id="imageInput" accept="image/*" multiple style="padding: 9px; cursor: pointer;" onchange="previewImages()">
+                            <p style="font-size:0.8em; color:#aaa; margin-top:-10px;">Hold 'Ctrl' to select multiple images.</p>
+                        </div>
+                    </div>
+
+                    <div id="image-preview-container" style="display:flex; gap:10px; margin-bottom:15px;"></div>
                     
                     <div class="checkbox-group">
                         <input type="checkbox" id="isNew" name="isNew">
-                        <label for="isNew" style="color:#ff9f43;cursor:pointer;">Mark as New Arrival</label>
+                        <label for="isNew" style="color:#ff9f43;cursor:pointer;">Show as New Arrival</label>
                     </div>
+                    
                     <button type="submit" class="btn primary-btn" style="width:100%;">Save Product</button>
                 </form>
             </div>
+
             <div class="data-section">
-                <h3 style="color:#fff;">Product List (<span id="current-product-count">0</span>)</h3>
-                <table id="product-table"><thead><tr><th>Thumbnail</th><th>Name</th><th>Price</th><th>Action</th></tr></thead><tbody></tbody></table>
+                <h3 style="color:#fff;">Current Items (<span id="current-product-count">0</span>)</h3>
+                <table id="product-table">
+                    <thead><tr><th>Thumbnail</th><th>Name</th><th>Price</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
