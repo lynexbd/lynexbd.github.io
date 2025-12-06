@@ -15,7 +15,6 @@ body {
     line-height: 1.6;
     color: #e0e0e0;       /* টেক্সট কালার (হালকা ধূসর) */
     background-color: #121212; /* মেইন ব্যাকগ্রাউন্ড (গাঢ় কালো) */
-    overflow-x: hidden; /* সাইডবার বা অন্য কারণে স্ক্রল যাতে না আসে */
 }
 
 .container {
@@ -247,11 +246,8 @@ h1, h2, h3, h4, h5, h6 {
     user-select: none;
     background-color: rgba(0,0,0,0.3);
     z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-.next { right: 10px; }
+.next { right: 0; border-radius: 3px 0 0 3px; }
 .prev { left: 10px; }
 .prev:hover, .next:hover { background-color: #ff9f43; color: #000; }
 
@@ -261,7 +257,7 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 10px;
     width: 100%;
     text-align: center;
-    z-index: 6;
+    z-index: 10;
 }
 
 .dot {
