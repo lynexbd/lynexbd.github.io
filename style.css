@@ -284,7 +284,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Buttons */
 .product-actions {
     display: flex;
-    gap: 40px;
+    gap: 60px;
     margin-top: auto;
 }
 
