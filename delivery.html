@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
     <header class="header">
         <div class="container">
             <div class="logo">
@@ -22,7 +23,11 @@
                     <li><a href="products.html">Products</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="feedback.html">Feedback</a></li>
-                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span></a></li>
+                    <li>
+                        <a href="cart.html" class="cart-icon">
+                            <i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span>
+                        </a>
+                    </li>
                 </ul>
                 <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
             </nav>
@@ -31,18 +36,33 @@
 
     <section class="container" style="padding: 100px 20px; min-height: 60vh;">
         <h1 class="page-title">Delivery Information</h1>
+        
         <div style="background: #1e1e1e; padding: 40px; border-radius: 8px; border: 1px solid #333; color: #ccc; line-height: 1.8; max-width: 800px; margin: 0 auto;">
             
-            <h3 style="color: #ff9f43; margin-bottom: 15px;">Shipping Policy</h3>
-            <p style="margin-bottom: 20px;">We deliver all over Bangladesh. Standard delivery time is 2-5 business days depending on your location.</p>
+            <h3 style="color: #ff9f43; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-truck-fast"></i> Shipping Policy
+            </h3>
+            <p style="margin-bottom: 25px;">
+                We provide fast delivery all over Bangladesh. Standard delivery time is <strong>2-5 business days</strong> depending on your district and sub-district location.
+            </p>
             
-            <h3 style="color: #ff9f43; margin-bottom: 15px;">Delivery Charges</h3>
-            <ul style="margin-left: 20px; margin-bottom: 20px;">
-                <li>Inside Munshiganj: ৳ 70</li>
-                <li>Outside Munshiganj: ৳ 130</li>
-            </ul>
+            <h3 style="color: #ff9f43; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-receipt"></i> Delivery Charges
+            </h3>
+            <div style="background: #252525; padding: 20px; border-radius: 6px; border-left: 4px solid #ff9f43; margin-bottom: 25px;">
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <i class="fas fa-circle-check" style="color: #2ecc71;"></i> Inside Munshiganj Sadar: <strong>৳ 60</strong>
+                    </li>
+                    <li>
+                        <i class="fas fa-circle-check" style="color: #ff9f43;"></i> Outside Munshiganj Sadar: <strong>৳ 120</strong>
+                    </li>
+                </ul>
+            </div>
             
-            <p><strong>Note:</strong> Delivery charges may vary based on product weight or special promotions. You will be informed during order confirmation.</p>
+            <p style="font-size: 0.9em; border-top: 1px solid #333; padding-top: 15px; color: #aaa;">
+                <i class="fas fa-circle-info"></i> <strong>Note:</strong> Final delivery charges will be confirmed automatically based on your address at the checkout page. During order confirmation, our team will call you if any adjustment is needed.
+            </p>
         </div>
     </section>
 
@@ -70,6 +90,7 @@
             <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
