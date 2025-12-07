@@ -719,19 +719,42 @@ function initAdminOrders() {
     };
 
     window.changeOrderStatus = async (id, status) => { 
-        await update(ref(db, 'orders/' + id), { status: status });
-        showPopup('Updated', `Order marked as ${status}`, 'success');
-    };
+    try {
+        const orderRef = ref(db, 'orders/' + id);
+        const snapshot = await get(orderRef);
+        
+        if(!snapshot.exists()) return;
+        const orderData = snapshot.val();
 
-    window.vOrd = async(id) => {
-        const s = await get(child(ref(db), 'orders/' + id));
-        if(!s.exists()) return;
-        const o = s.val();
-        const itemRows = o.items.map(i => `<tr><td>${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td><td style="text-align:center;">৳${i.price}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">৳${i.price*i.qty}</td></tr>`).join('');
-        const content = `<div style="text-align:left;"><p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p><p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p><p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p><div style="overflow-x:auto;"><table class="popup-table" style="width:100%; border-collapse: collapse; font-size:0.9em;"><thead><tr style="border-bottom:1px solid #555;"><th style="text-align:left; padding:5px;">Product</th><th style="text-align:center; padding:5px;">Rate</th><th style="text-align:center; padding:5px;">Qty</th><th style="text-align:right; padding:5px;">Total</th></tr></thead><tbody>${itemRows}</tbody></table></div><div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;"><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Delivery Charge:</span><span>৳${o.deliveryCharge}</span></div><hr style="border:0; border-top:1px dashed #333; margin:5px 0;"><div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em;"><span>Grand Total:</span><span>৳${o.total}</span></div></div></div>`;
-        showPopup('Order Details', content, 'info');
-    };
-}
+        // লজিক: যদি নতুন স্ট্যাটাস 'Cancelled' হয় এবং বর্তমান স্ট্যাটাস 'Cancelled' না থাকে
+        if (status === 'Cancelled' && orderData.status !== 'Cancelled') {
+            
+            // অর্ডারের প্রতিটি আইটেম লুপ করে স্টকে ফেরত পাঠানো
+            for(let item of orderData.items) {
+                const stockPath = `products/${item.id}/stock/${item.size.toLowerCase()}`;
+                const stockRef = ref(db, stockPath);
+                
+                // বর্তমান স্টকের পরিমাণ রিড করা
+                const stockSnap = await get(stockRef);
+                if(stockSnap.exists()) {
+                    const currentStock = parseInt(stockSnap.val()) || 0;
+                    // বর্তমান স্টকের সাথে অর্ডারের কোয়ান্টিটি যোগ করে আপডেট করা
+                    await set(stockRef, currentStock + parseInt(item.qty));
+                }
+            }
+            showPopup('Inventory Updated', 'Product quantities have been returned to stock.', 'success');
+        }
+
+        // ডাটাবেসে অর্ডারের স্ট্যাটাস (Pending/Shipped/Delivered/Cancelled) আপডেট করা
+        await update(orderRef, { status: status });
+        showPopup('Updated', `Order marked as ${status}`, 'success');
+
+    } catch (error) {
+        console.error("Status Update Error:", error);
+        showPopup('Error', 'Failed to update status. Check connection.', 'error');
+    }
+};
+
 
 // ADMIN: MESSAGES (FEEDBACK)
 function handleContactForm(form) {
