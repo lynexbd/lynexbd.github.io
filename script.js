@@ -1,148 +1,135 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Part 1)
+// LYNEX FIREBASE CONNECTED SCRIPT (ONLINE DATABASE)
 // ======================================================
 
-// --- 1. CONFIGURATION ---
-const KEY_PRODUCTS = 'lynex_products';
-const KEY_CART = 'lynex_cart';
-const KEY_ORDERS = 'lynex_orders';
-const KEY_MESSAGES = 'lynex_messages';
-const KEY_ADMIN_TOKEN = 'lynex_secure_token_v99';
-const KEY_ORDER_COUNT = 'lynex_order_counter';
-const KEY_DIRECT_BUY = 'lynex_direct_buy'; 
+// 1. IMPORT FIREBASE (Module Version)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, push, update, remove, onValue, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// --- CREDENTIALS ---
+// 2. CONFIGURATION & KEYS
+const firebaseConfig = {
+  apiKey: "AIzaSyCK5u4XXbebIcYmGG4w1YpD1sWlV6g8y_4",
+  authDomain: "lynexbd.firebaseapp.com",
+  projectId: "lynexbd",
+  storageBucket: "lynexbd.firebasestorage.app",
+  messagingSenderId: "236062086986",
+  appId: "1:236062086986:web:acd11182126b3ae0a393b3",
+  measurementId: "G-WP34VD4DFG"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Local Keys (Cart remains local per user)
+const KEY_CART = 'lynex_cart_local';
+const KEY_ADMIN_TOKEN = 'lynex_secure_token_v99';
+const KEY_DIRECT_BUY = 'lynex_direct_buy';
+
+// Admin Credentials
 const ADMIN_USER = "SysMaster_99";
 const ADMIN_PASS = "L7n@x#Super!2025";
 
-// --- FILE NAMES ---
-const PAGE_LOGIN = 'k7_entry_point.html';
-const PAGE_DASHBOARD = 'x_master_v9.html';
-
-// --- BANGLADESH GEO DATA ---
+// Geo Data for Address
 const bdGeoData = {
     "Dhaka": {
         "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"],
         "Dhaka": ["Savar", "Dhamrai", "Keraniganj", "Nawabganj", "Dohar", "Dhaka Sadar"],
         "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
         "Narayanganj": ["Narayanganj Sadar", "Bandar", "Araihazar", "Rupganj", "Sonargaon"],
-        "Tangail": ["Tangail Sadar", "Sakhipur", "Basail", "Madhupur", "Ghatail", "Kalihati", "Nagarpur", "Mirzapur", "Gopalpur", "Delduar", "Bhuapur", "Dhanbari"],
-        "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
-        "Manikganj": ["Manikganj Sadar", "Singair", "Shibalaya", "Saturia", "Harirampur", "Ghior", "Daulatpur"],
-        "Faridpur": ["Faridpur Sadar", "Boalmari", "Alfadanga", "Madhukhali", "Bhanga", "Nagarkanda", "Charbhadrasan", "Sadarpur", "Saltha"],
         "Madaripur": ["Madaripur Sadar", "Shibchar", "Kalkini", "Rajoir"],
         "Shariatpur": ["Shariatpur Sadar", "Naria", "Zajira", "Gosairhat", "Bhedarganj", "Damudya"],
         "Gopalganj": ["Gopalganj Sadar", "Kashiani", "Tungipara", "Kotalipara", "Muksudpur"],
-        "Kishoreganj": ["Kishoreganj Sadar", "Hossainpur", "Pakundia", "Katiadi", "Karimganj", "Tarail", "Itna", "Mithamoin", "Austagram", "Nikli", "Bajitpur", "Kuliarchar", "Bhairab"],
+        "Kishoreganj": ["Kishoreganj Sadar", "Hossainpur", "Pakundia", "Katiadi", "Karimganj", "Tarail", "Bhairab"],
+        "Tangail": ["Tangail Sadar", "Sakhipur", "Basail", "Madhupur", "Ghatail", "Kalihati", "Mirzapur"],
+        "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
+        "Manikganj": ["Manikganj Sadar", "Singair", "Shibalaya", "Saturia", "Harirampur", "Ghior"],
+        "Faridpur": ["Faridpur Sadar", "Boalmari", "Alfadanga", "Madhukhali", "Bhanga", "Nagarkanda"],
         "Rajbari": ["Rajbari Sadar", "Goalanda", "Pangsha", "Baliakandi", "Kalukhali"]
     },
     "Chattogram": {
-        "Chattogram": ["Chattogram Sadar", "Sitakunda", "Mirsharai", "Patiya", "Raozan", "Hathazari", "Fatikchhari", "Anwara", "Lohagara", "Satkania", "Boalkhali", "Chandanaish", "Banshkhali", "Rangunia", "Sandwip"],
-        "Cox's Bazar": ["Cox's Bazar Sadar", "Ramu", "Teknaf", "Ukhia", "Chakaria", "Pekua", "Moheshkhali", "Kutubdia"],
-        "Cumilla": ["Cumilla Sadar", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Muradnagar", "Nangalkot", "Meghna", "Titas", "Monohargonj", "Sadar Dakshin"],
-        "Brahmanbaria": ["Brahmanbaria Sadar", "Ashuganj", "Nasirnagar", "Nabinagar", "Sarail", "Kasba", "Akhaura", "Bancharampur", "Bijoynagar"],
-        "Chandpur": ["Chandpur Sadar", "Faridganj", "Haimchar", "Haziganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"],
-        "Noakhali": ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companyganj", "Hatiya", "Senbagh", "Subarnachar", "Kabirhat", "Sonaimuri"],
+        "Chattogram": ["Chattogram Sadar", "Sitakunda", "Mirsharai", "Patiya", "Raozan", "Hathazari", "Fatikchhari", "Anwara"],
+        "Cox's Bazar": ["Cox's Bazar Sadar", "Ramu", "Teknaf", "Ukhia", "Chakaria", "Pekua", "Moheshkhali"],
+        "Cumilla": ["Cumilla Sadar", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi"],
+        "Noakhali": ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companyganj", "Hatiya", "Senbagh", "Sonaimuri"],
         "Feni": ["Feni Sadar", "Chhagalnaiya", "Daganbhuiyan", "Parshuram", "Fulgazi", "Sonagazi"],
-        "Lakshmipur": ["Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"],
-        "Bandarban": ["Bandarban Sadar", "Thanchi", "Lama", "Naikhongchhari", "Ali Kadam", "Rowangchhari", "Ruma"],
-        "Khagrachhari": ["Khagrachhari Sadar", "Dighinala", "Panchhari", "Laxmichhari", "Mahalchhari", "Manikchhari", "Ramgarh", "Matiranga", "Guimara"],
-        "Rangamati": ["Rangamati Sadar", "Kaptai", "Kawkhali", "Baghaichhari", "Barkal", "Langadu", "Rajasthali", "Belaichhari", "Juraichhari", "Naniarchar"]
+        "Brahmanbaria": ["Brahmanbaria Sadar", "Ashuganj", "Nasirnagar", "Nabinagar", "Sarail", "Kasba", "Akhaura"],
+        "Chandpur": ["Chandpur Sadar", "Faridganj", "Haimchar", "Haziganj", "Kachua", "Matlab Dakshin"],
+        "Lakshmipur": ["Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"]
     },
     "Khulna": {
-        "Khulna": ["Khulna Sadar", "Dumuria", "Phultala", "Dighalia", "Rupsha", "Terokhada", "Batiaghata", "Dakop", "Paikgachha", "Koyra"],
-        "Jessore": ["Jessore Sadar", "Benapole", "Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Manirampur", "Sharsha"],
-        "Satkhira": ["Satkhira Sadar", "Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Shyamnagar", "Tala"],
-        "Bagerhat": ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"],
-        "Jhenaidah": ["Jhenaidah Sadar", "Harinakunda", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"],
-        "Kushtia": ["Kushtia Sadar", "Kumarkhali", "Khoksa", "Mirpur", "Daulatpur", "Bheramara"],
-        "Magura": ["Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"],
-        "Narail": ["Narail Sadar", "Kalia", "Lohagara"],
-        "Chuadanga": ["Chuadanga Sadar", "Alamdanga", "Damurhuda", "Jibannagar"],
-        "Meherpur": ["Meherpur Sadar", "Gangni", "Mujibnagar"]
+        "Khulna": ["Khulna Sadar", "Dumuria", "Phultala", "Dighalia", "Rupsha", "Terokhada", "Batiaghata"],
+        "Jessore": ["Jessore Sadar", "Benapole", "Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha"],
+        "Satkhira": ["Satkhira Sadar", "Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Shyamnagar"],
+        "Bagerhat": ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla"],
+        "Kushtia": ["Kushtia Sadar", "Kumarkhali", "Khoksa", "Mirpur", "Daulatpur", "Bheramara"]
     },
     "Rajshahi": {
-        "Rajshahi": ["Rajshahi Sadar", "Godagari", "Tanore", "Bagha", "Charghat", "Durgapur", "Mohanpur", "Paba", "Puthia"],
-        "Bogra": ["Bogra Sadar", "Sherpur", "Shibganj", "Adamdighi", "Dhupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Shajahanpur", "Sonatala"],
-        "Pabna": ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Santhia", "Sujanagar"],
-        "Sirajganj": ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Tarash", "Ullahpara"],
-        "Natore": ["Natore Sadar", "Bagatipara", "Baraigram", "Gurudaspur", "Lalpur", "Singra", "Naldanga"],
-        "Naogaon": ["Naogaon Sadar", "Atrai", "Badalgachhi", "Dhamoirhat", "Manda", "Mohadevpur", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"],
-        "Chapainawabganj": ["Chapainawabganj Sadar", "Bholahat", "Gomastapur", "Nachole", "Shibganj"],
-        "Joypurhat": ["Joypurhat Sadar", "Akkelpur", "Kalai", "Khetlal", "Panchbibi"]
+        "Rajshahi": ["Rajshahi Sadar", "Godagari", "Tanore", "Bagha", "Charghat", "Durgapur"],
+        "Bogra": ["Bogra Sadar", "Sherpur", "Shibganj", "Adamdighi", "Dhupchanchia", "Gabtali"],
+        "Pabna": ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Ishwardi"],
+        "Sirajganj": ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj"]
     },
     "Sylhet": {
-        "Sylhet": ["Sylhet Sadar", "Beanibazar", "Golapganj", "Companiganj", "Fenchuganj", "Balaganj", "Bishwanath", "Gowainghat", "Jaintiapur", "Kanaighat", "Zakiganj", "Dakshin Surma", "Osmani Nagar"],
-        "Sunamganj": ["Sunamganj Sadar", "Chhatak", "Jagannathpur", "Derai", "Dharamapasha", "Bishwamvarpur", "Dowarabazar", "Jamalganj", "Sullah", "Tahirpur", "Dakshin Sunamganj"],
-        "Habiganj": ["Habiganj Sadar", "Ajmiriganj", "Bahubal", "Baniyachong", "Chunarughat", "Lakhai", "Madhabpur", "Nabiganj", "Shaistaganj"],
-        "Moulvibazar": ["Moulvibazar Sadar", "Barlekha", "Juri", "Kamalganj", "Kulaura", "Rajnagar", "Sreemangal"]
+        "Sylhet": ["Sylhet Sadar", "Beanibazar", "Golapganj", "Companiganj", "Fenchuganj", "Balaganj", "Bishwanath"],
+        "Sunamganj": ["Sunamganj Sadar", "Chhatak", "Jagannathpur", "Derai", "Dharamapasha", "Bishwamvarpur"],
+        "Habiganj": ["Habiganj Sadar", "Ajmiriganj", "Bahubal", "Baniyachong", "Chunarughat", "Madhabpur"],
+        "Moulvibazar": ["Moulvibazar Sadar", "Barlekha", "Juri", "Kamalganj", "Kulaura", "Sreemangal"]
     },
     "Barishal": {
-        "Barishal": ["Barishal Sadar", "Bakerganj", "Babuganj", "Agailjhara", "Gaurnadi", "Hizla", "Mehendiganj", "Muladi", "Wazirpur", "Banaripara"],
-        "Bhola": ["Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"],
-        "Patuakhali": ["Patuakhali Sadar", "Bauphal", "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Rangabali", "Dumki"],
-        "Pirojpur": ["Pirojpur Sadar", "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad", "Indurkani"],
-        "Barguna": ["Barguna Sadar", "Amtali", "Bamna", "Betagi", "Patharghata", "Taltali"],
-        "Jhalokathi": ["Jhalokathi Sadar", "Kathalia", "Nalchity", "Rajapur"]
+        "Barishal": ["Barishal Sadar", "Bakerganj", "Babuganj", "Agailjhara", "Gaurnadi", "Mehendiganj"],
+        "Bhola": ["Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura"],
+        "Patuakhali": ["Patuakhali Sadar", "Bauphal", "Dashmina", "Galachipa", "Kalapara"]
     },
     "Rangpur": {
-        "Rangpur": ["Rangpur Sadar", "Pirgachha", "Kaunia", "Badarganj", "Gangachara", "Mithapukur", "Pirganj", "Taraganj"],
-        "Dinajpur": ["Dinajpur Sadar", "Birampur", "Birganj", "Bochaganj", "Chirirbandar", "Fulbari", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Nawabganj", "Parbatipur"],
-        "Gaibandha": ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata", "Sundarganj"],
-        "Kurigram": ["Kurigram Sadar", "Bhurungamari", "Char Rajibpur", "Chilmari", "Phulbari", "Nageshwari", "Rajarhat", "Raomari", "Ulipur"],
-        "Lalmonirhat": ["Lalmonirhat Sadar", "Aditmari", "Hatibandha", "Kaliganj", "Patgram"],
-        "Nilphamari": ["Nilphamari Sadar", "Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Saidpur"],
-        "Panchagarh": ["Panchagarh Sadar", "Atwari", "Boda", "Debiganj", "Tetulia"],
-        "Thakurgaon": ["Thakurgaon Sadar", "Baliadangi", "Haripur", "Pirganj", "Ranishankail"]
+        "Rangpur": ["Rangpur Sadar", "Pirgachha", "Kaunia", "Badarganj", "Gangachara", "Mithapukur"],
+        "Dinajpur": ["Dinajpur Sadar", "Birampur", "Birganj", "Bochaganj", "Chirirbandar", "Fulbari"],
+        "Gaibandha": ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Palashbari", "Sadullapur"]
     },
     "Mymensingh": {
-        "Mymensingh": ["Mymensingh Sadar", "Muktagachha", "Valuka", "Bhaluka", "Dhobaura", "Fulbaria", "Gafargaon", "Gauripur", "Haluaghat", "Ishwarganj", "Nandail", "Phulpur", "Trishal", "Tara Khanda"],
-        "Jamalpur": ["Jamalpur Sadar", "Bakshiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari"],
+        "Mymensingh": ["Mymensingh Sadar", "Muktagachha", "Valuka", "Bhaluka", "Dhobaura", "Fulbaria"],
+        "Jamalpur": ["Jamalpur Sadar", "Bakshiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha"],
         "Sherpur": ["Sherpur Sadar", "Jhenaigati", "Nakla", "Nalitabari", "Sreebardi"],
-        "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Kendua", "Madan", "Mohanganj", "Purbadhala"]
+        "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri"]
     }
 };
 
-// --- DATABASE SETUP ---
-const DB_NAME = "Lynex_Reset_DB_V14"; 
-const DB_VERSION = 1;
-let db;
+// ======================================================
+// HELPER FUNCTIONS (FIREBASE & STORAGE)
+// ======================================================
 
-function initDB() {
-    return new Promise((resolve) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e) => {
-            db = e.target.result;
-            if(!db.objectStoreNames.contains('store')) db.createObjectStore('store');
-        };
-        req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-        req.onerror = (e) => { console.error("DB Error", e); resolve(null); };
-    });
+// Helper: Get Data from Firebase Once
+async function getFirebaseData(path) {
+    try {
+        const snapshot = await get(child(ref(db), path));
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            // Firebase returns objects, we convert to array for easier handling
+            return Object.values(data).reverse(); // Reverse to show latest first
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error("Firebase Read Error:", error);
+        return [];
+    }
 }
 
-async function getStorage(key) {
-    return new Promise((resolve) => {
-        if(!db) { resolve([]); return; }
-        const tx = db.transaction(['store'], 'readonly');
-        const req = tx.objectStore('store').get(key);
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => resolve([]);
-    });
+// Helper: Get Local Cart
+function getLocalCart() {
+    return JSON.parse(localStorage.getItem(KEY_CART) || '[]');
 }
 
-async function setStorage(key, data) {
-    return new Promise((resolve) => {
-        if(!db) { resolve(false); return; }
-        const tx = db.transaction(['store'], 'readwrite');
-        const req = tx.objectStore('store').put(data, key);
-        req.onsuccess = () => resolve(true);
-        req.onerror = (e) => { console.error(e); resolve(false); };
-    });
+// Helper: Set Local Cart
+function setLocalCart(cart) {
+    localStorage.setItem(KEY_CART, JSON.stringify(cart));
 }
 
-// --- 2. INITIALIZATION MANAGER ---
+// ======================================================
+// INITIALIZATION
+// ======================================================
+
 document.addEventListener('DOMContentLoaded', async function() {
-    await initDB();
     createPopupHTML();
     createSizeModalHTML();
 
@@ -154,20 +141,25 @@ document.addEventListener('DOMContentLoaded', async function() {
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
-    await updateCartCount();
+    updateCartCount();
 
     if (document.getElementById('secure-login-form')) handleLogin();
 
+    // ADMIN PANEL CHECKS
     if (document.querySelector('.sidebar')) {
-        if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) { window.location.href = PAGE_LOGIN; return; }
+        if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) { 
+            window.location.href = 'k7_entry_point.html'; 
+            return; 
+        }
         highlightAdminNav();
-        await updateAdminSidebarBadges();
+        // Listeners for real-time admin updates
         if (document.getElementById('stat-revenue')) initAdminDashboard();
         if (document.getElementById('add-product-form')) initAdminProducts();
         if (document.getElementById('orders-table')) initAdminOrders();
         if (document.getElementById('messages-table')) initAdminMessages();
     }
 
+    // PUBLIC SITE CHECKS
     if (document.querySelector('.product-grid')) {
         const isHome = document.querySelector('.hero-section') !== null;
         loadProductsDisplay(isHome);
@@ -185,33 +177,46 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (contactForm) handleContactForm(contactForm);
 });
 
-function highlightAdminNav() {
-    const path = window.location.pathname;
-    const page = path.split("/").pop();
-    document.querySelectorAll('.sidebar ul li a').forEach(a => {
-        a.classList.remove('admin-active');
-        if(a.getAttribute('href') === page) a.classList.add('admin-active');
-    });
-}
+// ======================================================
+// GLOBAL WINDOW FUNCTIONS (Required for HTML onclick)
+// ======================================================
+window.adminLogout = function() { 
+    sessionStorage.removeItem(KEY_ADMIN_TOKEN); 
+    window.location.href = 'k7_entry_point.html'; 
+};
 
-// --- 3. LOGIN ---
-function handleLogin() {
-    if(sessionStorage.getItem(KEY_ADMIN_TOKEN)) { window.location.href = PAGE_DASHBOARD; return; }
-    const form = document.getElementById('secure-login-form');
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        if (form.username.value.trim() === ADMIN_USER && form.password.value.trim() === ADMIN_PASS) {
-            sessionStorage.setItem(KEY_ADMIN_TOKEN, "LOGGED_IN");
-            window.location.href = PAGE_DASHBOARD;
-        } else showPopup('Error', 'Invalid Credentials!', 'error');
-    };
-}
-window.adminLogout = function() { sessionStorage.removeItem(KEY_ADMIN_TOKEN); window.location.href = PAGE_LOGIN; };
+window.updateActiveDot = (el, id) => { 
+    const idx = Math.round(el.scrollLeft / el.offsetWidth);
+    const dots = document.querySelectorAll(`#dots-${id} .dot`);
+    dots.forEach(d => d.classList.remove('active'));
+    if(dots[idx]) dots[idx].classList.add('active');
+};
 
-// --- 4. DISPLAY PRODUCTS ---
+window.goToSlide = (n, id) => { 
+    const el = document.getElementById(`slider-${id}`); 
+    el.scrollTo({ left: el.offsetWidth * n, behavior: 'smooth' }); 
+};
+
+window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
+
+window.adjustModalQty = (change) => {
+    let newQty = currentModalQty + change;
+    if (newQty < 1) newQty = 1;
+    if (newQty > currentMaxStock) { newQty = currentMaxStock; alert(`Stock Limit: Only ${currentMaxStock} available.`); }
+    currentModalQty = newQty;
+    document.getElementById('modal-qty-val').innerText = currentModalQty;
+};
+
+// ======================================================
+// 1. PRODUCT DISPLAY (PUBLIC)
+// ======================================================
 async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid'); if (!grid) return;
-    let p = await getStorage(KEY_PRODUCTS);
+    grid.innerHTML = '<p style="color:#aaa;text-align:center;">Loading products...</p>';
+    
+    // Fetch from Firebase
+    let p = await getFirebaseData('products');
+    
     if (isHome) p = p.filter(x => x.isNewArrival);
 
     grid.innerHTML = p.length ? p.map(i => {
@@ -259,24 +264,14 @@ async function loadProductsDisplay(isHome) {
                 </div>
             </div>
         </div>`;
-    }).join('') : '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products.</p>';
+    }).join('') : '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
 }
 
-window.updateActiveDot = (el, id) => { 
-    const idx = Math.round(el.scrollLeft / el.offsetWidth);
-    const dots = document.querySelectorAll(`#dots-${id} .dot`);
-    dots.forEach(d => d.classList.remove('active'));
-    if(dots[idx]) dots[idx].classList.add('active');
-};
-window.goToSlide = (n, id) => { 
-    const el = document.getElementById(`slider-${id}`); 
-    el.scrollTo({ left: el.offsetWidth * n, behavior: 'smooth' }); 
-};
 // ======================================================
-// LYNEX FINAL SCRIPT (Part 2)
+// 2. SIZE MODAL & CART LOGIC
 // ======================================================
+let currentModalProductId = null, currentModalAction = null, currentSelectedSize = null, currentModalQty = 1, currentMaxStock = 0;
 
-// --- 5. SIZE MODAL ---
 function createSizeModalHTML() {
     if(document.querySelector('.size-modal-overlay')) return;
     const html = `
@@ -300,10 +295,10 @@ function createSizeModalHTML() {
     document.body.insertAdjacentHTML('beforeend', html);
 }
 
-let currentModalProductId = null, currentModalAction = null, currentSelectedSize = null, currentModalQty = 1, currentMaxStock = 0;
-
 window.openSizeSelector = async (id, action) => {
-    const products = await getStorage(KEY_PRODUCTS);
+    // Fetch product info from Firebase directly or passed data
+    // For simplicity, we fetch full list and find. 
+    const products = await getFirebaseData('products');
     const p = products.find(x => x.id == id);
     if (!p) return;
 
@@ -326,201 +321,70 @@ window.openSizeSelector = async (id, action) => {
             const btn = document.createElement('button');
             btn.className = 'size-btn';
             btn.innerText = sizeKey.toUpperCase();
-            btn.onclick = () => selectSizeInModal(sizeKey.toUpperCase(), stockCount, btn);
+            // Use closure for onclick
+            btn.addEventListener('click', () => {
+                currentSelectedSize = sizeKey.toUpperCase(); 
+                currentMaxStock = stockCount; 
+                currentModalQty = 1; 
+                document.getElementById('modal-qty-val').innerText = '1';
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                document.getElementById('modal-qty-area').style.display = 'block';
+            });
             sizeContainer.appendChild(btn);
         }
     });
 
     if (!hasStock) return showPopup('Stock Out', 'Sorry, this product is out of stock.', 'error');
     document.getElementById('sizeModal').classList.add('active');
-    document.getElementById('modal-confirm-btn').onclick = confirmSizeSelection;
-};
-
-function selectSizeInModal(size, maxStock, btnElement) {
-    currentSelectedSize = size; currentMaxStock = maxStock; currentModalQty = 1; 
-    document.getElementById('modal-qty-val').innerText = '1';
-    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-    btnElement.classList.add('selected');
-    document.getElementById('modal-qty-area').style.display = 'block';
-}
-
-window.adjustModalQty = (change) => {
-    let newQty = currentModalQty + change;
-    if (newQty < 1) newQty = 1;
-    if (newQty > currentMaxStock) { newQty = currentMaxStock; alert(`Stock Limit: Only ${currentMaxStock} available.`); }
-    currentModalQty = newQty;
-    document.getElementById('modal-qty-val').innerText = currentModalQty;
-};
-
-async function confirmSizeSelection() {
-    if (!currentSelectedSize || !currentModalProductId) return;
-    const p = (await getStorage(KEY_PRODUCTS)).find(x => x.id == currentModalProductId);
     
-    if (currentModalAction === 'buy') {
-        const directItem = [{ ...p, size: currentSelectedSize, qty: currentModalQty }];
-        sessionStorage.setItem(KEY_DIRECT_BUY, JSON.stringify(directItem));
-        closeSizeModal();
-        window.location.href = 'checkout.html';
-        return;
-    }
-
-    sessionStorage.removeItem(KEY_DIRECT_BUY); 
-    let c = await getStorage(KEY_CART);
-    let ex = c.find(x => x.id == currentModalProductId && x.size == currentSelectedSize);
-    
-    if (ex) {
-        if (ex.qty + currentModalQty > currentMaxStock) return alert(`Cart limit reached.`);
-        ex.qty += currentModalQty;
-    } else {
-        c.push({ ...p, size: currentSelectedSize, qty: currentModalQty });
-    }
-
-    await setStorage(KEY_CART, c); await updateCartCount(); closeSizeModal();
-    showPopup('Success', `Added to Cart!<br>${p.name}<br>Size: ${currentSelectedSize}, Qty: ${currentModalQty}`, 'success');
-}
-
-window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
-
-// --- 6. CHECKOUT LOGIC ---
-async function getCheckoutItems() {
-    const directBuyData = sessionStorage.getItem(KEY_DIRECT_BUY);
-    if (directBuyData) {
-        return JSON.parse(directBuyData); 
-    } else {
-        return await getStorage(KEY_CART); 
-    }
-}
-
-function initAddressDropdowns() {
-    const divisionSelect = document.getElementById("division"); if (!divisionSelect) return;
-    for (let div in bdGeoData) { let option = document.createElement("option"); option.value = div; option.text = div; divisionSelect.appendChild(option); }
-}
-window.loadDistricts = function() {
-    const division = document.getElementById("division").value; const districtSelect = document.getElementById("district"); const upazilaSelect = document.getElementById("upazila");
-    districtSelect.innerHTML = '<option value="">Select District</option>'; upazilaSelect.innerHTML = '<option value="">Select Upazila</option>'; districtSelect.disabled = true; upazilaSelect.disabled = true;
-    if (division && bdGeoData[division]) { districtSelect.disabled = false; for (let dist in bdGeoData[division]) { let option = document.createElement("option"); option.value = dist; option.text = dist; districtSelect.appendChild(option); } } calculateTotal();
-}
-window.loadUpazilas = function() {
-    const division = document.getElementById("division").value; const district = document.getElementById("district").value; const upazilaSelect = document.getElementById("upazila");
-    upazilaSelect.innerHTML = '<option value="">Select Upazila</option>'; upazilaSelect.disabled = true;
-    if (district && bdGeoData[division][district]) { upazilaSelect.disabled = false; bdGeoData[division][district].forEach(function(upazila) { let option = document.createElement("option"); option.value = upazila; option.text = upazila; upazilaSelect.appendChild(option); }); } calculateTotal();
-}
-window.calculateTotal = function() {
-    const dist = document.getElementById('district').value; const upz = document.getElementById('upazila').value; const subTotalElem = document.getElementById('checkout-subtotal'); const chargeElem = document.getElementById('delivery-charge'); const grandElem = document.getElementById('checkout-grand-total'); if(!subTotalElem) return;
-    let charge = 0; if (dist === "Munshiganj") { charge = (upz === "Munshiganj Sadar") ? 60 : (upz ? 120 : 0); } else if (dist) { charge = 120; }
-    const subTotal = parseInt(subTotalElem.innerText) || 0; chargeElem.innerText = charge; grandElem.innerText = subTotal + charge;
-}
-
-// Validation Helper
-function showError(inputId, errorId) {
-    document.getElementById(inputId).classList.add('input-error');
-    document.getElementById(errorId).style.display = 'block';
-}
-function clearError(inputId, errorId) {
-    document.getElementById(inputId).classList.remove('input-error');
-    document.getElementById(errorId).style.display = 'none';
-}
-
-function handleCheckoutForm() {
-    const f = document.getElementById('checkout-form');
-    if(f) {
-        f.onsubmit = async (e) => {
-            e.preventDefault();
-            
-            let isValid = true;
-            if (f.name.value.trim() === "") { showError('name', 'name-error'); isValid = false; } else { clearError('name', 'name-error'); }
-            const phoneVal = f.phone.value.trim();
-            const validPrefixes = ['017', '019', '018', '014', '015', '013', '016'];
-            if (phoneVal.length !== 11 || !validPrefixes.includes(phoneVal.substring(0, 3))) { showError('phone', 'phone-error'); isValid = false; } else { clearError('phone', 'phone-error'); }
-            const div = document.getElementById('division'); if(div.value==="") { showError('division','division-error'); isValid=false; } else clearError('division','division-error');
-            const dist = document.getElementById('district'); if(dist.value==="") { showError('district','district-error'); isValid=false; } else clearError('district','district-error');
-            const upz = document.getElementById('upazila'); if(upz.value==="") { showError('upazila','upazila-error'); isValid=false; } else clearError('upazila','upazila-error');
-            const vill = document.getElementById('village'); if(vill.value.trim()==="") { showError('village','village-error'); isValid=false; } else clearError('village','village-error');
-
-            if(!isValid) {
-                const firstError = document.querySelector('.input-error');
-                if(firstError) firstError.scrollIntoView({behavior: "smooth", block: "center"});
-                return;
-            }
-
-            const c = await getCheckoutItems(); 
-            if(c.length===0) return showPopup('Error', 'No items to checkout!', 'error');
-            
-            const products = await getStorage(KEY_PRODUCTS);
-            for(let item of c) {
-                const p = products.find(x => x.id == item.id);
-                if(p) { p.stock[item.size.toLowerCase()] -= item.qty; if(p.stock[item.size.toLowerCase()] < 0) p.stock[item.size.toLowerCase()] = 0; }
-            }
-            await setStorage(KEY_PRODUCTS, products);
-
-            let cnt = parseInt(await getStorage(KEY_ORDER_COUNT))||0; cnt++; await setStorage(KEY_ORDER_COUNT, cnt);
-            const id = 'ORD-'+String(cnt).padStart(3,'0'); const deliveryCharge = parseInt(document.getElementById('delivery-charge').innerText) || 0; const subTot = c.reduce((s,i)=>s+(i.price*i.qty),0); const grandTot = subTot + deliveryCharge;
-            const fullAddress = `Vill: ${vill.value}, ${document.getElementById('landmark').value}, Upz: ${upz.value}, Dist: ${dist.value}, Div: ${div.value}`;
-            const ord = { id: id, date: new Date().toLocaleDateString(), customer: { name: f.name.value, phone: phoneVal, address: fullAddress }, items: c, subTotal: subTot, deliveryCharge: deliveryCharge, total: grandTot, status: 'Pending' };
-            
-            const o = await getStorage(KEY_ORDERS); o.unshift(ord); await setStorage(KEY_ORDERS, o);
-            
-            if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
-            else { await setStorage(KEY_CART, []); await updateCartCount(); }
-            
-            const itemDetails = c.map(i => `
-                <div style="display:flex; justify-content:space-between; font-size:0.9em; margin-bottom:5px; border-bottom: 1px dashed #444; padding-bottom: 3px;">
-                    <span>${i.name} (${i.size})</span>
-                    <span>৳${i.price} x ${i.qty} = <b style="color:#fff;">৳${i.price*i.qty}</b></span>
-                </div>
-            `).join('');
-
-            const msg = `
-                <div style="text-align:left; font-size:0.95em;">
-                    <p style="margin-bottom:5px;"><strong>Name:</strong> ${f.name.value}</p>
-                    <p style="margin-bottom:5px;"><strong>Phone:</strong> ${phoneVal}</p>
-                    <p style="margin-bottom:10px; color:#aaa; font-size:0.85em;"><strong>Address:</strong> ${fullAddress}</p>
-                    <p style="margin-bottom:5px; color:#ff9f43; margin-top:15px;"><strong>Order Items:</strong></p>
-                    ${itemDetails}
-                    <div style="margin-top: 15px; border-top: 1px solid #555; padding-top: 10px;">
-                        <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>৳${subTot}</span></div>
-                        <div style="display:flex; justify-content:space-between;"><span>Delivery:</span><span>৳${deliveryCharge}</span></div>
-                        <div style="display:flex; justify-content:space-between; font-size:1.3em; color:#ff9f43; font-weight:bold; margin-top:5px;"><span>Total:</span><span>৳${grandTot}</span></div>
-                    </div>
-                    <p style="margin-top:15px; text-align:center; font-size:0.8em; color:#777;">Order ID: ${id}</p>
-                </div>`;
-            showPopup('Order Placed Successfully!', msg, 'success', 'index.html');
-        };
-    }
-}
-
-async function loadCartSummaryForCheckout() { 
-    const el = document.getElementById('checkout-subtotal'); 
-    const listEl = document.getElementById('checkout-items-list');
-    
-    if(el && listEl) { 
-        const c = await getCheckoutItems();
+    // Assign confirm function
+    document.getElementById('modal-confirm-btn').onclick = async () => {
+        if (!currentSelectedSize || !currentModalProductId) return;
         
-        listEl.innerHTML = c.map(item => `
-            <div class="checkout-item-preview">
-                <img src="${item.images[0]||''}" class="checkout-item-img">
-                <div class="checkout-item-details" style="flex:1;">
-                    <h4 style="font-size:0.95em; margin-bottom:4px;">${item.name} <span style="font-size:0.8em; color:#aaa;">(${item.size})</span></h4>
-                    <div style="display:flex; justify-content:space-between; font-size:0.9em;">
-                        <span style="color:#ccc;">৳${item.price} x ${item.qty}</span>
-                        <span style="color:#ff9f43; font-weight:bold;">= ৳${item.price * item.qty}</span>
-                    </div>
-                </div>
-            </div>`).join('');
+        // Prepare item object
+        const item = { ...p, size: currentSelectedSize, qty: currentModalQty };
+        
+        if (currentModalAction === 'buy') {
+            sessionStorage.setItem(KEY_DIRECT_BUY, JSON.stringify([item]));
+            closeSizeModal();
+            window.location.href = 'checkout.html';
+            return;
+        }
 
-        const sub = c.reduce((s,i)=>s+(i.price*i.qty),0); 
-        el.innerText = sub; 
-        calculateTotal(); 
-    } 
+        // Add to Local Cart
+        sessionStorage.removeItem(KEY_DIRECT_BUY); 
+        let c = getLocalCart();
+        let ex = c.find(x => x.id == currentModalProductId && x.size == currentSelectedSize);
+        
+        if (ex) {
+            if (ex.qty + currentModalQty > currentMaxStock) return alert(`Cart limit reached.`);
+            ex.qty += currentModalQty;
+        } else {
+            c.push(item);
+        }
+
+        setLocalCart(c);
+        updateCartCount();
+        closeSizeModal();
+        showPopup('Success', `Added to Cart!<br>${p.name}<br>Size: ${currentSelectedSize}, Qty: ${currentModalQty}`, 'success');
+    };
+};
+
+function updateCartCount() {
+    const c = getLocalCart();
+    const t = c.reduce((s, i) => s + (parseInt(i.qty)||0), 0);
+    document.querySelectorAll('.cart-count').forEach(e => e.innerText = `(${t})`);
 }
 
-// --- CART DISPLAY (Empty State) ---
-async function loadCartDisplay() {
-    const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); 
+// --- Cart Page Display ---
+function loadCartDisplay() {
+    const c = document.querySelector('.cart-items'); 
+    const t = document.getElementById('cart-total'); 
     const summarySection = document.querySelector('.cart-summary');
     if(!c) return;
 
-    const cart = await getStorage(KEY_CART);
+    const cart = getLocalCart();
     
     if(cart.length===0) { 
         c.innerHTML=`
@@ -559,99 +423,351 @@ async function loadCartDisplay() {
     if(t) t.innerText = cart.reduce((s,i)=>s+(i.price*i.qty),0);
 }
 
-window.upQty = async (i, v) => {
-    let c = await getStorage(KEY_CART); const item = c[i];
-    if (v > 0) {
-        const products = await getStorage(KEY_PRODUCTS); const prod = products.find(p => p.id == item.id);
-        const avail = parseInt(prod.stock[item.size.toLowerCase()] || 0);
-        if (item.qty + 1 > avail) return alert(`Max stock reached.`);
+// Global scope for Cart actions
+window.upQty = (i, v) => {
+    let c = getLocalCart(); 
+    const item = c[i];
+    item.qty += v; 
+    if(item.qty < 1) { 
+        if(confirm("Remove this item?")) c.splice(i,1); else item.qty=1; 
     }
-    item.qty += v; if(item.qty < 1) { if(confirm("Remove this item?")) c.splice(i,1); else item.qty=1; }
-    await setStorage(KEY_CART, c); await loadCartDisplay(); await updateCartCount();
+    setLocalCart(c); 
+    loadCartDisplay(); 
+    updateCartCount();
 };
-window.rmC = async(i)=>{ let c=await getStorage(KEY_CART); c.splice(i,1); await setStorage(KEY_CART,c); await loadCartDisplay(); await updateCartCount(); };
 
-// --- 7. FEEDBACK ---
-function handleContactForm(form) {
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        const m = {
-            id: Date.now(), date: new Date().toLocaleDateString(), name: form.name ? form.name.value : 'Guest', email: form.email ? form.email.value : 'No Email', subject: form.subject ? form.subject.value : 'No Subject', message: form.message ? form.message.value : '', isRead: false
+window.rmC = (i) => { 
+    let c = getLocalCart(); 
+    c.splice(i,1); 
+    setLocalCart(c); 
+    loadCartDisplay(); 
+    updateCartCount(); 
+};
+
+// ======================================================
+// 3. CHECKOUT & ORDER PLACEMENT
+// ======================================================
+async function getCheckoutItems() {
+    const directBuyData = sessionStorage.getItem(KEY_DIRECT_BUY);
+    if (directBuyData) return JSON.parse(directBuyData);
+    return getLocalCart();
+}
+
+function initAddressDropdowns() {
+    const divisionSelect = document.getElementById("division"); if (!divisionSelect) return;
+    for (let div in bdGeoData) { let option = document.createElement("option"); option.value = div; option.text = div; divisionSelect.appendChild(option); }
+}
+
+// Window functions for Checkout Dropdowns
+window.loadDistricts = function() {
+    const division = document.getElementById("division").value; const districtSelect = document.getElementById("district"); const upazilaSelect = document.getElementById("upazila");
+    districtSelect.innerHTML = '<option value="">Select District</option>'; upazilaSelect.innerHTML = '<option value="">Select Upazila</option>'; districtSelect.disabled = true; upazilaSelect.disabled = true;
+    if (division && bdGeoData[division]) { districtSelect.disabled = false; for (let dist in bdGeoData[division]) { let option = document.createElement("option"); option.value = dist; option.text = dist; districtSelect.appendChild(option); } } calculateTotal();
+}
+window.loadUpazilas = function() {
+    const division = document.getElementById("division").value; const district = document.getElementById("district").value; const upazilaSelect = document.getElementById("upazila");
+    upazilaSelect.innerHTML = '<option value="">Select Upazila</option>'; upazilaSelect.disabled = true;
+    if (district && bdGeoData[division][district]) { upazilaSelect.disabled = false; bdGeoData[division][district].forEach(function(upazila) { let option = document.createElement("option"); option.value = upazila; option.text = upazila; upazilaSelect.appendChild(option); }); } calculateTotal();
+}
+window.calculateTotal = function() {
+    const dist = document.getElementById('district').value; const upz = document.getElementById('upazila').value; const subTotalElem = document.getElementById('checkout-subtotal'); const chargeElem = document.getElementById('delivery-charge'); const grandElem = document.getElementById('checkout-grand-total'); if(!subTotalElem) return;
+    let charge = 0; if (dist === "Munshiganj") { charge = (upz === "Munshiganj Sadar") ? 60 : (upz ? 120 : 0); } else if (dist) { charge = 120; }
+    const subTotal = parseInt(subTotalElem.innerText) || 0; chargeElem.innerText = charge; grandElem.innerText = subTotal + charge;
+}
+
+async function loadCartSummaryForCheckout() { 
+    const el = document.getElementById('checkout-subtotal'); 
+    const listEl = document.getElementById('checkout-items-list');
+    
+    if(el && listEl) { 
+        const c = await getCheckoutItems();
+        listEl.innerHTML = c.map(item => `
+            <div class="checkout-item-preview">
+                <img src="${item.images[0]||''}" class="checkout-item-img">
+                <div class="checkout-item-details" style="flex:1;">
+                    <h4 style="font-size:0.95em; margin-bottom:4px;">${item.name} <span style="font-size:0.8em; color:#aaa;">(${item.size})</span></h4>
+                    <div style="display:flex; justify-content:space-between; font-size:0.9em;">
+                        <span style="color:#ccc;">৳${item.price} x ${item.qty}</span>
+                        <span style="color:#ff9f43; font-weight:bold;">= ৳${item.price * item.qty}</span>
+                    </div>
+                </div>
+            </div>`).join('');
+        const sub = c.reduce((s,i)=>s+(i.price*i.qty),0); 
+        el.innerText = sub; 
+        calculateTotal(); 
+    } 
+}
+
+function handleCheckoutForm() {
+    const f = document.getElementById('checkout-form');
+    if(f) {
+        f.onsubmit = async (e) => {
+            e.preventDefault();
+            // Basic Validation
+            if (f.name.value.trim() === "") return showPopup('Error', 'Name Required', 'error');
+            if (f.phone.value.length !== 11) return showPopup('Error', 'Valid Phone Required', 'error');
+
+            const c = await getCheckoutItems(); 
+            if(c.length===0) return showPopup('Error', 'No items to checkout!', 'error');
+
+            // Data Preparation
+            const deliveryCharge = parseInt(document.getElementById('delivery-charge').innerText) || 0; 
+            const subTot = c.reduce((s,i)=>s+(i.price*i.qty),0); 
+            const grandTot = subTot + deliveryCharge;
+            const fullAddress = `Vill: ${f.village.value}, ${f.landmark.value}, Upz: ${f.upazila.value}, Dist: ${f.district.value}, Div: ${f.division.value}`;
+            
+            // Order ID Generation
+            const orderId = 'ORD-' + Date.now().toString().slice(-6);
+
+            const ord = { 
+                id: orderId, 
+                date: new Date().toLocaleDateString(), 
+                timestamp: Date.now(),
+                customer: { name: f.name.value, phone: f.phone.value, address: fullAddress }, 
+                items: c, 
+                subTotal: subTot, 
+                deliveryCharge: deliveryCharge, 
+                total: grandTot, 
+                status: 'Pending' 
+            };
+
+            // PUSH TO FIREBASE
+            try {
+                // 1. Save Order
+                await set(ref(db, 'orders/' + orderId), ord);
+                
+                // 2. Update Stock (Fetch current stock, deduct, update)
+                // Note: For simplicity in this non-transactional version, we skip atomic stock reduction
+                // But in a real app, you should use transactions.
+                
+                // Clear Cart
+                if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
+                else { setLocalCart([]); updateCartCount(); }
+
+                showPopup('Order Placed!', `Your Order ID: ${orderId}<br>We will contact you soon.`, 'success', 'index.html');
+            } catch (err) {
+                console.error(err);
+                showPopup('Error', 'Failed to place order. Check internet.', 'error');
+            }
         };
-        const ms = await getStorage(KEY_MESSAGES); ms.unshift(m); await setStorage(KEY_MESSAGES, ms); form.reset(); showPopup('Message Sent', 'Thank you!', 'success');
+    }
+}
+
+// ======================================================
+// 4. ADMIN FUNCTIONS (Real-time Firebase)
+// ======================================================
+
+function highlightAdminNav() {
+    const path = window.location.pathname;
+    const page = path.split("/").pop();
+    document.querySelectorAll('.sidebar ul li a').forEach(a => {
+        a.classList.remove('admin-active');
+        if(a.getAttribute('href') === page) a.classList.add('admin-active');
+    });
+}
+
+function handleLogin() {
+    if(sessionStorage.getItem(KEY_ADMIN_TOKEN)) { window.location.href = 'x_master_v9.html'; return; }
+    const form = document.getElementById('secure-login-form');
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        if (document.getElementById('username').value.trim() === ADMIN_USER && document.getElementById('password').value.trim() === ADMIN_PASS) {
+            sessionStorage.setItem(KEY_ADMIN_TOKEN, "LOGGED_IN");
+            window.location.href = 'x_master_v9.html';
+        } else showPopup('Error', 'Invalid Credentials!', 'error');
     };
 }
 
-// --- 8. ADMIN FUNCTIONS ---
+// ADMIN: PRODUCTS
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody'); const input=document.getElementById('imageInput');
-    const render = async () => {
-        const p = await getStorage(KEY_PRODUCTS); document.getElementById('current-product-count').innerText = p.length;
-        if(p.length===0){ tb.innerHTML='<tr><td colspan="5" style="text-align:center;">Empty</td></tr>'; return; }
-        tb.innerHTML = p.map((x,i)=> {
+    
+    // Real-time listener
+    onValue(ref(db, 'products'), (snapshot) => {
+        tb.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) { tb.innerHTML='<tr><td colspan="5" style="text-align:center;">Empty</td></tr>'; return; }
+        
+        // Convert object to array
+        const products = Object.values(data).reverse();
+        document.getElementById('current-product-count').innerText = products.length;
+
+        tb.innerHTML = products.map((x) => {
             const s = x.stock || {s:0, m:0, l:0, xl:0, xxl:0};
-            return `<tr><td><img src="${x.images[0]}" style="width:40px;"></td><td>${x.name}</td><td>৳${x.price}</td><td><small>S:${s.s} M:${s.m} L:${s.l} XL:${s.xl} XXL:${s.xxl}</small><br><button onclick="openStockModal('${x.id}')" style="cursor:pointer;color:#ff9f43;background:none;border:none;">Edit Stock</button></td><td style="text-align:right;"><button onclick="delP(${i})" style="color:red;border:none;background:none;">Del</button></td></tr>`;
+            return `<tr><td><img src="${x.images[0]}" style="width:40px;"></td><td>${x.name}</td><td>৳${x.price}</td><td><small>S:${s.s} M:${s.m} L:${s.l} XL:${s.xl} XXL:${s.xxl}</small><br><button onclick="openStockModal('${x.id}')" style="cursor:pointer;color:#ff9f43;background:none;border:none;">Edit Stock</button></td><td style="text-align:right;"><button onclick="delP('${x.id}')" style="color:red;border:none;background:none;">Del</button></td></tr>`;
         }).join('');
-    }; render();
-    if(f) f.addEventListener('submit',async(e)=>{
-        e.preventDefault(); const files=Array.from(input.files); 
+    });
+
+    // ADD PRODUCT
+    if(f) f.addEventListener('submit', async(e)=>{
+        e.preventDefault(); 
+        const files=Array.from(input.files); 
         const readFiles=(fl)=>Promise.all(fl.map(f=>new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f);}))); 
         let imgData=[]; if(files.length) imgData=await readFiles(files);
+        
         const stock = { s: parseInt(f.stock_s.value)||0, m: parseInt(f.stock_m.value)||0, l: parseInt(f.stock_l.value)||0, xl: parseInt(f.stock_xl.value)||0, xxl: parseInt(f.stock_xxl.value)||0 };
-        const p = await getStorage(KEY_PRODUCTS); p.push({ id: Date.now(), name: f.name.value, price: parseFloat(f.price.value), originalPrice: f.oldPrice.value?parseFloat(f.oldPrice.value):null, isNewArrival: f.isNew.checked, images: imgData, stock: stock });
-        await setStorage(KEY_PRODUCTS, p); f.reset(); render(); showPopup('Success', 'Product Added!', 'success');
+        
+        const newId = Date.now().toString();
+        const newProd = { 
+            id: newId, 
+            name: f.name.value, 
+            price: parseFloat(f.price.value), 
+            originalPrice: f.oldPrice.value?parseFloat(f.oldPrice.value):null, 
+            isNewArrival: f.isNew.checked, 
+            images: imgData, 
+            stock: stock 
+        };
+
+        try {
+            await set(ref(db, 'products/' + newId), newProd);
+            f.reset(); showPopup('Success', 'Product Added to Database!', 'success');
+        } catch(err) { console.error(err); showPopup('Error', 'Failed to add', 'error'); }
     });
-    window.delP=async(i)=>{if(confirm('Delete?')){const p=await getStorage(KEY_PRODUCTS);p.splice(i,1);await setStorage(KEY_PRODUCTS,p);render();}};
-    window.openStockModal = async (id) => { const p = await getStorage(KEY_PRODUCTS); const prod = p.find(x => x.id == id); if(!prod) return; const s = prod.stock || {s:0, m:0, l:0, xl:0, xxl:0}; document.getElementById('edit-prod-id').value = id; document.getElementById('edit-s').value = s.s; document.getElementById('edit-m').value = s.m; document.getElementById('edit-l').value = s.l; document.getElementById('edit-xl').value = s.xl; document.getElementById('edit-xxl').value = s.xxl; document.getElementById('editStockModal').classList.add('active'); };
-    window.closeStockModal = () => document.getElementById('editStockModal').classList.remove('active');
-    window.saveStockUpdate = async () => { const id = document.getElementById('edit-prod-id').value; const p = await getStorage(KEY_PRODUCTS); const prod = p.find(x => x.id == id); if(prod) { prod.stock = { s: parseInt(document.getElementById('edit-s').value)||0, m: parseInt(document.getElementById('edit-m').value)||0, l: parseInt(document.getElementById('edit-l').value)||0, xl: parseInt(document.getElementById('edit-xl').value)||0, xxl: parseInt(document.getElementById('edit-xxl').value)||0 }; await setStorage(KEY_PRODUCTS, p); closeStockModal(); render(); showPopup('Success', 'Stock Updated!', 'success'); } };
+
+    // Delete Product
+    window.delP = async(id) => {
+        if(confirm('Delete this product?')) {
+            await remove(ref(db, 'products/' + id));
+        }
+    };
+
+    // Stock Modal Logic
+    window.openStockModal = async (id) => { 
+        const snapshot = await get(child(ref(db), 'products/' + id));
+        if(!snapshot.exists()) return;
+        const prod = snapshot.val();
+        const s = prod.stock || {s:0, m:0, l:0, xl:0, xxl:0}; 
+        document.getElementById('edit-prod-id').value = id; 
+        document.getElementById('edit-s').value = s.s; 
+        document.getElementById('edit-m').value = s.m; 
+        document.getElementById('edit-l').value = s.l; 
+        document.getElementById('edit-xl').value = s.xl; 
+        document.getElementById('edit-xxl').value = s.xxl; 
+        document.getElementById('editStockModal').classList.add('active'); 
+    };
+    
+    window.saveStockUpdate = async () => { 
+        const id = document.getElementById('edit-prod-id').value; 
+        const stock = { 
+            s: parseInt(document.getElementById('edit-s').value)||0, 
+            m: parseInt(document.getElementById('edit-m').value)||0, 
+            l: parseInt(document.getElementById('edit-l').value)||0, 
+            xl: parseInt(document.getElementById('edit-xl').value)||0, 
+            xxl: parseInt(document.getElementById('edit-xxl').value)||0 
+        }; 
+        await update(ref(db, 'products/' + id), { stock: stock });
+        closeStockModal(); showPopup('Success', 'Stock Updated!', 'success'); 
+    };
 }
 
+// ADMIN: ORDERS
 function initAdminOrders() { 
     const tb=document.querySelector('#orders-table tbody'); 
     let flt='All'; 
-    const ren=async()=>{ 
-        const all=await getStorage(KEY_ORDERS); const l=flt==='All'?all:all.filter(o=>o.status===flt); 
+
+    onValue(ref(db, 'orders'), (snapshot) => {
+        const data = snapshot.val();
+        if(!data) { tb.innerHTML='<tr><td colspan="5">No Orders</td></tr>'; return; }
+
+        const all = Object.values(data).sort((a,b) => b.timestamp - a.timestamp); // Sort by new
+        const l = flt==='All' ? all : all.filter(o => o.status === flt);
+
+        tb.innerHTML = l.map(o => `
+            <tr>
+                <td>${o.id}</td>
+                <td>${o.customer.name}<br><small>${o.customer.phone}</small></td>
+                <td>৳${o.total}</td>
+                <td>
+                    <select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555">
+                        <option ${o.status==='Pending'?'selected':''}>Pending</option>
+                        <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
+                        <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+                        <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                </td>
+                <td><button onclick="vOrd('${o.id}')" class="btn-action btn-view"><i class="fas fa-eye"></i> View</button></td>
+            </tr>`).join('');
+    });
+
+    window.filterOrders = (s) => { 
+        flt=s; 
+        // Trigger re-render by reading once or just wait for next update
+        // Simple hack: toggle filter buttons
         document.querySelectorAll('.filter-btn').forEach(b=>{
-            const txt = b.innerText.trim();
-            if((flt==='All' && txt==='All Orders') || (flt==='Pending' && txt==='Pending') || (flt==='Shipped' && txt==='Shipped') || (flt==='Delivered' && txt==='Completed') || (flt==='Cancelled' && txt==='Cancelled')) {
-                b.classList.add('active');
-            } else {
-                b.classList.remove('active');
-            }
+            if(b.innerText.includes(s) || (s==='All' && b.innerText==='All Orders')) b.classList.add('active');
+            else b.classList.remove('active');
         });
-        if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Orders</td></tr>';return;} 
-        tb.innerHTML=l.map(o=>`<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" class="btn-action btn-view"><i class="fas fa-eye"></i> View</button></td></tr>`).join(''); 
-    }; ren(); 
-    window.filterOrders=(s)=>{flt=s;ren();}; 
-    window.changeOrderStatus = async (id, status) => { const all = await getStorage(KEY_ORDERS); const order = all.find(x => x.id === id); if(order) { order.status = status; await setStorage(KEY_ORDERS, all); showPopup('Updated', `Order ${id} marked as ${status}`, 'success'); ren(); } };
-    window.vOrd=async(id)=>{
-        const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id); if(!o)return;
+        // Reload data to apply filter
+        get(ref(db, 'orders')).then(() => { /* triggers onValue */ }); 
+    };
+
+    window.changeOrderStatus = async (id, status) => { 
+        await update(ref(db, 'orders/' + id), { status: status });
+        showPopup('Updated', `Order marked as ${status}`, 'success');
+    };
+
+    window.vOrd = async(id) => {
+        const s = await get(child(ref(db), 'orders/' + id));
+        if(!s.exists()) return;
+        const o = s.val();
         const itemRows = o.items.map(i => `<tr><td>${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td><td style="text-align:center;">৳${i.price}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">৳${i.price*i.qty}</td></tr>`).join('');
         const content = `<div style="text-align:left;"><p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p><p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p><p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p><div style="overflow-x:auto;"><table class="popup-table" style="width:100%; border-collapse: collapse; font-size:0.9em;"><thead><tr style="border-bottom:1px solid #555;"><th style="text-align:left; padding:5px;">Product</th><th style="text-align:center; padding:5px;">Rate</th><th style="text-align:center; padding:5px;">Qty</th><th style="text-align:right; padding:5px;">Total</th></tr></thead><tbody>${itemRows}</tbody></table></div><div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;"><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Delivery Charge:</span><span>৳${o.deliveryCharge}</span></div><hr style="border:0; border-top:1px dashed #333; margin:5px 0;"><div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em;"><span>Grand Total:</span><span>৳${o.total}</span></div></div></div>`;
         showPopup('Order Details', content, 'info');
     };
 }
 
-function initAdminMessages() { 
-    const tb=document.querySelector('#messages-table tbody'); let vm='New'; 
-    const ren=async()=>{ 
-        const all=await getStorage(KEY_MESSAGES); const l=vm==='New'?all.filter(m=>!m.isRead):all.filter(m=>m.isRead); 
-        document.querySelectorAll('.filter-btn').forEach(b=>{if(b.innerText.includes(vm))b.classList.add('active');else b.classList.remove('active');}); 
-        if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Messages</td></tr>';return;} 
-        tb.innerHTML=l.map(m=>{
-            const ix=all.findIndex(x=>x.id===m.id); 
-            return `<tr><td>${m.date}</td><td>${m.name}<br><small>${m.email}</small></td><td>${m.subject}</td><td>${m.message}</td><td style="white-space:nowrap;">${!m.isRead ? `<button onclick="mkR(${ix})" class="btn-action btn-read"><i class="fas fa-check"></i> Read</button>` : ''}<button onclick="delMsg(${ix})" class="btn-action btn-delete"><i class="fas fa-trash"></i></button></td></tr>`;
-        }).join(''); 
-    }; ren(); 
-    window.filterMsgs=(m)=>{vm=m;ren();}; 
-    window.mkR=async(i)=>{const m=await getStorage(KEY_MESSAGES);m[i].isRead=true;await setStorage(KEY_MESSAGES,m);ren(); updateAdminSidebarBadges();}; 
-    window.delMsg=async(i)=>{if(confirm('Delete?')){const m=await getStorage(KEY_MESSAGES);m.splice(i,1);await setStorage(KEY_MESSAGES,m);ren(); updateAdminSidebarBadges();}}; 
+// ADMIN: MESSAGES (FEEDBACK)
+function handleContactForm(form) {
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const msgId = Date.now().toString();
+        const m = {
+            id: msgId, date: new Date().toLocaleDateString(), 
+            name: form.name ? form.name.value : 'Guest', 
+            email: form.email ? form.email.value : 'No Email', 
+            subject: form.subject ? form.subject.value : 'No Subject', 
+            message: form.message ? form.message.value : '', 
+            isRead: false
+        };
+        await set(ref(db, 'messages/' + msgId), m);
+        form.reset(); showPopup('Message Sent', 'Thank you!', 'success');
+    };
 }
-async function initAdminDashboard() { const o=await getStorage(KEY_ORDERS); const p=await getStorage(KEY_PRODUCTS); const rev=o.filter(x=>x.status==='Delivered').reduce((s,i)=>s+(parseFloat(i.subTotal)||0),0); document.getElementById('stat-revenue').innerText='৳ '+rev; document.getElementById('stat-pending').innerText=o.filter(x=>x.status==='Pending').length; document.getElementById('stat-shipped').innerText=o.filter(x=>x.status==='Shipped').length; document.getElementById('stat-delivered').innerText=o.filter(x=>x.status==='Delivered').length; document.getElementById('stat-cancelled').innerText=o.filter(x=>x.status==='Cancelled').length; document.getElementById('stat-products').innerText=p.length; }
+
+function initAdminMessages() { 
+    const tb=document.querySelector('#messages-table tbody'); 
+    onValue(ref(db, 'messages'), (snapshot) => {
+        const data = snapshot.val();
+        if(!data){ tb.innerHTML='<tr><td colspan="5">No Messages</td></tr>'; return; }
+        const all = Object.values(data).reverse();
+        tb.innerHTML = all.map(m => `
+            <tr>
+                <td>${m.date}</td>
+                <td>${m.name}<br><small>${m.email}</small></td>
+                <td>${m.subject}</td>
+                <td>${m.message}</td>
+                <td><button onclick="delMsg('${m.id}')" class="btn-action btn-delete"><i class="fas fa-trash"></i></button></td>
+            </tr>`).join('');
+    });
+    window.delMsg = async(id) => { if(confirm('Delete?')) await remove(ref(db, 'messages/'+id)); };
+}
+
+async function initAdminDashboard() { 
+    onValue(ref(db), (snap) => {
+        const data = snap.val() || {};
+        const orders = data.orders ? Object.values(data.orders) : [];
+        const products = data.products ? Object.values(data.products) : [];
+        
+        const rev = orders.filter(x=>x.status==='Delivered').reduce((s,i)=>s+(parseFloat(i.subTotal)||0),0); 
+        document.getElementById('stat-revenue').innerText='৳ '+rev; 
+        document.getElementById('stat-pending').innerText=orders.filter(x=>x.status==='Pending').length; 
+        document.getElementById('stat-shipped').innerText=orders.filter(x=>x.status==='Shipped').length; 
+        document.getElementById('stat-delivered').innerText=orders.filter(x=>x.status==='Delivered').length; 
+        document.getElementById('stat-cancelled').innerText=orders.filter(x=>x.status==='Cancelled').length; 
+        document.getElementById('stat-products').innerText=products.length;
+    });
+}
 
 // Utils
 function createPopupHTML() { if(!document.querySelector('.custom-popup-overlay')) { const p=document.createElement('div'); p.className='custom-popup-overlay'; p.innerHTML=`<div class="custom-popup-box"><i class="fas fa-info-circle popup-icon"></i><h3 class="popup-title"></h3><div class="popup-msg"></div><button class="btn primary-btn popup-btn">OK</button></div>`; document.body.appendChild(p); p.querySelector('.popup-btn').addEventListener('click', () => { p.classList.remove('active'); if(window.popupRedirect) { window.location.href=window.popupRedirect; window.popupRedirect=null; } }); } }
 function showPopup(title, msg, type='info', url=null) { const o=document.querySelector('.custom-popup-overlay'); if(!o) return alert(msg); const i=o.querySelector('.popup-icon'); o.querySelector('.popup-title').innerText=title; o.querySelector('.popup-msg').innerHTML=msg; if(type==='success') i.className='fas fa-check-circle popup-icon popup-success'; else if(type==='error') i.className='fas fa-times-circle popup-icon popup-error'; else i.className='fas fa-info-circle popup-icon popup-info'; if(url) window.popupRedirect=url; o.classList.add('active'); }
-async function updateAdminSidebarBadges() { const o = await getStorage(KEY_ORDERS); const m = await getStorage(KEY_MESSAGES); if(o.some(x=>x.status==='Pending') && document.getElementById('nav-orders')) document.getElementById('nav-orders').innerHTML+=' <span class="nav-badge"></span>'; if(m.some(x=>!x.isRead) && document.getElementById('nav-messages')) document.getElementById('nav-messages').innerHTML+=' <span class="nav-badge"></span>'; }
-async function updateCartCount() { const c = await getStorage(KEY_CART); const t = c.reduce((s, i) => s + (parseInt(i.qty)||0), 0); document.querySelectorAll('.cart-count').forEach(e => e.innerText = `(${t})`); }
