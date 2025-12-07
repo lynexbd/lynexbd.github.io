@@ -896,3 +896,23 @@ td {
     color: #ff9f43;
     font-size: 0.95em;
 }
+/* --- FORM VALIDATION STYLES --- */
+.error-msg {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: none; /* ডিফল্টভাবে লুকানো থাকবে */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ইনপুটে ভুল হলে লাল বর্ডার আসবে */
+.form-input.input-error, 
+.form-select.input-error {
+    border-color: #e74c3c !important;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
