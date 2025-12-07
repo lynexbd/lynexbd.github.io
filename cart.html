@@ -9,9 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
     <header class="header">
         <div class="container">
-            <div class="logo"><a href="index.html"><span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span></a></div>
+            <div class="logo">
+                <a href="index.html"><span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span></a>
+            </div>
             <nav class="nav">
                 <ul class="nav-list" id="nav-list">
                     <li><a href="index.html">Home</a></li>
@@ -25,14 +28,20 @@
         </div>
     </header>
 
-    <section class="container" style="padding: 100px 20px;">
+    <section class="container" style="padding: 100px 20px; min-height: 60vh;">
         <h1 class="page-title">Your Cart</h1>
+        
         <div class="cart-section">
             <div class="cart-items"></div>
-            <div class="cart-summary">
-                <h3>Summary</h3>
-                <div class="summary-row"><strong>Total:</strong><strong>৳ <span id="cart-total">0</span></strong></div>
-                <p style="font-size:0.9em; color:#aaa; margin-top:10px;"></p>
+
+            <div class="cart-summary" style="display: none;"> <h3>Summary</h3>
+                <div class="summary-row">
+                    <strong>Total:</strong>
+                    <strong>৳ <span id="cart-total">0</span></strong>
+                </div>
+                <p style="font-size: 0.85em; color: #aaa; margin: 10px 0;">
+                    * Delivery charges calculated at checkout.
+                </p>
                 <a href="checkout.html" class="btn primary-btn checkout-btn">PROCEED TO CHECKOUT</a>
             </div>
         </div>
@@ -62,6 +71,7 @@
             <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
