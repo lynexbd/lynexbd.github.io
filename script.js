@@ -498,25 +498,26 @@ async function loadCartSummaryForCheckout() {
     } 
 }
 
+// সংশোধিত handleCheckoutForm ফাংশন
 function handleCheckoutForm() {
     const f = document.getElementById('checkout-form');
     if(f) {
         f.onsubmit = async (e) => {
             e.preventDefault();
-            // Basic Validation
+            
+            // ১. বেসিক ভ্যালিডেশন
             if (f.name.value.trim() === "") return showPopup('Error', 'Name Required', 'error');
             if (f.phone.value.length !== 11) return showPopup('Error', 'Valid Phone Required', 'error');
 
             const c = await getCheckoutItems(); 
-            if(c.length===0) return showPopup('Error', 'No items to checkout!', 'error');
+            if(c.length === 0) return showPopup('Error', 'No items to checkout!', 'error');
 
-            // Data Preparation
+            // ২. ডেটা প্রিপারেশন
             const deliveryCharge = parseInt(document.getElementById('delivery-charge').innerText) || 0; 
-            const subTot = c.reduce((s,i)=>s+(i.price*i.qty),0); 
+            const subTot = c.reduce((s,i) => s + (i.price * i.qty), 0); 
             const grandTot = subTot + deliveryCharge;
             const fullAddress = `Vill: ${f.village.value}, ${f.landmark.value}, Upz: ${f.upazila.value}, Dist: ${f.district.value}, Div: ${f.division.value}`;
             
-            // Order ID Generation
             const orderId = 'ORD-' + Date.now().toString().slice(-6);
 
             const ord = { 
@@ -531,27 +532,43 @@ function handleCheckoutForm() {
                 status: 'Pending' 
             };
 
-            // PUSH TO FIREBASE
+            // ৩. Firebase-এ পুশ এবং স্টক আপডেট
             try {
-                // 1. Save Order
+                // ক. অর্ডার সেভ করা
                 await set(ref(db, 'orders/' + orderId), ord);
                 
-                // 2. Update Stock (Fetch current stock, deduct, update)
-                // Note: For simplicity in this non-transactional version, we skip atomic stock reduction
-                // But in a real app, you should use transactions.
+                // খ. প্রতিটি পণ্যের সাইজ অনুযায়ী স্টক কমানো
+                for(let item of c) {
+                    const sizePath = item.size.toLowerCase();
+                    const stockRef = ref(db, `products/${item.id}/stock/${sizePath}`);
+                    
+                    // বর্তমান স্টক রিড করা
+                    const snapshot = await get(stockRef);
+                    if(snapshot.exists()) {
+                        const currentStock = parseInt(snapshot.val());
+                        // নতুন স্টক হিসাব করে আপডেট করা (০ এর নিচে যাবে না)
+                        const newStock = Math.max(0, currentStock - item.qty);
+                        await set(stockRef, newStock);
+                    }
+                }
                 
-                // Clear Cart
-                if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
-                else { setLocalCart([]); updateCartCount(); }
+                // ৪. কার্ট ক্লিয়ার করা
+                if(sessionStorage.getItem(KEY_DIRECT_BUY)) {
+                    sessionStorage.removeItem(KEY_DIRECT_BUY);
+                } else {
+                    setLocalCart([]); 
+                    updateCartCount(); 
+                }
 
                 showPopup('Order Placed!', `Your Order ID: ${orderId}<br>We will contact you soon.`, 'success', 'index.html');
             } catch (err) {
-                console.error(err);
+                console.error("Firebase Update Error:", err);
                 showPopup('Error', 'Failed to place order. Check internet.', 'error');
             }
         };
     }
 }
+
 
 // ======================================================
 // 4. ADMIN FUNCTIONS (Real-time Firebase)
@@ -735,22 +752,77 @@ function handleContactForm(form) {
 }
 
 function initAdminMessages() { 
-    const tb=document.querySelector('#messages-table tbody'); 
+    const tb = document.querySelector('#messages-table tbody'); 
+    let filterStatus = 'New'; // ডিফল্টভাবে নতুন মেসেজ দেখাবে
+
+    // Firebase রিয়েল-টাইম লিসেনার
     onValue(ref(db, 'messages'), (snapshot) => {
         const data = snapshot.val();
-        if(!data){ tb.innerHTML='<tr><td colspan="5">No Messages</td></tr>'; return; }
-        const all = Object.values(data).reverse();
-        tb.innerHTML = all.map(m => `
+        renderMessages(data);
+    });
+
+    // মেসেজ রেন্ডার করার মূল লজিক
+    function renderMessages(data) {
+        if (!data) { 
+            tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No Messages Found</td></tr>'; 
+            return; 
+        }
+
+        const allMsgs = Object.values(data).reverse();
+        // ফিল্টার লজিক: New হলে isRead: false, Read হলে isRead: true
+        const filtered = filterStatus === 'New' 
+            ? allMsgs.filter(m => m.isRead === false) 
+            : allMsgs.filter(m => m.isRead === true);
+
+        // ট্যাব হাইলাইট ঠিক করা
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            if(btn.innerText.includes(filterStatus)) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+
+        if (filtered.length === 0) {
+            tb.innerHTML = `<tr><td colspan="5" style="text-align:center;">No ${filterStatus} Messages</td></tr>`;
+            return;
+        }
+
+        tb.innerHTML = filtered.map(m => `
             <tr>
                 <td>${m.date}</td>
                 <td>${m.name}<br><small>${m.email}</small></td>
                 <td>${m.subject}</td>
                 <td>${m.message}</td>
-                <td><button onclick="delMsg('${m.id}')" class="btn-action btn-delete"><i class="fas fa-trash"></i></button></td>
+                <td style="white-space:nowrap;">
+                    ${m.isRead === false ? `<button onclick="markAsRead('${m.id}')" class="btn-action btn-read"><i class="fas fa-check"></i> Read</button>` : ''}
+                    <button onclick="delMsg('${m.id}')" class="btn-action btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
             </tr>`).join('');
-    });
-    window.delMsg = async(id) => { if(confirm('Delete?')) await remove(ref(db, 'messages/'+id)); };
+    }
+
+    // গ্লোবাল ফাংশন: ফিল্টার চেঞ্জ করার জন্য
+    window.filterMsgs = (status) => {
+        filterStatus = status;
+        // পুনরায় ডেটা রিড করে রেন্ডার করা
+        get(ref(db, 'messages')).then((snap) => renderMessages(snap.val()));
+    };
+
+    // গ্লোবাল ফাংশন: মেসেজ পড়া হয়েছে হিসেবে চিহ্নিত করা
+    window.markAsRead = async (id) => {
+        try {
+            await update(ref(db, 'messages/' + id), { isRead: true });
+            showPopup('Success', 'Message marked as read!', 'success');
+        } catch(e) { 
+            console.error("Update Error:", e); 
+        }
+    };
+
+    // গ্লোবাল ফাংশন: মেসেজ ডিলিট করা
+    window.delMsg = async (id) => { 
+        if (confirm('Permanently delete this message?')) {
+            await remove(ref(db, 'messages/' + id));
+        }
+    };
 }
+
 
 async function initAdminDashboard() { 
     onValue(ref(db), (snap) => {
