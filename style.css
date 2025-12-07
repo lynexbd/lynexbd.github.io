@@ -913,3 +913,53 @@ td {
     cursor: pointer;
 }
 .close-modal-btn:hover { color: #e74c3c; }
+
+/* --- NEW STOCK OUT DESIGN (Diagonal & Dark Overlay) --- */
+
+/* 1. Dark Overlay (dims the image) */
+.stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65); /* কালো আস্তরণ */
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* মাউস ক্লিক যাতে আটকাবে না */
+    transition: 0.3s;
+}
+
+/* 2. Diagonal Text Badge */
+.stock-text-diagonal {
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    border: 3px solid #e74c3c; /* লাল বর্ডার */
+    background-color: rgba(231, 76, 60, 0.2); /* হালকা স্বচ্ছ লাল */
+    padding: 10px 30px;
+    transform: rotate(-45deg); /* কোণাকুনি */
+    letter-spacing: 2px;
+    backdrop-filter: blur(2px); /* হালকা ব্লার ইফেক্ট */
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Discount Badge (থাকে বাম পাশে) */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #d10000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.75em;
+    font-weight: 800;
+    border-radius: 4px;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
