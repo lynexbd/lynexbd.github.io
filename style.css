@@ -266,7 +266,7 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 1;
 }
 
-/* --- BADGES (Discount & Stock Out) --- */
+/* --- BADGES (Discount & New Stock Out Ribbon) --- */
 
 /* Discount Badge (Top-Left) */
 .discount-badge {
@@ -283,20 +283,12 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
-/* --- STOCK OUT RIBBON (Right Corner Diagonal) --- */
-
-/* ইমেজের কন্টেইনারে overflow hidden থাকতে হবে */
-.image-wrapper {
-    position: relative;
-    overflow: hidden; /* রিবনের বাইরের অংশ কাটার জন্য */
-}
-
-/* রিবন স্টাইল */
+/* --- NEW: STOCK OUT RIBBON (Right Corner Diagonal) --- */
 .stock-ribbon {
     position: absolute;
-    top: 20px;           /* উপর থেকে অবস্থান */
-    right: -35px;        /* ডান দিক থেকে পজিশন (নেগেটিভ ভ্যালু যাতে কোণায় বসে) */
-    width: 120px;        /* রিবনের লম্বা */
+    top: 20px;
+    right: -35px;
+    width: 120px;
     background-color: rgba(231, 76, 60, 0.9); /* লাল ব্যাকগ্রাউন্ড */
     color: #fff;
     text-align: center;
@@ -311,12 +303,11 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: none;
 }
 
-/* অপশনাল: ইমেজ হালকা কালো করার জন্য */
+/* Optional: Dim image when out of stock */
 .product-card.out-of-stock .slider-image {
     opacity: 0.6;
     filter: grayscale(80%);
 }
-
 
 /* Product Info & Price */
 .product-info h3 {
@@ -452,12 +443,26 @@ form label {
 }
 .checkbox-group input { width: auto; margin: 0; }
 
-#phone-error {
+/* Error Message Style */
+.error-msg {
+    color: #e74c3c;
     font-size: 0.85em;
     margin-top: 5px;
-    animation: fadeIn 0.3s;
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Error Input Highlight */
+.form-input.input-error, 
+.form-select.input-error {
+    border-color: #e74c3c !important;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* --- 8. ADMIN PANEL (Fixed Sidebar) --- */
 .admin-layout {
@@ -615,7 +620,7 @@ td {
     animation: pulse 2s infinite;
 }
 
-/* --- ADMIN ACTION BUTTONS (New Styles) --- */
+/* --- ADMIN ACTION BUTTONS --- */
 .btn-action {
     padding: 6px 12px;
     border: none;
@@ -630,7 +635,6 @@ td {
     gap: 5px;
 }
 
-/* View Button (Orange) */
 .btn-view {
     background: rgba(255, 159, 67, 0.15);
     color: #ff9f43;
@@ -638,7 +642,6 @@ td {
 }
 .btn-view:hover { background: #ff9f43; color: #000; }
 
-/* Read Button (Green) */
 .btn-read {
     background: rgba(46, 204, 113, 0.15);
     color: #2ecc71;
@@ -646,7 +649,6 @@ td {
 }
 .btn-read:hover { background: #2ecc71; color: #000; }
 
-/* Delete Button (Red) */
 .btn-delete {
     background: rgba(231, 76, 60, 0.15);
     color: #e74c3c;
@@ -721,12 +723,11 @@ td {
 }
 .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 159, 67, 0.4); }
 
-/* Popup Table (Order Details) */
 .popup-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em; }
 .popup-table td { padding: 5px; border-bottom: 1px solid #444; color: #ccc; }
 .popup-table tr:last-child td { border-bottom: none; }
 
-/* --- 10. SIZE MODAL (Admin & User) --- */
+/* --- 10. SIZE MODAL (Stylish Buttons) --- */
 .size-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.85); z-index: 9999;
@@ -759,6 +760,90 @@ td {
     font-size: 1.5em; cursor: pointer;
 }
 .close-modal-btn:hover { color: #e74c3c; }
+
+/* Stylish Qty Buttons */
+.qty-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    background: #252525;
+    padding: 10px;
+    border-radius: 30px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #333;
+}
+
+.qty-action-btn {
+    width: 35px;
+    height: 35px;
+    background-color: #1e1e1e;
+    color: #ff9f43;
+    border: 2px solid #ff9f43;
+    border-radius: 50%;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+}
+
+.qty-action-btn:hover {
+    background-color: #ff9f43;
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 159, 67, 0.4);
+}
+
+.qty-action-btn:active { transform: scale(0.9); }
+
+.qty-display {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #fff;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Checkout Item List */
+.checkout-item-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+.checkout-item-preview:last-child { border-bottom: none; }
+
+.checkout-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+.checkout-item-details h4 {
+    font-size: 0.9em;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.checkout-item-meta { font-size: 0.8em; color: #aaa; }
+
+.checkout-item-price {
+    margin-left: auto;
+    font-weight: bold;
+    color: #ff9f43;
+    font-size: 0.95em;
+}
 
 /* Stock Edit Modal (Admin) */
 .stock-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -808,115 +893,4 @@ td {
     .sidebar ul li { margin-right: 15px; }
     .sidebar ul li a { white-space: nowrap; }
     .main-content { margin-left: 0; width: 100%; padding: 15px; }
-}
-/* --- 1. STYLISH QUANTITY BUTTONS (Popup) --- */
-.qty-selector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    background: #252525;
-    padding: 10px;
-    border-radius: 30px; /* ক্যাপসুল শেপ */
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #333;
-}
-
-.qty-action-btn {
-    width: 35px;
-    height: 35px;
-    background-color: #1e1e1e;
-    color: #ff9f43;
-    border: 2px solid #ff9f43;
-    border-radius: 50%; /* গোল বাটন */
-    font-size: 1.2em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline: none;
-}
-
-.qty-action-btn:hover {
-    background-color: #ff9f43;
-    color: #000;
-    transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(255, 159, 67, 0.4);
-}
-
-.qty-action-btn:active {
-    transform: scale(0.9);
-}
-
-.qty-display {
-    font-size: 1.4em;
-    font-weight: 800;
-    color: #fff;
-    min-width: 40px;
-    text-align: center;
-}
-
-/* --- 2. CHECKOUT ITEM LIST (Mini Cart View) --- */
-.checkout-item-preview {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #333;
-}
-
-.checkout-item-preview:last-child {
-    border-bottom: none;
-}
-
-.checkout-item-img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #444;
-}
-
-.checkout-item-details h4 {
-    font-size: 0.9em;
-    margin-bottom: 2px;
-    color: #fff;
-}
-
-.checkout-item-meta {
-    font-size: 0.8em;
-    color: #aaa;
-}
-
-.checkout-item-price {
-    margin-left: auto;
-    font-weight: bold;
-    color: #ff9f43;
-    font-size: 0.95em;
-}
-/* --- FORM VALIDATION STYLES --- */
-.error-msg {
-    color: #e74c3c;
-    font-size: 0.85em;
-    margin-top: 5px;
-    display: none; /* ডিফল্টভাবে লুকানো থাকবে */
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-/* ইনপুটে ভুল হলে লাল বর্ডার আসবে */
-.form-input.input-error, 
-.form-select.input-error {
-    border-color: #e74c3c !important;
-    background-color: rgba(231, 76, 60, 0.1);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
 }
