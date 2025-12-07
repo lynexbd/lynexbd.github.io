@@ -6,6 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ইনপুট ফিল্ডের ডিজাইন ঠিক রাখার জন্য CSS */
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+        }
+        .form-input:focus {
+            border-color: #ff9f43;
+            outline: none;
+        }
+    </style>
 </head>
 <body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000;">
     
@@ -15,12 +32,12 @@
         <form id="secure-login-form">
             <div style="margin-bottom: 20px;">
                 <label style="color:#ccc; display:block; margin-bottom:8px;">User ID</label>
-                <input type="text" name="username" class="form-input" required placeholder="Enter Admin ID">
+                <input type="text" id="username" name="username" class="form-input" required placeholder="Enter Admin ID">
             </div>
             
             <div style="margin-bottom: 30px;">
                 <label style="color:#ccc; display:block; margin-bottom:8px;">Pass Key</label>
-                <input type="password" name="password" class="form-input" required placeholder="Enter Pass Key">
+                <input type="password" id="password" name="password" class="form-input" required placeholder="Enter Pass Key">
             </div>
             
             <button type="submit" class="btn primary-btn" style="width: 100%; padding: 12px; font-weight:bold;">AUTHENTICATE</button>
@@ -33,6 +50,6 @@
         </p>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
