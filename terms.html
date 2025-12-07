@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
     <header class="header">
         <div class="container">
             <div class="logo">
@@ -22,7 +23,11 @@
                     <li><a href="products.html">Products</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="feedback.html">Feedback</a></li>
-                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span></a></li>
+                    <li>
+                        <a href="cart.html" class="cart-icon">
+                            <i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span>
+                        </a>
+                    </li>
                 </ul>
                 <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
             </nav>
@@ -31,16 +36,35 @@
 
     <section class="container" style="padding: 100px 20px; min-height: 60vh;">
         <h1 class="page-title">Terms & Conditions</h1>
+        
         <div style="background: #1e1e1e; padding: 40px; border-radius: 8px; border: 1px solid #333; color: #ccc; line-height: 1.8; max-width: 800px; margin: 0 auto;">
             
-            <h3 style="color: #ff9f43; margin-bottom: 15px;">1. Return Policy</h3>
-            <p style="margin-bottom: 20px;">If you receive a defective product, please inform us within 3 days. Used items cannot be returned or exchanged.</p>
+            <h3 style="color: #ff9f43; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-rotate-left"></i> 1. Return Policy
+            </h3>
+            <p style="margin-bottom: 25px;">
+                ইউজার যদি কোনো ত্রুটিপূর্ণ পণ্য পান, তবে অবশ্যই ৩ দিনের মধ্যে আমাদের জানাতে হবে। ব্যবহৃত পণ্য কোনোভাবেই ফেরত বা পরিবর্তনযোগ্য নয়।
+            </p>
             
-            <h3 style="color: #ff9f43; margin-bottom: 15px;">2. Order Cancellation</h3>
-            <p style="margin-bottom: 20px;">Orders can be cancelled before the delivery process starts. If the delivery man has already left, delivery charges will apply for cancellation.</p>
+            <h3 style="color: #ff9f43; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-ban"></i> 2. Order Cancellation
+            </h3>
+            <p style="margin-bottom: 25px;">
+                ডেলিভারি প্রক্রিয়া শুরু হওয়ার আগে যেকোনো অর্ডার বাতিল করা যাবে। তবে ডেলিভারি পার্সন লোকেশনে চলে গেলে, অর্ডার বাতিলের ক্ষেত্রে ডেলিভারি চার্জ প্রযোজ্য হবে।
+            </p>
 
-            <h3 style="color: #ff9f43; margin-bottom: 15px;">3. Privacy Policy</h3>
-            <p>Your personal information (Name, Phone, Address) is used solely for delivery purposes and is kept secure.</p>
+            <h3 style="color: #ff9f43; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-shield"></i> 3. Privacy Policy
+            </h3>
+            <p style="margin-bottom: 25px;">
+                আপনার ব্যক্তিগত তথ্য (নাম, ফোন, ঠিকানা) শুধুমাত্র ডেলিভারি প্রক্রিয়ার জন্য ব্যবহৃত হবে এবং এটি আমাদের কাছে সম্পূর্ণ সুরক্ষিত থাকবে।
+            </p>
+
+            <div style="background: rgba(255, 159, 67, 0.1); padding: 15px; border-left: 4px solid #ff9f43; border-radius: 4px;">
+                <p style="color: #ff9f43; font-size: 0.9em; margin: 0;">
+                    <i class="fas fa-circle-info"></i> LYNEX যেকোনো সময় এই নিয়মাবলী পরিবর্তন করার অধিকার রাখে।
+                </p>
+            </div>
         </div>
     </section>
 
@@ -68,6 +92,7 @@
             <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
