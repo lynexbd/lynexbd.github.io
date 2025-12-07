@@ -1,5 +1,5 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Version)
+   LYNEX COMPLETE STYLESHEET (Final Fixed Version)
    Theme: Dark Mode | Accent: Orange (#ff9f43) & Gold (#ffcd75)
    ====================================================== */
 
@@ -213,7 +213,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
     background: #2a2a2a;
     border-radius: 4px;
-    overflow: hidden;
+    overflow: hidden; /* রিবনের বাইরের অংশ কাটার জন্য জরুরি */
 }
 
 .slider-container {
@@ -266,7 +266,7 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 1;
 }
 
-/* --- BADGES (Discount & New Stock Out Ribbon) --- */
+/* --- BADGES (Discount & Fixed Stock Out Ribbon) --- */
 
 /* Discount Badge (Top-Left) */
 .discount-badge {
@@ -283,27 +283,27 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
-/* --- NEW: STOCK OUT RIBBON (Right Corner Diagonal) --- */
+/* UPDATED STOCK OUT RIBBON (Right Corner Diagonal) */
 .stock-ribbon {
     position: absolute;
-    top: 20px;
-    right: -35px;
-    width: 120px;
-    background-color: rgba(231, 76, 60, 0.9); /* লাল ব্যাকগ্রাউন্ড */
+    top: 25px;           /* উপর থেকে একটু নিচে */
+    right: -50px;        /* ডানদিকে সরানো */
+    width: 170px;        /* প্রস্থ বাড়ানো হয়েছে */
+    background-color: rgba(231, 76, 60, 0.95); /* লাল */
     color: #fff;
     text-align: center;
-    font-size: 0.75em;
+    font-size: 0.8em;
     font-weight: 800;
-    padding: 5px 0;
-    transform: rotate(45deg); /* ৪৫ ডিগ্রি কোণাকুনি */
+    padding: 7px 0;
+    transform: rotate(45deg); /* কোণাকুনি */
     z-index: 20;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.2);
-    letter-spacing: 1px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    border: 1px dashed rgba(255,255,255,0.4);
+    letter-spacing: 2px;
     pointer-events: none;
 }
 
-/* Optional: Dim image when out of stock */
+/* Dim image when out of stock */
 .product-card.out-of-stock .slider-image {
     opacity: 0.6;
     filter: grayscale(80%);
@@ -405,6 +405,40 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
+/* Checkout Item List (Mini Cart View) */
+.checkout-item-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+.checkout-item-preview:last-child { border-bottom: none; }
+
+.checkout-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+.checkout-item-details h4 {
+    font-size: 0.9em;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.checkout-item-meta { font-size: 0.8em; color: #aaa; }
+
+.checkout-item-price {
+    margin-left: auto;
+    font-weight: bold;
+    color: #ff9f43;
+    font-size: 0.95em;
+}
+
 /* --- 7. FORMS (Global) --- */
 form label {
     display: block;
@@ -443,7 +477,7 @@ form label {
 }
 .checkbox-group input { width: auto; margin: 0; }
 
-/* Error Message Style */
+/* Validation Error Styles */
 .error-msg {
     color: #e74c3c;
     font-size: 0.85em;
@@ -452,7 +486,6 @@ form label {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Error Input Highlight */
 .form-input.input-error, 
 .form-select.input-error {
     border-color: #e74c3c !important;
@@ -464,7 +497,7 @@ form label {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- 8. ADMIN PANEL (Fixed Sidebar) --- */
+/* --- 8. ADMIN PANEL --- */
 .admin-layout {
     display: flex;
     min-height: 100vh;
@@ -578,7 +611,6 @@ td {
     vertical-align: middle;
 }
 
-/* Filters & Actions */
 .filter-tabs {
     display: flex;
     gap: 10px;
@@ -811,46 +843,12 @@ td {
     text-align: center;
 }
 
-/* Checkout Item List */
-.checkout-item-preview {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #333;
-}
-.checkout-item-preview:last-child { border-bottom: none; }
-
-.checkout-item-img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #444;
-}
-
-.checkout-item-details h4 {
-    font-size: 0.9em;
-    margin-bottom: 2px;
-    color: #fff;
-}
-
-.checkout-item-meta { font-size: 0.8em; color: #aaa; }
-
-.checkout-item-price {
-    margin-left: auto;
-    font-weight: bold;
-    color: #ff9f43;
-    font-size: 0.95em;
-}
-
-/* Stock Edit Modal (Admin) */
+/* Stock Edit Modal */
 .stock-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .stock-row label { color: #fff; }
 .stock-row input { width: 80px; padding: 5px; background: #333; border: 1px solid #555; color: #fff; text-align: center; }
 
-/* --- 11. FOOTER --- */
+/* --- 11. FOOTER & RESPONSIVE --- */
 .footer {
     background-color: #000000;
     color: #ffffff;
@@ -873,7 +871,6 @@ td {
 
 .copyright { border-top: 1px solid #333; padding-top: 30px; color: #777; font-size: 0.85em; }
 
-/* --- 12. RESPONSIVE --- */
 @media (max-width: 768px) {
     .nav-list {
         display: none; flex-direction: column; position: absolute;
