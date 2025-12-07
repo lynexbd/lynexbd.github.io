@@ -1,5 +1,5 @@
 /* ======================================================
-   LYNEX COMPLETE STYLESHEET (Final Version - No Shadow Dots)
+   LYNEX COMPLETE STYLESHEET (Final Version)
    Theme: Dark Mode | Accent: Orange (#ff9f43) & Gold (#ffcd75)
    ====================================================== */
 
@@ -36,13 +36,13 @@ ul {
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
-    color: #ffffff; /* হেডিং সাদা */
+    color: #ffffff;
 }
 
 /* --- 2. HEADER & NAVIGATION --- */
 .header {
     background-color: #000000;
-    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15); /* হালকা অরেঞ্জ শ্যাডো */
+    box-shadow: 0 2px 10px rgba(255, 159, 67, 0.15);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -65,9 +65,9 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
 }
 
-.logo-lyn { color: #ffffff; } /* LYN - সাদা */
-.logo-e { color: #ff9f43; }   /* E - কমলা */
-.logo-x { color: #ffcd75; }   /* X - গোল্ডেন/হলুদ */
+.logo-lyn { color: #ffffff; }
+.logo-e { color: #ff9f43; }
+.logo-x { color: #ffcd75; }
 
 /* Navigation Menu */
 .nav-list {
@@ -86,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-list a:hover, 
 .nav-list a.active {
-    color: #ff9f43; /* হোভার কালার */
+    color: #ff9f43;
 }
 
 .cart-icon {
@@ -100,13 +100,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .menu-toggle {
-    display: none; /* মোবাইল ছাড়া লুকানো থাকবে */
+    display: none;
     font-size: 1.5em;
     color: #fff;
     cursor: pointer;
 }
 
-/* --- 3. BUTTONS --- */
+/* --- 3. BUTTONS (General) --- */
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -121,8 +121,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-btn {
-    background-color: #ff9f43; /* অরেঞ্জ বাটন */
-    color: #000; /* টেক্সট কালো */
+    background-color: #ff9f43;
+    color: #000;
     border: 1px solid #ff9f43;
 }
 
@@ -147,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
     background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('hero-bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 40vh; /* উচ্চতা */
+    height: 40vh;
     min-height: 300px;
     display: flex;
     align-items: center;
@@ -205,18 +205,17 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #ff9f43;
 }
 
-/* Image Wrapper (Holds Slider & Dots) */
+/* Image Wrapper & Slider */
 .image-wrapper {
     position: relative;
     width: 100%;
-    height: 260px; /* ছবির ফিক্সড হাইট */
+    height: 260px;
     margin-bottom: 10px;
     background: #2a2a2a;
     border-radius: 4px;
     overflow: hidden;
 }
 
-/* Scrollable Slider */
 .slider-container {
     width: 100%;
     height: 100%;
@@ -236,44 +235,86 @@ h1, h2, h3, h4, h5, h6 {
     scroll-snap-stop: always;
 }
 
-/* Dots (Inside Image at Bottom - No Shadow) */
+/* --- FIXED SLIDER DOTS --- */
 .slider-dots {
     position: absolute;
-    bottom: 5px; /* আরও নিচে নামানো হয়েছে (5px) */
+    bottom: 10px;
     left: 0;
     width: 100%;
     text-align: center;
-    z-index: 6;
+    z-index: 25; /* Overlay এর উপরে থাকার জন্য */
     pointer-events: none;
-    /* ব্যাকগ্রাউন্ড শ্যাডো রিমুভ করা হয়েছে */
 }
 
 .dot {
     height: 8px;
     width: 8px;
     margin: 0 4px;
-    background-color: rgba(255,255,255,0.6);
+    background-color: rgba(255,255,255,0.5);
     border-radius: 50%;
     display: inline-block;
     cursor: pointer;
     transition: all 0.3s ease;
     pointer-events: auto;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.2);
 }
 
 .dot.active {
     background-color: #ff9f43;
-    transform: scale(1.4);
-    border: 1px solid #fff;
+    transform: scale(1.3);
+    border-color: #fff;
     opacity: 1;
 }
 
-/* Hide controls for single image */
-.single-slide .prev, .single-slide .next, .single-slide .slider-dots {
-    display: none;
+/* --- BADGES (Discount & Stock Out) --- */
+
+/* Discount Badge (Top-Left) */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #d10000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.75em;
+    font-weight: 800;
+    border-radius: 4px;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
-/* Product Info */
+/* Stock Out Overlay (Dark & Diagonal) */
+.stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65); /* কালো আস্তরণ */
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.stock-text-diagonal {
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    border: 3px solid #e74c3c; /* লাল বর্ডার */
+    background-color: rgba(231, 76, 60, 0.2); /* হালকা স্বচ্ছ লাল */
+    padding: 10px 30px;
+    transform: rotate(-45deg); /* কোণাকুনি */
+    letter-spacing: 2px;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Product Info & Price */
 .product-info h3 {
     font-size: 1.1em;
     text-align: center;
@@ -281,7 +322,6 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
 }
 
-/* Price Styling */
 .price-container {
     display: flex;
     flex-direction: column;
@@ -299,27 +339,12 @@ h1, h2, h3, h4, h5, h6 {
 .old-price {
     color: #777;
     text-decoration: line-through;
-    text-decoration-color: #e74c3c; /* লাল দাগ */
+    text-decoration-color: #e74c3c;
     text-decoration-thickness: 2px;
     font-size: 0.9em;
     font-weight: 500;
 }
 
-.discount-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background-color: #d10000;
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: bold;
-    z-index: 5;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* Product Buttons */
 .product-actions {
     display: flex;
     gap: 10px;
@@ -351,7 +376,6 @@ h1, h2, h3, h4, h5, h6 {
 .cart-item h4 { color: #fff; font-size: 1em; }
 .cart-item p { color: #aaa; font-size: 0.9em; }
 
-/* Quantity Buttons */
 .qty-controls {
     display: flex;
     align-items: center;
@@ -370,10 +394,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
-.qty-btn:hover {
-    background: #ff9f43;
-    color: #000;
-}
+.qty-btn:hover { background: #ff9f43; color: #000; }
 
 .summary-row {
     display: flex;
@@ -382,8 +403,6 @@ h1, h2, h3, h4, h5, h6 {
     color: #e0e0e0;
 }
 
-.summary-row strong { color: #ff9f43; }
-
 .checkout-btn {
     width: 100%;
     display: block;
@@ -391,7 +410,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
-/* --- 7. FORMS (Global Style) --- */
+/* --- 7. FORMS (Global) --- */
 form label {
     display: block;
     margin-bottom: 8px;
@@ -399,20 +418,25 @@ form label {
     color: #ccc;
 }
 
-form input, form textarea, form select {
+.form-input, form input, form textarea, form select {
     width: 100%;
     padding: 12px;
-    background-color: #2a2a2a; /* ডার্ক ইনপুট */
+    background-color: #2a2a2a;
     border: 1px solid #444;
-    color: #fff; /* সাদা টেক্সট */
+    color: #fff;
     border-radius: 4px;
     margin-bottom: 15px;
     font-family: 'Montserrat', sans-serif;
 }
 
-form input:focus, form textarea:focus {
+.form-input:focus, form input:focus, form select:focus {
     border-color: #ff9f43;
     outline: none;
+}
+
+.form-input:disabled, form select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .checkbox-group {
@@ -424,29 +448,28 @@ form input:focus, form textarea:focus {
 }
 .checkbox-group input { width: auto; margin: 0; }
 
-/* Image Preview List (Admin) */
-#image-preview-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+#phone-error {
+    font-size: 0.85em;
+    margin-top: 5px;
+    animation: fadeIn 0.3s;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* --- 8. ADMIN PANEL STYLES (FIXED SIDEBAR) --- */
+/* --- 8. ADMIN PANEL (Fixed Sidebar) --- */
 .admin-layout {
     display: flex;
     min-height: 100vh;
     width: 100%;
 }
 
-/* Sidebar */
 .sidebar {
     width: 280px;
     background-color: #000000;
     padding: 20px;
     border-right: 1px solid #333;
     flex-shrink: 0;
-    height: 100vh; /* Full height */
-    position: fixed; /* Fixed position */
+    height: 100vh;
+    position: fixed;
     top: 0;
     left: 0;
     overflow-y: auto;
@@ -477,9 +500,8 @@ form input:focus, form textarea:focus {
     font-weight: 600;
 }
 
-/* Admin Content */
 .main-content {
-    margin-left: 280px; /* Push content right */
+    margin-left: 280px;
     flex: 1;
     padding: 30px;
     background-color: #121212;
@@ -496,7 +518,6 @@ form input:focus, form textarea:focus {
     border: 1px solid #333;
 }
 
-/* Widgets */
 .widget-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -508,14 +529,8 @@ form input:focus, form textarea:focus {
     background: #1e1e1e;
     padding: 20px;
     border-radius: 8px;
-    border-left: 5px solid #ff9f43; /* ডিফল্ট */
+    border-left: 5px solid #ff9f43;
     border: 1px solid #333;
-}
-
-.widget h3 {
-    font-size: 1em;
-    color: #aaa;
-    margin-bottom: 10px;
 }
 
 .widget p {
@@ -524,7 +539,6 @@ form input:focus, form textarea:focus {
     color: #fff;
 }
 
-/* Admin Tables (Scrollable & Wide) */
 .data-section {
     background: #1e1e1e;
     padding: 25px;
@@ -537,7 +551,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-    min-width: 800px; /* Force desktop view */
+    min-width: 800px;
 }
 
 th {
@@ -546,7 +560,6 @@ th {
     padding: 15px;
     text-align: left;
     border-bottom: 2px solid #444;
-    white-space: nowrap;
 }
 
 td {
@@ -582,21 +595,11 @@ td {
 .filter-btn:hover { color: #fff; background: #252525; }
 
 .filter-btn.active {
-    color: #ff9f43;
-    border-bottom: 3px solid #ff9f43;
+    color: #ff9f43 !important;
+    border-bottom: 3px solid #ff9f43 !important;
     background-color: #1e1e1e;
 }
 
-.status-select {
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #333;
-    background: #2a2a2a;
-    color: #fff;
-    cursor: pointer;
-}
-
-/* Notification Badge */
 .nav-badge {
     display: inline-block;
     width: 10px;
@@ -606,361 +609,6 @@ td {
     margin-left: 10px;
     box-shadow: 0 0 5px rgba(231, 76, 60, 0.8);
     animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(0.95); } 70% { transform: scale(1); } 100% { transform: scale(0.95); }
-}
-
-/* --- 9. POPUP STYLE --- */
-.custom-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-.custom-popup-overlay.active { opacity: 1; visibility: visible; }
-.custom-popup-box { background: #1e1e1e; width: 90%; max-width: 450px; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; transform: scale(0.8); transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,159,67,0.15); }
-.custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
-.popup-icon { font-size: 3em; margin-bottom: 15px; display: block; }
-.popup-success { color: #2ecc71; } .popup-error { color: #e74c3c; } .popup-info { color: #ff9f43; }
-.popup-title { color: #fff; font-size: 1.5em; margin-bottom: 10px; }
-.popup-msg { color: #ccc; margin-bottom: 25px; font-size: 0.95em; line-height: 1.6; text-align: left; }
-.popup-btn { width: 100%; padding: 12px; border-radius: 6px; font-size: 1em; margin-top: 10px; }
-
-/* --- 10. FOOTER --- */
-.footer {
-    background-color: #000000;
-    color: #ffffff;
-    padding: 80px 20px 40px;
-    margin-top: auto;
-    border-top: 1px solid #333;
-    text-align: center;
-}
-
-.footer-brand {
-    font-size: 2.5em;
-    font-weight: 900;
-    color: #ff9f43;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-}
-
-.footer-desc {
-    max-width: 600px;
-    margin: 0 auto 40px;
-    color: #ccc;
-    font-size: 0.95em;
-}
-
-.footer-links-title {
-    color: #ff9f43;
-    font-size: 1.5em;
-    font-weight: 800;
-    margin-bottom: 20px;
-}
-
-.footer-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 40px;
-}
-
-.footer-nav a {
-    color: #e0e0e0;
-    font-weight: 500;
-}
-
-.footer-nav a:hover {
-    color: #ff9f43;
-}
-
-.social-icons {
-    margin-bottom: 40px;
-}
-
-.social-icons a {
-    color: #ffcd75;
-    font-size: 1.5em;
-    margin: 0 15px;
-    transition: 0.3s;
-    display: inline-block;
-}
-
-.social-icons a:hover {
-    color: #ff9f43;
-    transform: translateY(-3px);
-}
-
-.copyright {
-    border-top: 1px solid #333;
-    padding-top: 30px;
-    color: #777;
-    font-size: 0.85em;
-}
-
-/* --- 11. RESPONSIVE DESIGN --- */
-@media (max-width: 768px) {
-    .nav-list {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 100%;
-        background-color: #000;
-        padding: 20px;
-        text-align: center;
-        border-bottom: 2px solid #ff9f43;
-    }
-
-    .nav-list.active {
-        display: flex;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .admin-layout {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        display: flex;
-        overflow-x: auto;
-        padding: 10px;
-        border-right: none;
-        border-bottom: 1px solid #333;
-    }
-    
-    .sidebar ul {
-        display: flex;
-    }
-    
-    .sidebar ul li {
-        margin-right: 15px;
-    }
-    
-    .sidebar ul li a {
-        white-space: nowrap;
-    }
-
-    .main-content {
-        margin-left: 0;
-        width: 100%;
-        padding: 15px;
-    }
-}
-/* Checkout Form Select Styles */
-.form-input {
-    width: 100%;
-    padding: 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #444;
-    color: #fff;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.form-input:focus {
-    border-color: #ff9f43;
-    outline: none;
-}
-
-.form-input:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* Error Message Animation */
-#phone-error {
-    font-size: 0.85em;
-    margin-top: 5px;
-    animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-/* --- NEW FEATURES: Stock Badge & Size Modal --- */
-
-/* 1. Stock Out Badge on Image Corner */
-.stock-badge-corner {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #e74c3c; /* Red */
-    color: #fff;
-    padding: 5px 10px;
-    font-size: 0.8em;
-    font-weight: 800;
-    border-radius: 4px;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    pointer-events: none;
-}
-
-/* 2. Size Selection Modal */
-.size-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 9999;
-    display: none; /* Hidden by default */
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.size-modal-overlay.active {
-    display: flex;
-    opacity: 1;
-}
-
-.size-modal-box {
-    background: #1e1e1e;
-    width: 90%;
-    max-width: 400px;
-    padding: 25px;
-    border-radius: 12px;
-    border: 1px solid #ff9f43;
-    text-align: center;
-    position: relative;
-    transform: scale(0.8);
-    transition: transform 0.3s ease;
-}
-
-.size-modal-overlay.active .size-modal-box {
-    transform: scale(1);
-}
-
-.size-grid {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin: 20px 0;
-}
-
-.size-btn {
-    background: #333;
-    color: #fff;
-    border: 1px solid #555;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-    min-width: 50px;
-}
-
-.size-btn:hover {
-    border-color: #ff9f43;
-}
-
-.size-btn.selected {
-    background: #ff9f43;
-    color: #000;
-    border-color: #ff9f43;
-}
-
-.qty-selector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.qty-action-btn {
-    background: #333;
-    color: #fff;
-    border: none;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    font-size: 1.2em;
-    cursor: pointer;
-}
-
-.qty-action-btn:hover {
-    background: #ff9f43;
-    color: #000;
-}
-
-.qty-display {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #fff;
-    width: 30px;
-    text-align: center;
-}
-
-.close-modal-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: #777;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-.close-modal-btn:hover { color: #e74c3c; }
-
-/* --- NEW STOCK OUT DESIGN (Diagonal & Dark Overlay) --- */
-
-/* 1. Dark Overlay (dims the image) */
-.stock-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.65); /* কালো আস্তরণ */
-    z-index: 15;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none; /* মাউস ক্লিক যাতে আটকাবে না */
-    transition: 0.3s;
-}
-
-/* 2. Diagonal Text Badge */
-.stock-text-diagonal {
-    color: #fff;
-    font-weight: 900;
-    font-size: 1.4em;
-    text-transform: uppercase;
-    border: 3px solid #e74c3c; /* লাল বর্ডার */
-    background-color: rgba(231, 76, 60, 0.2); /* হালকা স্বচ্ছ লাল */
-    padding: 10px 30px;
-    transform: rotate(-45deg); /* কোণাকুনি */
-    letter-spacing: 2px;
-    backdrop-filter: blur(2px); /* হালকা ব্লার ইফেক্ট */
-    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
-    text-shadow: 2px 2px 4px #000;
-}
-
-/* Discount Badge (থাকে বাম পাশে) */
-.discount-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #d10000;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 0.75em;
-    font-weight: 800;
-    border-radius: 4px;
-    z-index: 20;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
 /* --- ADMIN ACTION BUTTONS (New Styles) --- */
@@ -984,10 +632,7 @@ td {
     color: #ff9f43;
     border: 1px solid #ff9f43;
 }
-.btn-view:hover {
-    background: #ff9f43;
-    color: #000;
-}
+.btn-view:hover { background: #ff9f43; color: #000; }
 
 /* Read Button (Green) */
 .btn-read {
@@ -995,10 +640,7 @@ td {
     color: #2ecc71;
     border: 1px solid #2ecc71;
 }
-.btn-read:hover {
-    background: #2ecc71;
-    color: #000;
-}
+.btn-read:hover { background: #2ecc71; color: #000; }
 
 /* Delete Button (Red) */
 .btn-delete {
@@ -1006,21 +648,160 @@ td {
     color: #e74c3c;
     border: 1px solid #e74c3c;
 }
-.btn-delete:hover {
-    background: #e74c3c;
-    color: #fff;
+.btn-delete:hover { background: #e74c3c; color: #fff; }
+
+/* --- 9. MODERN POPUP & MODAL --- */
+.custom-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Order Details Table inside Popup */
-.popup-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 10px 0;
-    font-size: 0.9em;
+.custom-popup-overlay.active { opacity: 1; visibility: visible; }
+
+.custom-popup-box {
+    background: #1e1e1e;
+    width: 90%;
+    max-width: 420px;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #333;
+    text-align: center;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 }
-.popup-table td {
-    padding: 5px;
-    border-bottom: 1px solid #444;
+
+.custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
+
+.popup-icon { font-size: 3.5em; margin-bottom: 15px; display: block; }
+.popup-success { color: #2ecc71; } .popup-error { color: #e74c3c; } .popup-info { color: #ff9f43; }
+
+.popup-title { color: #fff; font-size: 1.6em; margin-bottom: 10px; font-weight: 800; }
+
+.popup-msg {
     color: #ccc;
+    margin-bottom: 25px;
+    font-size: 0.95em;
+    line-height: 1.6;
+    background: #252525;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
 }
+
+.popup-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    background: linear-gradient(45deg, #ff9f43, #ffcd75);
+    color: #000;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(255, 159, 67, 0.3);
+    cursor: pointer;
+}
+.popup-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 159, 67, 0.4); }
+
+/* Popup Table (Order Details) */
+.popup-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em; }
+.popup-table td { padding: 5px; border-bottom: 1px solid #444; color: #ccc; }
 .popup-table tr:last-child td { border-bottom: none; }
+
+/* --- 10. SIZE MODAL (Admin & User) --- */
+.size-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); z-index: 9999;
+    display: none; justify-content: center; align-items: center;
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.size-modal-overlay.active { display: flex; opacity: 1; }
+
+.size-modal-box {
+    background: #1e1e1e; width: 90%; max-width: 400px;
+    padding: 25px; border-radius: 12px; border: 1px solid #ff9f43;
+    text-align: center; position: relative;
+    transform: scale(0.8); transition: transform 0.3s ease;
+}
+.size-modal-overlay.active .size-modal-box { transform: scale(1); }
+
+.size-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+
+.size-btn {
+    background: #333; color: #fff; border: 1px solid #555;
+    padding: 10px 15px; border-radius: 5px; cursor: pointer;
+    font-weight: bold; transition: 0.2s; min-width: 50px;
+}
+.size-btn:hover { border-color: #ff9f43; }
+.size-btn.selected { background: #ff9f43; color: #000; border-color: #ff9f43; }
+
+.close-modal-btn {
+    position: absolute; top: 10px; right: 15px;
+    background: none; border: none; color: #777;
+    font-size: 1.5em; cursor: pointer;
+}
+.close-modal-btn:hover { color: #e74c3c; }
+
+/* Stock Edit Modal (Admin) */
+.stock-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.stock-row label { color: #fff; }
+.stock-row input { width: 80px; padding: 5px; background: #333; border: 1px solid #555; color: #fff; text-align: center; }
+
+/* --- 11. FOOTER --- */
+.footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 20px 40px;
+    margin-top: auto;
+    border-top: 1px solid #333;
+    text-align: center;
+}
+
+.footer-brand { font-size: 2.5em; font-weight: 900; color: #ff9f43; margin-bottom: 20px; letter-spacing: 2px; }
+.footer-desc { max-width: 600px; margin: 0 auto 40px; color: #ccc; font-size: 0.95em; }
+.footer-links-title { color: #ff9f43; font-size: 1.5em; font-weight: 800; margin-bottom: 20px; }
+
+.footer-nav { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+.footer-nav a { color: #e0e0e0; font-weight: 500; }
+.footer-nav a:hover { color: #ff9f43; }
+
+.social-icons a { color: #ffcd75; font-size: 1.5em; margin: 0 15px; display: inline-block; transition: 0.3s; }
+.social-icons a:hover { color: #ff9f43; transform: translateY(-3px); }
+
+.copyright { border-top: 1px solid #333; padding-top: 30px; color: #777; font-size: 0.85em; }
+
+/* --- 12. RESPONSIVE --- */
+@media (max-width: 768px) {
+    .nav-list {
+        display: none; flex-direction: column; position: absolute;
+        top: 60px; right: 0; width: 100%; background-color: #000;
+        padding: 20px; text-align: center; border-bottom: 2px solid #ff9f43;
+    }
+    .nav-list.active { display: flex; }
+    .menu-toggle { display: block; }
+
+    .admin-layout { flex-direction: column; }
+    .sidebar {
+        width: 100%; height: auto; position: relative;
+        display: flex; overflow-x: auto; padding: 10px;
+        border-right: none; border-bottom: 1px solid #333;
+    }
+    .sidebar ul { display: flex; }
+    .sidebar ul li { margin-right: 15px; }
+    .sidebar ul li a { white-space: nowrap; }
+    .main-content { margin-left: 0; width: 100%; padding: 15px; }
+}
