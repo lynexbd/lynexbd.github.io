@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Buy Now Fix & Admin Filter Fix)
+// LYNEX FINAL SCRIPT (Checkout Details & Stylish Buttons)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -9,7 +9,7 @@ const KEY_ORDERS = 'lynex_orders';
 const KEY_MESSAGES = 'lynex_messages';
 const KEY_ADMIN_TOKEN = 'lynex_secure_token_v99';
 const KEY_ORDER_COUNT = 'lynex_order_counter';
-const KEY_DIRECT_BUY = 'lynex_direct_buy'; // NEW: For "Buy Now" specific item
+const KEY_DIRECT_BUY = 'lynex_direct_buy'; 
 
 // --- CREDENTIALS ---
 const ADMIN_USER = "SysMaster_99";
@@ -32,7 +32,7 @@ const bdGeoData = {
 };
 
 // --- DATABASE SETUP ---
-const DB_NAME = "Lynex_Reset_DB_V7"; 
+const DB_NAME = "Lynex_Reset_DB_V8"; 
 const DB_VERSION = 1;
 let db;
 
@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     createPopupHTML();
     createSizeModalHTML();
 
-    // Clear Direct Buy data if user visits Cart page (Logic: User chose to view cart, not direct buy)
     if (window.location.pathname.includes('cart.html')) {
         sessionStorage.removeItem(KEY_DIRECT_BUY);
     }
@@ -201,7 +200,7 @@ window.goToSlide = (n, id) => {
     el.scrollTo({ left: el.offsetWidth * n, behavior: 'smooth' }); 
 };
 
-// --- 5. SIZE MODAL (Modified for Buy Now) ---
+// --- 5. SIZE MODAL (Stylish Buttons) ---
 function createSizeModalHTML() {
     if(document.querySelector('.size-modal-overlay')) return;
     const html = `
@@ -214,9 +213,9 @@ function createSizeModalHTML() {
             <div id="modal-qty-area" style="display:none;">
                 <p style="color:#ccc; margin-bottom:10px;">Quantity</p>
                 <div class="qty-selector">
-                    <button class="qty-action-btn" onclick="adjustModalQty(-1)">-</button>
+                    <button class="qty-action-btn" onclick="adjustModalQty(-1)"><i class="fas fa-minus"></i></button>
                     <span class="qty-display" id="modal-qty-val">1</span>
-                    <button class="qty-action-btn" onclick="adjustModalQty(1)">+</button>
+                    <button class="qty-action-btn" onclick="adjustModalQty(1)"><i class="fas fa-plus"></i></button>
                 </div>
                 <button id="modal-confirm-btn" class="btn primary-btn" style="width:100%; padding:12px;">CONFIRM</button>
             </div>
@@ -277,12 +276,10 @@ window.adjustModalQty = (change) => {
     document.getElementById('modal-qty-val').innerText = currentModalQty;
 };
 
-// --- FIX: Buy Now uses Separate Storage ---
 async function confirmSizeSelection() {
     if (!currentSelectedSize || !currentModalProductId) return;
     const p = (await getStorage(KEY_PRODUCTS)).find(x => x.id == currentModalProductId);
     
-    // IF BUY NOW: Save to temporary storage only
     if (currentModalAction === 'buy') {
         const directItem = [{ ...p, size: currentSelectedSize, qty: currentModalQty }];
         sessionStorage.setItem(KEY_DIRECT_BUY, JSON.stringify(directItem));
@@ -291,34 +288,30 @@ async function confirmSizeSelection() {
         return;
     }
 
-    // IF ADD TO CART: Save to Main Cart
-    sessionStorage.removeItem(KEY_DIRECT_BUY); // Clear direct buy if adding to cart
+    sessionStorage.removeItem(KEY_DIRECT_BUY); 
     let c = await getStorage(KEY_CART);
     let ex = c.find(x => x.id == currentModalProductId && x.size == currentSelectedSize);
     
     if (ex) {
-        if (ex.qty + currentModalQty > currentMaxStock) return alert(`Cart limit reached for this item.`);
+        if (ex.qty + currentModalQty > currentMaxStock) return alert(`Cart limit reached.`);
         ex.qty += currentModalQty;
     } else {
         c.push({ ...p, size: currentSelectedSize, qty: currentModalQty });
     }
 
-    await setStorage(KEY_CART, c); 
-    await updateCartCount(); 
-    closeSizeModal();
+    await setStorage(KEY_CART, c); await updateCartCount(); closeSizeModal();
     showPopup('Success', `Added to Cart!<br>${p.name}<br>Size: ${currentSelectedSize}, Qty: ${currentModalQty}`, 'success');
 }
 
 window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
 
-// --- 6. CHECKOUT LOGIC (Dual Source) ---
-// Helper to get items (Buy Now OR Cart)
+// --- 6. CHECKOUT LOGIC (Dual Source + Detailed Summary) ---
 async function getCheckoutItems() {
     const directBuyData = sessionStorage.getItem(KEY_DIRECT_BUY);
     if (directBuyData) {
-        return JSON.parse(directBuyData); // Return single item from Buy Now
+        return JSON.parse(directBuyData); 
     } else {
-        return await getStorage(KEY_CART); // Return all items from Cart
+        return await getStorage(KEY_CART); 
     }
 }
 
@@ -352,11 +345,9 @@ function handleCheckoutForm() {
             const div = document.getElementById('division').value; const dist = document.getElementById('district').value; const upz = document.getElementById('upazila').value; const vill = document.getElementById('village').value;
             if(!div || !dist || !upz || !vill) { return alert('Address incomplete.'); }
 
-            // USE CHECKOUT ITEMS HELPER
             const c = await getCheckoutItems(); 
             if(c.length===0) return showPopup('Error', 'No items to checkout!', 'error');
             
-            // Stock Reduction
             const products = await getStorage(KEY_PRODUCTS);
             for(let item of c) {
                 const p = products.find(x => x.id == item.id);
@@ -371,42 +362,43 @@ function handleCheckoutForm() {
             
             const o = await getStorage(KEY_ORDERS); o.unshift(ord); await setStorage(KEY_ORDERS, o);
             
-            // CLEANUP: If Buy Now, clear session. If Cart, clear localstorage.
-            if(sessionStorage.getItem(KEY_DIRECT_BUY)) {
-                sessionStorage.removeItem(KEY_DIRECT_BUY);
-            } else {
-                await setStorage(KEY_CART, []);
-                await updateCartCount();
-            }
+            if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
+            else { await setStorage(KEY_CART, []); await updateCartCount(); }
             
-            // Detailed Success Popup
-            const itemDetails = c.map(i => `<b>${i.name}</b> (Size: ${i.size}) x ${i.qty}`).join('<br>');
-            const msg = `
-                Order ID: <b>${id}</b><br>
-                <hr style="border:1px solid #444; margin:10px 0;">
-                ${itemDetails}<br>
-                <hr style="border:1px solid #444; margin:10px 0;">
-                Subtotal: ৳${subTot}<br>
-                Delivery: ৳${deliveryCharge}<br>
-                <b style="color:#ff9f43; font-size:1.2em;">Total: ৳${grandTot}</b>
-            `;
-            showPopup('Order Placed Successfully!', msg, 'success', 'index.html');
+            const itemDetails = c.map(i => `<b>${i.name}</b> (${i.size}) x ${i.qty}`).join('<br>');
+            const msg = `Order ID: <b>${id}</b><br><hr style="border:1px solid #444;">${itemDetails}<br>Total: ৳${grandTot}`;
+            showPopup('Order Placed!', msg, 'success', 'index.html');
         };
     }
 }
 
+// --- NEW: Detailed Checkout Summary ---
 async function loadCartSummaryForCheckout() { 
     const el = document.getElementById('checkout-subtotal'); 
-    if(el) { 
-        // USE CHECKOUT ITEMS HELPER
+    const listEl = document.getElementById('checkout-items-list');
+    
+    if(el && listEl) { 
         const c = await getCheckoutItems();
+        
+        // Generate Item List HTML
+        listEl.innerHTML = c.map(item => `
+            <div class="checkout-item-preview">
+                <img src="${item.images[0]||''}" class="checkout-item-img">
+                <div class="checkout-item-details">
+                    <h4>${item.name}</h4>
+                    <p class="checkout-item-meta">Size: <span style="color:#ff9f43">${item.size}</span> | Qty: ${item.qty}</p>
+                </div>
+                <div class="checkout-item-price">৳${item.price * item.qty}</div>
+            </div>
+        `).join('');
+
         const sub = c.reduce((s,i)=>s+(i.price*i.qty),0); 
         el.innerText = sub; 
         calculateTotal(); 
     } 
 }
 
-// --- CART DISPLAY (Standard) ---
+// --- CART DISPLAY ---
 async function loadCartDisplay() {
     const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); if(!c) return;
     const cart = await getStorage(KEY_CART);
@@ -457,7 +449,7 @@ function handleContactForm(form) {
     };
 }
 
-// --- 8. ADMIN FUNCTIONS (Fixed Highlight) ---
+// --- 8. ADMIN FUNCTIONS ---
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody'); const input=document.getElementById('imageInput');
     const render = async () => {
@@ -482,64 +474,28 @@ function initAdminProducts() {
     window.saveStockUpdate = async () => { const id = document.getElementById('edit-prod-id').value; const p = await getStorage(KEY_PRODUCTS); const prod = p.find(x => x.id == id); if(prod) { prod.stock = { s: parseInt(document.getElementById('edit-s').value)||0, m: parseInt(document.getElementById('edit-m').value)||0, l: parseInt(document.getElementById('edit-l').value)||0, xl: parseInt(document.getElementById('edit-xl').value)||0, xxl: parseInt(document.getElementById('edit-xxl').value)||0 }; await setStorage(KEY_PRODUCTS, p); closeStockModal(); render(); showPopup('Success', 'Stock Updated!', 'success'); } };
 }
 
-// --- FIX: ADMIN ORDERS & FILTER HIGHLIGHT ---
 function initAdminOrders() { 
     const tb=document.querySelector('#orders-table tbody'); 
     let flt='All'; 
     const ren=async()=>{ 
         const all=await getStorage(KEY_ORDERS); const l=flt==='All'?all:all.filter(o=>o.status===flt); 
-        
-        // Fix: Highlight logic for "Completed" (which maps to Delivered)
         document.querySelectorAll('.filter-btn').forEach(b=>{
             const txt = b.innerText.trim();
-            if((flt==='All' && txt==='All Orders') || 
-               (flt==='Pending' && txt==='Pending') ||
-               (flt==='Shipped' && txt==='Shipped') ||
-               (flt==='Delivered' && txt==='Completed') || // Mapped
-               (flt==='Cancelled' && txt==='Cancelled')) {
+            if((flt==='All' && txt==='All Orders') || (flt==='Pending' && txt==='Pending') || (flt==='Shipped' && txt==='Shipped') || (flt==='Delivered' && txt==='Completed') || (flt==='Cancelled' && txt==='Cancelled')) {
                 b.classList.add('active');
             } else {
                 b.classList.remove('active');
             }
         });
-
         if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Orders</td></tr>';return;} 
-        tb.innerHTML=l.map(o=>`
-            <tr>
-                <td>${o.id}</td>
-                <td>${o.customer.name}</td>
-                <td>৳${o.total}</td>
-                <td>
-                    <select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555">
-                        <option ${o.status==='Pending'?'selected':''}>Pending</option>
-                        <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                        <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                        <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
-                    </select>
-                </td>
-                <td><button onclick="vOrd('${o.id}')" class="btn-action btn-view"><i class="fas fa-eye"></i> View</button></td>
-            </tr>`
-        ).join(''); 
+        tb.innerHTML=l.map(o=>`<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" class="btn-action btn-view"><i class="fas fa-eye"></i> View</button></td></tr>`).join(''); 
     }; ren(); 
-    
-    // Fix: Filter functions matching button text logic
     window.filterOrders=(s)=>{flt=s;ren();}; 
     window.changeOrderStatus = async (id, status) => { const all = await getStorage(KEY_ORDERS); const order = all.find(x => x.id === id); if(order) { order.status = status; await setStorage(KEY_ORDERS, all); showPopup('Updated', `Order ${id} marked as ${status}`, 'success'); ren(); } };
     window.vOrd=async(id)=>{
         const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id); if(!o)return;
         const itemRows = o.items.map(i => `<tr><td>${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">৳${i.price*i.qty}</td></tr>`).join('');
-        const content = `
-            <div style="text-align:left;">
-                <p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p>
-                <p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p>
-                <p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p>
-                <table class="popup-table"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th></tr></thead><tbody>${itemRows}</tbody></table>
-                <div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;">
-                    <div style="display:flex; justify-content:space-between; color:#ccc;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div>
-                    <div style="display:flex; justify-content:space-between; color:#ccc;"><span>Delivery:</span><span>৳${o.deliveryCharge}</span></div>
-                    <div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em; margin-top:5px;"><span>Total:</span><span>৳${o.total}</span></div>
-                </div>
-            </div>`;
+        const content = `<div style="text-align:left;"><p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p><p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p><p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p><table class="popup-table"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th></tr></thead><tbody>${itemRows}</tbody></table><div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;"><div style="display:flex; justify-content:space-between; color:#ccc;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div><div style="display:flex; justify-content:space-between; color:#ccc;"><span>Delivery:</span><span>৳${o.deliveryCharge}</span></div><div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em; margin-top:5px;"><span>Total:</span><span>৳${o.total}</span></div></div></div>`;
         showPopup('Order Details', content, 'info');
     }; 
 }
