@@ -15,11 +15,19 @@
             border: 1px solid #444;
             color: #fff;
             border-radius: 4px;
-            margin-bottom: 15px;
+            margin-bottom: 5px; /* Margin reduced to fit error msg */
             font-family: 'Montserrat', sans-serif;
         }
         .form-select:disabled { opacity: 0.5; cursor: not-allowed; }
-        .error-msg { color: #e74c3c; font-size: 0.85em; margin-top: -10px; margin-bottom: 15px; display: none; }
+        
+        /* Error Message Style */
+        .error-msg { 
+            color: #e74c3c; 
+            font-size: 0.85em; 
+            margin-bottom: 15px; 
+            display: none; 
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -72,34 +80,48 @@
             <div style="background: #1e1e1e; padding: 40px; border-radius: 8px; border: 1px solid #333;">
                 <h3 style="color: #fff; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px;">Billing Information</h3>
                 
-                <form id="checkout-form">
+                <form id="checkout-form" novalidate>
                     <div style="margin-bottom: 5px;">
                         <label>Full Name</label>
-                        <input type="text" name="name" class="form-input" required placeholder="Enter your full name">
+                        <input type="text" id="name" name="name" class="form-input" required placeholder="Enter your full name">
+                        <small id="name-error" class="error-msg">Please enter your full name.</small>
                     </div>
 
                     <div style="margin-bottom: 5px;">
                         <label>Phone Number</label>
                         <input type="number" id="phone" name="phone" class="form-input" required placeholder="Mobile Number (01xxxxxxxxx)">
-                        <small id="phone-error" class="error-msg">Number must be 11 digits starting with 013-019.</small>
+                        <small id="phone-error" class="error-msg">Valid number required (11 digits, starts with 013-019).</small>
                     </div>
 
                     <div style="margin-bottom: 20px;">
                         <label>Shipping Address</label>
                         
-                        <select id="division" class="form-select" required onchange="loadDistricts()">
-                            <option value="">Select Division</option>
-                        </select>
+                        <div>
+                            <select id="division" class="form-select" required onchange="loadDistricts()">
+                                <option value="">Select Division</option>
+                            </select>
+                            <small id="division-error" class="error-msg">Please select a division.</small>
+                        </div>
 
-                        <select id="district" class="form-select" required disabled onchange="loadUpazilas()">
-                            <option value="">Select District</option>
-                        </select>
+                        <div>
+                            <select id="district" class="form-select" required disabled onchange="loadUpazilas()">
+                                <option value="">Select District</option>
+                            </select>
+                            <small id="district-error" class="error-msg">Please select a district.</small>
+                        </div>
 
-                        <select id="upazila" class="form-select" required disabled onchange="calculateTotal()">
-                            <option value="">Select Upazila</option>
-                        </select>
+                        <div>
+                            <select id="upazila" class="form-select" required disabled onchange="calculateTotal()">
+                                <option value="">Select Upazila</option>
+                            </select>
+                            <small id="upazila-error" class="error-msg">Please select an upazila.</small>
+                        </div>
 
-                        <input type="text" id="village" class="form-input" required placeholder="Village / Area / House & Road No">
+                        <div>
+                            <input type="text" id="village" class="form-input" required placeholder="Village / Area / House & Road No">
+                            <small id="village-error" class="error-msg">Please enter your village or area details.</small>
+                        </div>
+
                         <input type="text" id="landmark" class="form-input" placeholder="Nearby Landmark (Optional)">
                     </div>
 
