@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Diagonal Stock Badge & Multi-Size)
+// LYNEX FINAL SCRIPT (Feedback Fix, Order Details & Nav)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -31,7 +31,7 @@ const bdGeoData = {
 };
 
 // --- DATABASE SETUP (IndexedDB) ---
-const DB_NAME = "Lynex_Reset_DB_V4"; 
+const DB_NAME = "Lynex_Reset_DB_V5"; 
 const DB_VERSION = 1;
 let db;
 
@@ -103,7 +103,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     if (document.querySelector('.cart-items') && !document.getElementById('checkout-form')) loadCartDisplay();
-    if (document.getElementById('contact-form')) handleContactForm();
+    
+    // Feedback Form Init
+    const contactForm = document.getElementById('contact-form') || document.querySelector('form[action="feedback.html"]');
+    if (contactForm) handleContactForm(contactForm);
 });
 
 function highlightAdminNav() {
@@ -129,7 +132,7 @@ function handleLogin() {
 }
 window.adminLogout = function() { sessionStorage.removeItem(KEY_ADMIN_TOKEN); window.location.href = PAGE_LOGIN; };
 
-// --- 4. DISPLAY PRODUCTS (NEW DESIGN LOGIC) ---
+// --- 4. DISPLAY PRODUCTS & DOTS ---
 async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid'); if (!grid) return;
     let p = await getStorage(KEY_PRODUCTS);
@@ -138,38 +141,39 @@ async function loadProductsDisplay(isHome) {
     grid.innerHTML = p.length ? p.map(i => {
         let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
         let discountBadge = '';
-        
-        // Discount (Top-Left)
         if (i.originalPrice && i.originalPrice > i.price) {
             const d = Math.round(((i.originalPrice - i.price) / i.originalPrice) * 100);
             priceHTML = `<span class="old-price">৳ ${i.originalPrice}</span> <span class="current-price">৳ ${i.price}</span>`;
             discountBadge = `<span class="discount-badge">-${d}% OFF</span>`;
         }
 
-        // Stock Logic
         const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
         const totalStock = (parseInt(s.s)||0) + (parseInt(s.m)||0) + (parseInt(s.l)||0) + (parseInt(s.xl)||0) + (parseInt(s.xxl)||0);
-        
-        let stockOverlay = '';
-        let btnState = '';
+        let stockOverlay = '', btnState = '';
 
-        // NEW: Dark Overlay + Diagonal Text
         if (totalStock === 0) {
-            stockOverlay = `
-                <div class="stock-overlay">
-                    <div class="stock-text-diagonal">STOCK OUT</div>
-                </div>`;
+            stockOverlay = `<div class="stock-overlay"><div class="stock-text-diagonal">STOCK OUT</div></div>`;
             btnState = 'disabled style="opacity:0.5; cursor:not-allowed;"';
         }
 
         let images = i.images && i.images.length ? i.images : [''];
         let slides = images.map((src) => `<img src="${src}" class="slider-image">`).join('');
         
+        // Dots generation
+        let dots = '';
+        if (images.length > 1) {
+            dots = `<div class="slider-dots" id="dots-${i.id}">
+                ${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}
+            </div>`;
+        }
+        
         return `
         <div class="product-card">
             <div class="image-wrapper">
-                ${discountBadge}  ${stockOverlay}   <div class="slider-container" id="slider-${i.id}" onscroll="updateActiveDot(this, '${i.id}')">${slides}</div>
-            </div>
+                ${discountBadge}
+                ${stockOverlay}
+                <div class="slider-container" id="slider-${i.id}" onscroll="updateActiveDot(this, '${i.id}')">${slides}</div>
+                ${dots} </div>
             <div class="product-info">
                 <h3>${i.name}</h3>
                 <div class="price-container">${priceHTML}</div>
@@ -181,9 +185,20 @@ async function loadProductsDisplay(isHome) {
         </div>`;
     }).join('') : '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products.</p>';
 }
-window.updateActiveDot = (el, id) => {}; 
 
-// --- 5. SIZE MODAL ---
+// Fixed Dot Logic
+window.updateActiveDot = (el, id) => { 
+    const idx = Math.round(el.scrollLeft / el.offsetWidth);
+    const dots = document.querySelectorAll(`#dots-${id} .dot`);
+    dots.forEach(d => d.classList.remove('active'));
+    if(dots[idx]) dots[idx].classList.add('active');
+};
+window.goToSlide = (n, id) => { 
+    const el = document.getElementById(`slider-${id}`); 
+    el.scrollTo({ left: el.offsetWidth * n, behavior: 'smooth' }); 
+};
+
+// --- 5. SIZE MODAL & CART ---
 function createSizeModalHTML() {
     if(document.querySelector('.size-modal-overlay')) return;
     const html = `
@@ -303,7 +318,6 @@ async function confirmSizeSelection() {
 
 window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
 
-// --- 6. CART DISPLAY ---
 async function loadCartDisplay() {
     const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); if(!c) return;
     const cart = await getStorage(KEY_CART);
@@ -351,7 +365,7 @@ window.upQty = async (i, v) => {
 };
 window.rmC = async(i)=>{ let c=await getStorage(KEY_CART); c.splice(i,1); await setStorage(KEY_CART,c); await loadCartDisplay(); await updateCartCount(); };
 
-// --- 7. CHECKOUT ---
+// --- 6. CHECKOUT WITH DETAILED POPUP ---
 function initAddressDropdowns() {
     const divisionSelect = document.getElementById("division"); if (!divisionSelect) return;
     for (let div in bdGeoData) { let option = document.createElement("option"); option.value = div; option.text = div; divisionSelect.appendChild(option); }
@@ -387,6 +401,7 @@ function handleCheckoutForm() {
             const c = await getStorage(KEY_CART); 
             if(c.length===0) return showPopup('Error', 'Your cart is empty!', 'error');
             
+            // Stock Reduction
             const products = await getStorage(KEY_PRODUCTS);
             for(let item of c) {
                 const p = products.find(x => x.id == item.id);
@@ -403,13 +418,45 @@ function handleCheckoutForm() {
             const ord = { id: id, date: new Date().toLocaleDateString(), customer: { name: f.name.value, phone: phoneVal, address: fullAddress }, items: c, subTotal: subTot, deliveryCharge: deliveryCharge, total: grandTot, status: 'Pending' };
             
             const o = await getStorage(KEY_ORDERS); o.unshift(ord); await setStorage(KEY_ORDERS, o); await setStorage(KEY_CART, []); await updateCartCount();
-            showPopup('Order Success!', `Order ID: ${id}`, 'success', 'index.html');
+            
+            // Detailed Success Popup
+            const itemDetails = c.map(i => `<b>${i.name}</b> (Size: ${i.size}) x ${i.qty} = ৳${i.price*i.qty}`).join('<br>');
+            const msg = `
+                Order ID: <b>${id}</b><br>
+                <hr style="border:1px solid #444; margin:10px 0;">
+                ${itemDetails}<br>
+                <hr style="border:1px solid #444; margin:10px 0;">
+                Subtotal: ৳${subTot}<br>
+                Delivery: ৳${deliveryCharge}<br>
+                <b style="color:#ff9f43; font-size:1.2em;">Total: ৳${grandTot}</b>
+            `;
+            showPopup('Order Placed Successfully!', msg, 'success', 'index.html');
         };
     }
 }
 async function loadCartSummaryForCheckout() { const el = document.getElementById('checkout-subtotal'); if(el) { const c = await getStorage(KEY_CART); const sub = c.reduce((s,i)=>s+(i.price*i.qty),0); el.innerText = sub; calculateTotal(); } }
 
-// --- 8. ADMIN FUNCTIONS ---
+// --- 7. FEEDBACK FIX ---
+function handleContactForm(form) {
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const m = {
+            id: Date.now(), 
+            date: new Date().toLocaleDateString(), 
+            name: form.name ? form.name.value : 'Guest', 
+            email: form.email ? form.email.value : 'No Email', 
+            subject: form.subject ? form.subject.value : 'No Subject', 
+            message: form.message ? form.message.value : '', 
+            isRead: false
+        };
+        const ms = await getStorage(KEY_MESSAGES); ms.unshift(m); 
+        await setStorage(KEY_MESSAGES, ms); 
+        form.reset(); 
+        showPopup('Message Sent', 'Thank you for your feedback! We will contact you soon.', 'success');
+    };
+}
+
+// --- 8. ADMIN FUNCTIONS (Fixed Highlight & Order Filter) ---
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody'); const input=document.getElementById('imageInput');
     const render = async () => {
@@ -435,24 +482,46 @@ function initAdminProducts() {
 }
 
 function initAdminOrders() { 
-    const tb=document.querySelector('#orders-table tbody'); let flt='All'; 
+    const tb=document.querySelector('#orders-table tbody'); 
+    let flt='All'; 
     const ren=async()=>{ 
         const all=await getStorage(KEY_ORDERS); 
         const l=flt==='All'?all:all.filter(o=>o.status===flt); 
-        document.querySelectorAll('.filter-btn').forEach(b=>{ if(b.innerText.includes(flt) || (flt=='All' && b.innerText=='All Orders')) b.classList.add('active'); else b.classList.remove('active'); });
+        
+        // Fix: Active Tab Highlight logic
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            const onClickText = b.getAttribute('onclick');
+            if(onClickText && onClickText.includes(`'${flt}'`)) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+
         if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Orders</td></tr>';return;} 
         tb.innerHTML=l.map(o=>`<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" style="cursor:pointer;color:#fff;background:none;border:none;">View</button></td></tr>`).join(''); 
     }; ren(); 
     window.filterOrders=(s)=>{flt=s;ren();}; 
     window.changeOrderStatus = async (id, status) => { const all = await getStorage(KEY_ORDERS); const order = all.find(x => x.id === id); if(order) { order.status = status; await setStorage(KEY_ORDERS, all); showPopup('Updated', `Order ${id} marked as ${status}`, 'success'); ren(); } };
-    window.vOrd=async(id)=>{const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id);if(!o)return;const items=o.items.map(i=>`- ${i.name} (${i.size}) x${i.qty}`).join('\n');showPopup('Details',`ID: ${o.id}\n${items}\nTotal: ৳${o.total}`,'info');}; 
+    window.vOrd=async(id)=>{const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id);if(!o)return;const items=o.items.map(i=>`- ${i.name} (${i.size}) x${i.qty}`).join('\n');showPopup('Details',`ID: ${o.id}\n${items}\nSub: ৳${o.subTotal}, Del: ৳${o.deliveryCharge}\nTotal: ৳${o.total}`,'info');}; 
 }
 
-function initAdminMessages() { /* Standard */ }
-async function initAdminDashboard() { /* Standard */ }
+function initAdminMessages() { 
+    const tb=document.querySelector('#messages-table tbody'); let vm='New'; 
+    const ren=async()=>{ 
+        const all=await getStorage(KEY_MESSAGES); const l=vm==='New'?all.filter(m=>!m.isRead):all.filter(m=>m.isRead); 
+        document.querySelectorAll('.filter-btn').forEach(b=>{if(b.innerText.includes(vm))b.classList.add('active');else b.classList.remove('active');}); 
+        if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Messages</td></tr>';return;} 
+        tb.innerHTML=l.map(m=>{const ix=all.findIndex(x=>x.id===m.id); return `<tr><td>${m.date}</td><td>${m.name}<br><small>${m.email}</small></td><td>${m.subject}</td><td>${m.message}</td><td>${!m.isRead?`<button onclick="mkR(${ix})">Read</button>`:''}<button onclick="delMsg(${ix})">Del</button></td></tr>`;}).join(''); 
+    }; ren(); 
+    window.filterMsgs=(m)=>{vm=m;ren();}; 
+    window.mkR=async(i)=>{const m=await getStorage(KEY_MESSAGES);m[i].isRead=true;await setStorage(KEY_MESSAGES,m);ren(); updateAdminSidebarBadges();}; 
+    window.delMsg=async(i)=>{if(confirm('Delete?')){const m=await getStorage(KEY_MESSAGES);m.splice(i,1);await setStorage(KEY_MESSAGES,m);ren(); updateAdminSidebarBadges();}}; 
+}
+async function initAdminDashboard() { const o=await getStorage(KEY_ORDERS); const p=await getStorage(KEY_PRODUCTS); const rev=o.filter(x=>x.status==='Delivered').reduce((s,i)=>s+parseFloat(i.total),0); document.getElementById('stat-revenue').innerText='৳ '+rev; document.getElementById('stat-pending').innerText=o.filter(x=>x.status==='Pending').length; document.getElementById('stat-shipped').innerText=o.filter(x=>x.status==='Shipped').length; document.getElementById('stat-delivered').innerText=o.filter(x=>x.status==='Delivered').length; document.getElementById('stat-cancelled').innerText=o.filter(x=>x.status==='Cancelled').length; document.getElementById('stat-products').innerText=p.length; }
 
 // Utils
 function createPopupHTML() { if(!document.querySelector('.custom-popup-overlay')) { const p=document.createElement('div'); p.className='custom-popup-overlay'; p.innerHTML=`<div class="custom-popup-box"><i class="fas fa-info-circle popup-icon"></i><h3 class="popup-title"></h3><p class="popup-msg"></p><button class="btn primary-btn popup-btn">OK</button></div>`; document.body.appendChild(p); p.querySelector('.popup-btn').addEventListener('click', () => { p.classList.remove('active'); if(window.popupRedirect) { window.location.href=window.popupRedirect; window.popupRedirect=null; } }); } }
 function showPopup(title, msg, type='info', url=null) { const o=document.querySelector('.custom-popup-overlay'); if(!o) return alert(msg); const i=o.querySelector('.popup-icon'); o.querySelector('.popup-title').innerText=title; o.querySelector('.popup-msg').innerHTML=msg.replace(/\n/g, '<br>'); if(type==='success') i.className='fas fa-check-circle popup-icon popup-success'; else if(type==='error') i.className='fas fa-times-circle popup-icon popup-error'; else i.className='fas fa-info-circle popup-icon popup-info'; if(url) window.popupRedirect=url; o.classList.add('active'); }
-async function updateAdminSidebarBadges() { /* Standard */ }
+async function updateAdminSidebarBadges() { const o = await getStorage(KEY_ORDERS); const m = await getStorage(KEY_MESSAGES); if(o.some(x=>x.status==='Pending') && document.getElementById('nav-orders')) document.getElementById('nav-orders').innerHTML+=' <span class="nav-badge"></span>'; if(m.some(x=>!x.isRead) && document.getElementById('nav-messages')) document.getElementById('nav-messages').innerHTML+=' <span class="nav-badge"></span>'; }
 async function updateCartCount() { const c = await getStorage(KEY_CART); const t = c.reduce((s, i) => s + (parseInt(i.qty)||0), 0); document.querySelectorAll('.cart-count').forEach(e => e.innerText = `(${t})`); }
