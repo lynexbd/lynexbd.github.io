@@ -753,69 +753,63 @@ function handleContactForm(form) {
 
 function initAdminMessages() { 
     const tb = document.querySelector('#messages-table tbody'); 
-    let filterStatus = 'New'; // ডিফল্টভাবে নতুন মেসেজ দেখাবে
+    let filterStatus = 'New'; 
 
-    // Firebase রিয়েল-টাইম লিসেনার
     onValue(ref(db, 'messages'), (snapshot) => {
         const data = snapshot.val();
         renderMessages(data);
     });
 
-    // মেসেজ রেন্ডার করার মূল লজিক
     function renderMessages(data) {
         if (!data) { 
-            tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No Messages Found</td></tr>'; 
+            tb.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">No Messages Found</td></tr>'; 
             return; 
         }
 
         const allMsgs = Object.values(data).reverse();
-        // ফিল্টার লজিক: New হলে isRead: false, Read হলে isRead: true
         const filtered = filterStatus === 'New' 
             ? allMsgs.filter(m => m.isRead === false) 
             : allMsgs.filter(m => m.isRead === true);
 
-        // ট্যাব হাইলাইট ঠিক করা
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        // ট্যাব হাইলাইট লজিক
+        document.querySelectorAll('.filter-tabs .filter-btn').forEach(btn => {
             if(btn.innerText.includes(filterStatus)) btn.classList.add('active');
             else btn.classList.remove('active');
         });
 
         if (filtered.length === 0) {
-            tb.innerHTML = `<tr><td colspan="5" style="text-align:center;">No ${filterStatus} Messages</td></tr>`;
+            tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No ${filterStatus} Messages</td></tr>`;
             return;
         }
 
         tb.innerHTML = filtered.map(m => `
             <tr>
                 <td>${m.date}</td>
-                <td>${m.name}<br><small>${m.email}</small></td>
+                <td><strong>${m.name}</strong><br><small style="color:#aaa;">${m.email}</small></td>
                 <td>${m.subject}</td>
-                <td>${m.message}</td>
-                <td style="white-space:nowrap;">
-                    ${m.isRead === false ? `<button onclick="markAsRead('${m.id}')" class="btn-action btn-read"><i class="fas fa-check"></i> Read</button>` : ''}
-                    <button onclick="delMsg('${m.id}')" class="btn-action btn-delete"><i class="fas fa-trash"></i></button>
+                <td><div style="max-width:300px; font-size:0.9em; color:#ccc;">${m.message}</div></td>
+                <td style="text-align: right; white-space:nowrap;">
+                    ${m.isRead === false ? 
+                        `<button onclick="markAsRead('${m.id}')" class="btn-action btn-read"><i class="fas fa-check"></i> Mark Read</button>` : 
+                        `<span style="color:#2ecc71; font-size:0.8em; margin-right:10px;"><i class="fas fa-check-double"></i> Read</span>`
+                    }
+                    <button onclick="delMsg('${m.id}')" class="btn-action btn-delete" style="padding: 6px 10px;"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>`).join('');
     }
 
-    // গ্লোবাল ফাংশন: ফিল্টার চেঞ্জ করার জন্য
     window.filterMsgs = (status) => {
         filterStatus = status;
-        // পুনরায় ডেটা রিড করে রেন্ডার করা
         get(ref(db, 'messages')).then((snap) => renderMessages(snap.val()));
     };
 
-    // গ্লোবাল ফাংশন: মেসেজ পড়া হয়েছে হিসেবে চিহ্নিত করা
     window.markAsRead = async (id) => {
         try {
             await update(ref(db, 'messages/' + id), { isRead: true });
-            showPopup('Success', 'Message marked as read!', 'success');
-        } catch(e) { 
-            console.error("Update Error:", e); 
-        }
+            showPopup('Updated', 'Message moved to Read list.', 'success');
+        } catch(e) { console.error(e); }
     };
 
-    // গ্লোবাল ফাংশন: মেসেজ ডিলিট করা
     window.delMsg = async (id) => { 
         if (confirm('Permanently delete this message?')) {
             await remove(ref(db, 'messages/' + id));
