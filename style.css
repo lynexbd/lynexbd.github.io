@@ -784,3 +784,132 @@ td {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+/* --- NEW FEATURES: Stock Badge & Size Modal --- */
+
+/* 1. Stock Out Badge on Image Corner */
+.stock-badge-corner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #e74c3c; /* Red */
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    font-weight: 800;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+/* 2. Size Selection Modal */
+.size-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.size-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.size-modal-box {
+    background: #1e1e1e;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #ff9f43;
+    text-align: center;
+    position: relative;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.size-modal-overlay.active .size-modal-box {
+    transform: scale(1);
+}
+
+.size-grid {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.size-btn {
+    background: #333;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    min-width: 50px;
+}
+
+.size-btn:hover {
+    border-color: #ff9f43;
+}
+
+.size-btn.selected {
+    background: #ff9f43;
+    color: #000;
+    border-color: #ff9f43;
+}
+
+.qty-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.qty-action-btn {
+    background: #333;
+    color: #fff;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.qty-action-btn:hover {
+    background: #ff9f43;
+    color: #000;
+}
+
+.qty-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    width: 30px;
+    text-align: center;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+.close-modal-btn:hover { color: #e74c3c; }
