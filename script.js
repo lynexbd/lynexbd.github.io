@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Price * Qty Format Updated)
+// LYNEX FINAL SCRIPT (Detailed Admin Order View Updated)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -32,7 +32,7 @@ const bdGeoData = {
 };
 
 // --- DATABASE SETUP ---
-const DB_NAME = "Lynex_Reset_DB_V12"; 
+const DB_NAME = "Lynex_Reset_DB_V13"; 
 const DB_VERSION = 1;
 let db;
 
@@ -136,7 +136,7 @@ function handleLogin() {
 }
 window.adminLogout = function() { sessionStorage.removeItem(KEY_ADMIN_TOKEN); window.location.href = PAGE_LOGIN; };
 
-// --- 4. DISPLAY PRODUCTS (Updated Ribbon) ---
+// --- 4. DISPLAY PRODUCTS ---
 async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid'); if (!grid) return;
     let p = await getStorage(KEY_PRODUCTS);
@@ -306,7 +306,7 @@ async function confirmSizeSelection() {
 
 window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
 
-// --- 6. CHECKOUT LOGIC (With Price * Qty Format) ---
+// --- 6. CHECKOUT LOGIC ---
 async function getCheckoutItems() {
     const directBuyData = sessionStorage.getItem(KEY_DIRECT_BUY);
     if (directBuyData) {
@@ -353,7 +353,6 @@ function handleCheckoutForm() {
             e.preventDefault();
             
             let isValid = true;
-            // Validate Inputs
             if (f.name.value.trim() === "") { showError('name', 'name-error'); isValid = false; } else { clearError('name', 'name-error'); }
             const phoneVal = f.phone.value.trim();
             const validPrefixes = ['017', '019', '018', '014', '015', '013', '016'];
@@ -389,7 +388,6 @@ function handleCheckoutForm() {
             if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
             else { await setStorage(KEY_CART, []); await updateCartCount(); }
             
-            // --- DETAILED POPUP LOGIC (Price x Qty) ---
             const itemDetails = c.map(i => `
                 <div style="display:flex; justify-content:space-between; font-size:0.9em; margin-bottom:5px; border-bottom: 1px dashed #444; padding-bottom: 3px;">
                     <span>${i.name} (${i.size})</span>
@@ -402,25 +400,20 @@ function handleCheckoutForm() {
                     <p style="margin-bottom:5px;"><strong>Name:</strong> ${f.name.value}</p>
                     <p style="margin-bottom:5px;"><strong>Phone:</strong> ${phoneVal}</p>
                     <p style="margin-bottom:10px; color:#aaa; font-size:0.85em;"><strong>Address:</strong> ${fullAddress}</p>
-                    
                     <p style="margin-bottom:5px; color:#ff9f43; margin-top:15px;"><strong>Order Items:</strong></p>
                     ${itemDetails}
-                    
                     <div style="margin-top: 15px; border-top: 1px solid #555; padding-top: 10px;">
                         <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>৳${subTot}</span></div>
                         <div style="display:flex; justify-content:space-between;"><span>Delivery:</span><span>৳${deliveryCharge}</span></div>
                         <div style="display:flex; justify-content:space-between; font-size:1.3em; color:#ff9f43; font-weight:bold; margin-top:5px;"><span>Total:</span><span>৳${grandTot}</span></div>
                     </div>
-                    
                     <p style="margin-top:15px; text-align:center; font-size:0.8em; color:#777;">Order ID: ${id}</p>
-                </div>
-            `;
+                </div>`;
             showPopup('Order Placed Successfully!', msg, 'success', 'index.html');
         };
     }
 }
 
-// --- UPDATED SUMMARY (Price x Qty) ---
 async function loadCartSummaryForCheckout() { 
     const el = document.getElementById('checkout-subtotal'); 
     const listEl = document.getElementById('checkout-items-list');
@@ -438,8 +431,7 @@ async function loadCartSummaryForCheckout() {
                         <span style="color:#ff9f43; font-weight:bold;">= ৳${item.price * item.qty}</span>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            </div>`).join('');
 
         const sub = c.reduce((s,i)=>s+(i.price*i.qty),0); 
         el.innerText = sub; 
@@ -455,7 +447,6 @@ async function loadCartDisplay() {
 
     const cart = await getStorage(KEY_CART);
     
-    // EMPTY STATE
     if(cart.length===0) { 
         c.innerHTML=`
             <div style="text-align:center; padding: 40px 0;">
@@ -465,7 +456,7 @@ async function loadCartDisplay() {
                 <a href="products.html" class="btn primary-btn">SHOP COLLECTION</a>
             </div>`; 
         if(t) t.innerText='0'; 
-        if(summarySection) summarySection.style.display = 'none'; // Hide Checkout Button
+        if(summarySection) summarySection.style.display = 'none'; 
         return; 
     }
 
@@ -516,7 +507,7 @@ function handleContactForm(form) {
     };
 }
 
-// --- 8. ADMIN FUNCTIONS ---
+// --- 8. ADMIN FUNCTIONS (Updated Order View) ---
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody'); const input=document.getElementById('imageInput');
     const render = async () => {
@@ -559,12 +550,50 @@ function initAdminOrders() {
     }; ren(); 
     window.filterOrders=(s)=>{flt=s;ren();}; 
     window.changeOrderStatus = async (id, status) => { const all = await getStorage(KEY_ORDERS); const order = all.find(x => x.id === id); if(order) { order.status = status; await setStorage(KEY_ORDERS, all); showPopup('Updated', `Order ${id} marked as ${status}`, 'success'); ren(); } };
-    window.vOrd=async(id)=>{
-        const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id); if(!o)return;
-        const itemRows = o.items.map(i => `<tr><td>${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">৳${i.price*i.qty}</td></tr>`).join('');
-        const content = `<div style="text-align:left;"><p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p><p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p><p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p><table class="popup-table"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th></tr></thead><tbody>${itemRows}</tbody></table><div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;"><div style="display:flex; justify-content:space-between; color:#ccc;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div><div style="display:flex; justify-content:space-between; color:#ccc;"><span>Delivery:</span><span>৳${o.deliveryCharge}</span></div><div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em; margin-top:5px;"><span>Total:</span><span>৳${o.total}</span></div></div></div>`;
+    
+    // Updated vOrd: Table View for Admin Order Details
+    window.vOrd = async (id) => {
+        const o = (await getStorage(KEY_ORDERS)).find(x => x.id === id);
+        if (!o) return;
+
+        const itemRows = o.items.map(i => `
+            <tr>
+                <td style="text-align:left;">${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td>
+                <td style="text-align:center;">৳${i.price}</td>
+                <td style="text-align:center;">${i.qty}</td>
+                <td style="text-align:right;">৳${i.price * i.qty}</td>
+            </tr>
+        `).join('');
+
+        const content = `
+            <div style="text-align:left;">
+                <p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p>
+                <p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p>
+                <p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p>
+                
+                <div style="overflow-x:auto;">
+                    <table class="popup-table" style="width:100%; border-collapse: collapse; font-size:0.9em;">
+                        <thead>
+                            <tr style="border-bottom:1px solid #555;">
+                                <th style="text-align:left; padding:5px;">Product</th>
+                                <th style="text-align:center; padding:5px;">Rate</th>
+                                <th style="text-align:center; padding:5px;">Qty</th>
+                                <th style="text-align:right; padding:5px;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemRows}</tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;">
+                    <div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div>
+                    <div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Delivery Charge:</span><span>৳${o.deliveryCharge}</span></div>
+                    <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
+                    <div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em;"><span>Grand Total:</span><span>৳${o.total}</span></div>
+                </div>
+            </div>`;
         showPopup('Order Details', content, 'info');
-    }; 
+    };
 }
 
 function initAdminMessages() { 
