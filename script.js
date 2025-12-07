@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (With Address Logic & Validations)
+// LYNEX FINAL SCRIPT (Delivery Charge Logic Added)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -18,13 +18,13 @@ const ADMIN_PASS = "L7n@x#Super!2025";
 const PAGE_LOGIN = 'k7_entry_point.html';
 const PAGE_DASHBOARD = 'x_master_v9.html';
 
-// --- BANGLADESH GEO DATA (Division > District > Upazila) ---
+// --- BANGLADESH GEO DATA ---
 const bdGeoData = {
     "Dhaka": {
+        "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"],
         "Dhaka": ["Savar", "Dhamrai", "Keraniganj", "Nawabganj", "Dohar", "Dhaka Sadar"],
         "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
         "Narayanganj": ["Narayanganj Sadar", "Bandar", "Araihazar", "Rupganj", "Sonargaon"],
-        "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"],
         "Tangail": ["Tangail Sadar", "Sakhipur", "Basail", "Madhupur", "Ghatail", "Kalihati", "Nagarpur", "Mirzapur", "Gopalpur", "Delduar", "Bhuapur", "Dhanbari"],
         "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
         "Manikganj": ["Manikganj Sadar", "Singair", "Shibalaya", "Saturia", "Harirampur", "Ghior", "Daulatpur"],
@@ -278,7 +278,7 @@ async function loadCartDisplay() {
 }
 window.upQty=async(i,v)=>{let c=await getStorage(KEY_CART);c[i].qty+=v;if(c[i].qty<1){if(confirm("Remove?"))c.splice(i,1);else c[i].qty=1;}await setStorage(KEY_CART,c);await loadCartDisplay();await updateCartCount();}; window.rmC=async(i)=>{let c=await getStorage(KEY_CART);c.splice(i,1);await setStorage(KEY_CART,c);await loadCartDisplay();await updateCartCount();};
 
-// --- CHECKOUT LOGIC WITH VALIDATION & DROPDOWNS ---
+// --- CHECKOUT LOGIC WITH ADDRESS & DELIVERY CHARGE ---
 
 function initAddressDropdowns() {
     const divisionSelect = document.getElementById("division");
@@ -313,6 +313,7 @@ window.loadDistricts = function() {
             districtSelect.appendChild(option);
         }
     }
+    calculateTotal(); // Update charge when district changes
 }
 
 window.loadUpazilas = function() {
@@ -332,6 +333,44 @@ window.loadUpazilas = function() {
             upazilaSelect.appendChild(option);
         });
     }
+    calculateTotal(); // Update charge when district selected (defaults 120 unless Munshiganj Sadar)
+}
+
+// NEW: Calculate Total with Delivery Charge
+window.calculateTotal = function() {
+    const dist = document.getElementById('district').value;
+    const upz = document.getElementById('upazila').value;
+    const subTotalElem = document.getElementById('checkout-subtotal');
+    const chargeElem = document.getElementById('delivery-charge');
+    const grandElem = document.getElementById('checkout-grand-total');
+
+    if(!subTotalElem) return;
+
+    let charge = 0;
+    
+    // Logic: 
+    // 1. If District is Munshiganj AND Upazila is Munshiganj Sadar -> 60
+    // 2. If District is Munshiganj AND Upazila is NOT Sadar (but selected) -> 120
+    // 3. If District is NOT Munshiganj (and selected) -> 120
+    // 4. Default -> 0
+    
+    if (dist === "Munshiganj") {
+        if (upz === "Munshiganj Sadar") {
+            charge = 60;
+        } else if (upz) {
+            charge = 120; // Munshiganj other upazilas
+        } else {
+            charge = 0; // Wait for upazila
+        }
+    } else if (dist) {
+        charge = 120; // Outside Munshiganj
+    } else {
+        charge = 0;
+    }
+
+    const subTotal = parseInt(subTotalElem.innerText) || 0;
+    chargeElem.innerText = charge;
+    grandElem.innerText = subTotal + charge;
 }
 
 function handleCheckoutForm() {
@@ -357,12 +396,13 @@ function handleCheckoutForm() {
                 errorMsg.style.display = "none";
             }
 
-            // 2. Address Construction
+            // 2. Address & Charge
             const div = document.getElementById('division').value;
             const dist = document.getElementById('district').value;
             const upz = document.getElementById('upazila').value;
             const vill = document.getElementById('village').value;
             const land = document.getElementById('landmark').value;
+            const deliveryCharge = parseInt(document.getElementById('delivery-charge').innerText) || 0;
 
             if(!div || !dist || !upz || !vill) {
                 showPopup('Missing Info', 'Please select Division, District, Upazila and enter Village.', 'error');
@@ -378,7 +418,8 @@ function handleCheckoutForm() {
             // 4. Save Order
             let cnt = parseInt(await getStorage(KEY_ORDER_COUNT))||0; cnt++; await setStorage(KEY_ORDER_COUNT, cnt);
             const id = 'ORD-'+String(cnt).padStart(3,'0');
-            const tot = c.reduce((s,i)=>s+(i.price*i.qty),0);
+            const subTot = c.reduce((s,i)=>s+(i.price*i.qty),0);
+            const grandTot = subTot + deliveryCharge;
             
             const ord = { 
                 id: id, 
@@ -389,7 +430,9 @@ function handleCheckoutForm() {
                     address: fullAddress 
                 }, 
                 items: c, 
-                total: tot, 
+                subTotal: subTot,
+                deliveryCharge: deliveryCharge,
+                total: grandTot, 
                 status: 'Pending' 
             };
             
@@ -397,12 +440,20 @@ function handleCheckoutForm() {
             await setStorage(KEY_ORDERS, o); await setStorage(KEY_CART, []); await updateCartCount();
             
             const l = c.map(i => `- ${i.name} (x${i.qty})`).join('\n');
-            showPopup('Order Confirmed!', `ID: ${id}\n\n${l}\n\nTotal: ৳${tot}`, 'success', 'index.html');
+            showPopup('Order Confirmed!', `ID: ${id}\n\n${l}\n\nSubtotal: ৳${subTot}\nDelivery: ৳${deliveryCharge}\nTotal: ৳${grandTot}`, 'success', 'index.html');
         };
     }
 }
 
-async function loadCartSummaryForCheckout() { const el=document.getElementById('checkout-total'); if(el) { const c=await getStorage(KEY_CART); el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); }}
+async function loadCartSummaryForCheckout() { 
+    const el = document.getElementById('checkout-subtotal'); 
+    if(el) { 
+        const c = await getStorage(KEY_CART); 
+        const sub = c.reduce((s,i)=>s+(i.price*i.qty),0);
+        el.innerText = sub;
+        calculateTotal(); // Update grand total with default 0 charge
+    }
+}
 
 // Feedback
 function handleContactForm() {
@@ -433,7 +484,7 @@ function initAdminProducts() {
 function initAdminOrders() {
     const tb=document.querySelector('#orders-table tbody'); let flt='All';
     const ren=async()=>{ const all=await getStorage(KEY_ORDERS); const l=flt==='All'?all:all.filter(o=>o.status===flt); document.querySelectorAll('.filter-btn').forEach(b=>{if(b.innerText.includes(flt))b.classList.add('active');else b.classList.remove('active');}); if(l.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;">No Orders</td></tr>';return;} tb.innerHTML=l.map(o=>{const ix=all.findIndex(x=>x.id===o.id); return `<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="upS(${ix},this.value)" style="color:#ff9f43;background:#222;border:1px solid #555"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" style="color:#fff;background:none;border:none;">View</button></td></tr>`;}).join(''); }; ren();
-    window.filterOrders=(s)=>{flt=s;ren();}; window.upS=async(i,v)=>{const o=await getStorage(KEY_ORDERS);o[i].status=v;await setStorage(KEY_ORDERS,o);ren();}; window.vOrd=async(id)=>{const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id);if(!o)return;const items=o.items.map(i=>`- ${i.name} x${i.qty}`).join('\n');showPopup('Details',`ID: ${o.id}\nName: ${o.customer.name}\nPhone: ${o.customer.phone}\nAddr: ${o.customer.address}\n\n${items}\n\nTotal: ৳${o.total}`,'info');};
+    window.filterOrders=(s)=>{flt=s;ren();}; window.upS=async(i,v)=>{const o=await getStorage(KEY_ORDERS);o[i].status=v;await setStorage(KEY_ORDERS,o);ren();}; window.vOrd=async(id)=>{const o=(await getStorage(KEY_ORDERS)).find(x=>x.id===id);if(!o)return;const items=o.items.map(i=>`- ${i.name} x${i.qty}`).join('\n');showPopup('Details',`ID: ${o.id}\nName: ${o.customer.name}\nPhone: ${o.customer.phone}\nAddr: ${o.customer.address}\n\n${items}\n\nSub: ৳${o.subTotal||0}, Del: ৳${o.deliveryCharge||0}\nTotal: ৳${o.total}`,'info');};
 }
 
 function initAdminMessages() {
