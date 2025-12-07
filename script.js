@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Database Reset Version)
+// LYNEX FINAL SCRIPT (With Address Logic & Validations)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -18,7 +18,88 @@ const ADMIN_PASS = "L7n@x#Super!2025";
 const PAGE_LOGIN = 'k7_entry_point.html';
 const PAGE_DASHBOARD = 'x_master_v9.html';
 
-// --- DATABASE SETUP (New Name to Force Reset) ---
+// --- BANGLADESH GEO DATA (Division > District > Upazila) ---
+const bdGeoData = {
+    "Dhaka": {
+        "Dhaka": ["Savar", "Dhamrai", "Keraniganj", "Nawabganj", "Dohar", "Dhaka Sadar"],
+        "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
+        "Narayanganj": ["Narayanganj Sadar", "Bandar", "Araihazar", "Rupganj", "Sonargaon"],
+        "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"],
+        "Tangail": ["Tangail Sadar", "Sakhipur", "Basail", "Madhupur", "Ghatail", "Kalihati", "Nagarpur", "Mirzapur", "Gopalpur", "Delduar", "Bhuapur", "Dhanbari"],
+        "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
+        "Manikganj": ["Manikganj Sadar", "Singair", "Shibalaya", "Saturia", "Harirampur", "Ghior", "Daulatpur"],
+        "Faridpur": ["Faridpur Sadar", "Boalmari", "Alfadanga", "Madhukhali", "Bhanga", "Nagarkanda", "Charbhadrasan", "Sadarpur", "Saltha"],
+        "Madaripur": ["Madaripur Sadar", "Shibchar", "Kalkini", "Rajoir"],
+        "Shariatpur": ["Shariatpur Sadar", "Naria", "Zajira", "Gosairhat", "Bhedarganj", "Damudya"],
+        "Gopalganj": ["Gopalganj Sadar", "Kashiani", "Tungipara", "Kotalipara", "Muksudpur"],
+        "Kishoreganj": ["Kishoreganj Sadar", "Hossainpur", "Pakundia", "Katiadi", "Karimganj", "Tarail", "Itna", "Mithamoin", "Austagram", "Nikli", "Bajitpur", "Kuliarchar", "Bhairab"],
+        "Rajbari": ["Rajbari Sadar", "Goalanda", "Pangsha", "Baliakandi", "Kalukhali"]
+    },
+    "Chattogram": {
+        "Chattogram": ["Chattogram Sadar", "Sitakunda", "Mirsharai", "Patiya", "Raozan", "Hathazari", "Fatikchhari", "Anwara", "Lohagara", "Satkania", "Boalkhali", "Chandanaish", "Banshkhali", "Rangunia", "Sandwip"],
+        "Cox's Bazar": ["Cox's Bazar Sadar", "Ramu", "Teknaf", "Ukhia", "Chakaria", "Pekua", "Moheshkhali", "Kutubdia"],
+        "Cumilla": ["Cumilla Sadar", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Muradnagar", "Nangalkot", "Meghna", "Titas", "Monohargonj", "Sadar Dakshin"],
+        "Brahmanbaria": ["Brahmanbaria Sadar", "Ashuganj", "Nasirnagar", "Nabinagar", "Sarail", "Kasba", "Akhaura", "Bancharampur", "Bijoynagar"],
+        "Chandpur": ["Chandpur Sadar", "Faridganj", "Haimchar", "Haziganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"],
+        "Noakhali": ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companyganj", "Hatiya", "Senbagh", "Subarnachar", "Kabirhat", "Sonaimuri"],
+        "Feni": ["Feni Sadar", "Chhagalnaiya", "Daganbhuiyan", "Parshuram", "Fulgazi", "Sonagazi"],
+        "Lakshmipur": ["Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"]
+    },
+    "Khulna": {
+        "Khulna": ["Khulna Sadar", "Dumuria", "Phultala", "Dighalia", "Rupsha", "Terokhada", "Batiaghata", "Dakop", "Paikgachha", "Koyra"],
+        "Jessore": ["Jessore Sadar", "Benapole", "Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Manirampur", "Sharsha"],
+        "Satkhira": ["Satkhira Sadar", "Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Shyamnagar", "Tala"],
+        "Bagerhat": ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"],
+        "Jhenaidah": ["Jhenaidah Sadar", "Harinakunda", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"],
+        "Kushtia": ["Kushtia Sadar", "Kumarkhali", "Khoksa", "Mirpur", "Daulatpur", "Bheramara"],
+        "Magura": ["Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"],
+        "Narail": ["Narail Sadar", "Kalia", "Lohagara"],
+        "Chuadanga": ["Chuadanga Sadar", "Alamdanga", "Damurhuda", "Jibannagar"],
+        "Meherpur": ["Meherpur Sadar", "Gangni", "Mujibnagar"]
+    },
+    "Rajshahi": {
+        "Rajshahi": ["Rajshahi Sadar", "Godagari", "Tanore", "Bagha", "Charghat", "Durgapur", "Mohanpur", "Paba", "Puthia"],
+        "Bogra": ["Bogra Sadar", "Sherpur", "Shibganj", "Adamdighi", "Dhupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Shajahanpur", "Sonatala"],
+        "Pabna": ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Santhia", "Sujanagar"],
+        "Sirajganj": ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Tarash", "Ullahpara"],
+        "Natore": ["Natore Sadar", "Bagatipara", "Baraigram", "Gurudaspur", "Lalpur", "Singra", "Naldanga"],
+        "Naogaon": ["Naogaon Sadar", "Atrai", "Badalgachhi", "Dhamoirhat", "Manda", "Mohadevpur", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"],
+        "Chapainawabganj": ["Chapainawabganj Sadar", "Bholahat", "Gomastapur", "Nachole", "Shibganj"],
+        "Joypurhat": ["Joypurhat Sadar", "Akkelpur", "Kalai", "Khetlal", "Panchbibi"]
+    },
+    "Sylhet": {
+        "Sylhet": ["Sylhet Sadar", "Beanibazar", "Golapganj", "Companiganj", "Fenchuganj", "Balaganj", "Bishwanath", "Gowainghat", "Jaintiapur", "Kanaighat", "Zakiganj", "Dakshin Surma", "Osmani Nagar"],
+        "Sunamganj": ["Sunamganj Sadar", "Chhatak", "Jagannathpur", "Derai", "Dharamapasha", "Bishwamvarpur", "Dowarabazar", "Jamalganj", "Sullah", "Tahirpur", "Dakshin Sunamganj"],
+        "Habiganj": ["Habiganj Sadar", "Ajmiriganj", "Bahubal", "Baniyachong", "Chunarughat", "Lakhai", "Madhabpur", "Nabiganj", "Shaistaganj"],
+        "Moulvibazar": ["Moulvibazar Sadar", "Barlekha", "Juri", "Kamalganj", "Kulaura", "Rajnagar", "Sreemangal"]
+    },
+    "Barishal": {
+        "Barishal": ["Barishal Sadar", "Bakerganj", "Babuganj", "Agailjhara", "Gaurnadi", "Hizla", "Mehendiganj", "Muladi", "Wazirpur", "Banaripara"],
+        "Bhola": ["Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"],
+        "Patuakhali": ["Patuakhali Sadar", "Bauphal", "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Rangabali", "Dumki"],
+        "Pirojpur": ["Pirojpur Sadar", "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad", "Indurkani"],
+        "Barguna": ["Barguna Sadar", "Amtali", "Bamna", "Betagi", "Patharghata", "Taltali"],
+        "Jhalokathi": ["Jhalokathi Sadar", "Kathalia", "Nalchity", "Rajapur"]
+    },
+    "Rangpur": {
+        "Rangpur": ["Rangpur Sadar", "Pirgachha", "Kaunia", "Badarganj", "Gangachara", "Mithapukur", "Pirganj", "Taraganj"],
+        "Dinajpur": ["Dinajpur Sadar", "Birampur", "Birganj", "Bochaganj", "Chirirbandar", "Fulbari", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Nawabganj", "Parbatipur"],
+        "Gaibandha": ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata", "Sundarganj"],
+        "Kurigram": ["Kurigram Sadar", "Bhurungamari", "Char Rajibpur", "Chilmari", "Phulbari", "Nageshwari", "Rajarhat", "Raomari", "Ulipur"],
+        "Lalmonirhat": ["Lalmonirhat Sadar", "Aditmari", "Hatibandha", "Kaliganj", "Patgram"],
+        "Nilphamari": ["Nilphamari Sadar", "Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Saidpur"],
+        "Panchagarh": ["Panchagarh Sadar", "Atwari", "Boda", "Debiganj", "Tetulia"],
+        "Thakurgaon": ["Thakurgaon Sadar", "Baliadangi", "Haripur", "Pirganj", "Ranishankail"]
+    },
+    "Mymensingh": {
+        "Mymensingh": ["Mymensingh Sadar", "Muktagachha", "Valuka", "Bhaluka", "Dhobaura", "Fulbaria", "Gafargaon", "Gauripur", "Haluaghat", "Ishwarganj", "Nandail", "Phulpur", "Trishal", "Tara Khanda"],
+        "Jamalpur": ["Jamalpur Sadar", "Bakshiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari"],
+        "Sherpur": ["Sherpur Sadar", "Jhenaigati", "Nakla", "Nalitabari", "Sreebardi"],
+        "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Kendua", "Madan", "Mohanganj", "Purbadhala"]
+    }
+};
+
+// --- DATABASE SETUP (IndexedDB) ---
 const DB_NAME = "Lynex_Reset_DB_V1"; 
 const DB_VERSION = 1;
 let db;
@@ -76,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // 2. ADMIN PAGES (Sidebar Check)
     if (document.querySelector('.sidebar')) {
         if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) {
-            window.location.href = PAGE_LOGIN; // Redirect if not logged in
+            window.location.href = PAGE_LOGIN;
             return;
         }
         await updateAdminSidebarBadges();
@@ -92,10 +173,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const isHome = document.querySelector('.hero-section') !== null;
         loadProductsDisplay(isHome);
     }
+    
+    // 4. CHECKOUT PAGE (Dropdown Initialization)
     if (document.getElementById('checkout-form')) {
+        initAddressDropdowns(); // Populate Divisions
         handleCheckoutForm();
         loadCartSummaryForCheckout();
     }
+
     if (document.querySelector('.cart-items') && !document.getElementById('checkout-form')) {
         loadCartDisplay();
     }
@@ -193,19 +278,120 @@ async function loadCartDisplay() {
 }
 window.upQty=async(i,v)=>{let c=await getStorage(KEY_CART);c[i].qty+=v;if(c[i].qty<1){if(confirm("Remove?"))c.splice(i,1);else c[i].qty=1;}await setStorage(KEY_CART,c);await loadCartDisplay();await updateCartCount();}; window.rmC=async(i)=>{let c=await getStorage(KEY_CART);c.splice(i,1);await setStorage(KEY_CART,c);await loadCartDisplay();await updateCartCount();};
 
-// Checkout
+// --- CHECKOUT LOGIC WITH VALIDATION & DROPDOWNS ---
+
+function initAddressDropdowns() {
+    const divisionSelect = document.getElementById("division");
+    if (!divisionSelect) return;
+    
+    // Load Divisions
+    for (let div in bdGeoData) {
+        let option = document.createElement("option");
+        option.value = div;
+        option.text = div;
+        divisionSelect.appendChild(option);
+    }
+}
+
+// Global functions for HTML onchange events
+window.loadDistricts = function() {
+    const division = document.getElementById("division").value;
+    const districtSelect = document.getElementById("district");
+    const upazilaSelect = document.getElementById("upazila");
+
+    districtSelect.innerHTML = '<option value="">জেলা নির্বাচন করুন</option>';
+    upazilaSelect.innerHTML = '<option value="">উপজেলা নির্বাচন করুন</option>';
+    districtSelect.disabled = true;
+    upazilaSelect.disabled = true;
+
+    if (division && bdGeoData[division]) {
+        districtSelect.disabled = false;
+        for (let dist in bdGeoData[division]) {
+            let option = document.createElement("option");
+            option.value = dist;
+            option.text = dist;
+            districtSelect.appendChild(option);
+        }
+    }
+}
+
+window.loadUpazilas = function() {
+    const division = document.getElementById("division").value;
+    const district = document.getElementById("district").value;
+    const upazilaSelect = document.getElementById("upazila");
+
+    upazilaSelect.innerHTML = '<option value="">উপজেলা নির্বাচন করুন</option>';
+    upazilaSelect.disabled = true;
+
+    if (district && bdGeoData[division][district]) {
+        upazilaSelect.disabled = false;
+        bdGeoData[division][district].forEach(function(upazila) {
+            let option = document.createElement("option");
+            option.value = upazila;
+            option.text = upazila;
+            upazilaSelect.appendChild(option);
+        });
+    }
+}
+
 function handleCheckoutForm() {
     const f = document.getElementById('checkout-form');
     if(f) {
         f.onsubmit = async (e) => {
             e.preventDefault();
+            
+            // 1. Phone Validation
+            const phoneInput = document.getElementById('phone');
+            const phoneVal = phoneInput.value.trim();
+            const errorMsg = document.getElementById('phone-error');
+            const validPrefixes = ['017', '019', '018', '014', '015', '013', '016'];
+            const prefix = phoneVal.substring(0, 3);
+
+            if (phoneVal.length !== 11 || !validPrefixes.includes(prefix)) {
+                phoneInput.style.borderColor = "#e74c3c";
+                errorMsg.style.display = "block";
+                phoneInput.scrollIntoView({behavior: "smooth", block: "center"});
+                return;
+            } else {
+                phoneInput.style.borderColor = "#444";
+                errorMsg.style.display = "none";
+            }
+
+            // 2. Address Construction
+            const div = document.getElementById('division').value;
+            const dist = document.getElementById('district').value;
+            const upz = document.getElementById('upazila').value;
+            const vill = document.getElementById('village').value;
+            const land = document.getElementById('landmark').value;
+
+            if(!div || !dist || !upz || !vill) {
+                showPopup('Missing Info', 'Please select Division, District, Upazila and enter Village.', 'error');
+                return;
+            }
+
+            const fullAddress = `Vill: ${vill}, ${land ? 'Landmark: '+land+', ' : ''}Upz: ${upz}, Dist: ${dist}, Div: ${div}`;
+
+            // 3. Cart Validation
             const c = await getStorage(KEY_CART);
             if(c.length===0) return showPopup('Error', 'Cart Empty', 'error');
             
+            // 4. Save Order
             let cnt = parseInt(await getStorage(KEY_ORDER_COUNT))||0; cnt++; await setStorage(KEY_ORDER_COUNT, cnt);
             const id = 'ORD-'+String(cnt).padStart(3,'0');
             const tot = c.reduce((s,i)=>s+(i.price*i.qty),0);
-            const ord = { id: id, date: new Date().toLocaleDateString(), customer: { name: f.name.value, phone: f.phone.value, address: f.address.value }, items: c, total: tot, status: 'Pending' };
+            
+            const ord = { 
+                id: id, 
+                date: new Date().toLocaleDateString(), 
+                customer: { 
+                    name: f.name.value, 
+                    phone: phoneVal, 
+                    address: fullAddress 
+                }, 
+                items: c, 
+                total: tot, 
+                status: 'Pending' 
+            };
             
             const o = await getStorage(KEY_ORDERS); o.unshift(ord); 
             await setStorage(KEY_ORDERS, o); await setStorage(KEY_CART, []); await updateCartCount();
@@ -215,6 +401,7 @@ function handleCheckoutForm() {
         };
     }
 }
+
 async function loadCartSummaryForCheckout() { const el=document.getElementById('checkout-total'); if(el) { const c=await getStorage(KEY_CART); el.innerText=c.reduce((s,i)=>s+(i.price*i.qty),0); }}
 
 // Feedback
