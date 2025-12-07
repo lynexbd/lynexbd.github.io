@@ -2,23 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | LYNEX Admin</title>
+    <title>Dashboard Overview | LYNEX Admin</title>
     <meta name="viewport" content="width=1366">
+    
     <link rel="stylesheet" href="style.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="admin-layout">
+        
         <div class="sidebar">
             <h2>LYNEX ADMIN</h2>
             <ul>
-                <li><a href="x_master_v9.html" class="admin-active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-                <li><a href="p_data_source_5.html"><i class="fas fa-box-open"></i> <span>Products</span></a></li>
-                <li><a href="o_log_file_22.html" id="nav-orders"><i class="fas fa-shopping-cart"></i> <span>Orders</span></a></li>
-                <li><a href="m_feed_back_01.html" id="nav-messages"><i class="fas fa-comment-dots"></i> <span>Feedback</span></a></li>
-                <li><a href="index.html" target="_blank" style="margin-top: 50px;"><i class="fas fa-globe"></i> <span>Visit Site</span></a></li>
-                <li><a href="#" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                <li>
+                    <a href="x_master_v9.html" class="admin-active">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="p_data_source_5.html">
+                        <i class="fas fa-box-open"></i> <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="o_log_file_22.html" id="nav-orders">
+                        <i class="fas fa-shopping-cart"></i> <span>Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="m_feed_back_01.html" id="nav-messages">
+                        <i class="fas fa-comment-dots"></i> <span>Feedback</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" target="_blank" style="margin-top: 50px;">
+                        <i class="fas fa-globe"></i> <span>Visit Site</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -32,22 +59,27 @@
                     <h3>Total Revenue</h3>
                     <p id="stat-revenue" style="color: #2ecc71;">৳ 0</p>
                 </div>
+
                 <div class="widget" style="border-left-color: #ff9f43;">
                     <h3>Pending Orders</h3>
                     <p id="stat-pending" style="color: #ff9f43;">0</p>
                 </div>
+
                 <div class="widget" style="border-left-color: #3498db;">
-                    <h3>Shipped</h3>
+                    <h3>Shipped Items</h3>
                     <p id="stat-shipped" style="color: #3498db;">0</p>
                 </div>
+
                 <div class="widget" style="border-left-color: #2ecc71;">
-                    <h3>Delivered</h3>
+                    <h3>Completed Orders</h3>
                     <p id="stat-delivered" style="color: #2ecc71;">0</p>
                 </div>
+
                 <div class="widget" style="border-left-color: #e74c3c;">
-                    <h3>Cancelled</h3>
+                    <h3>Cancelled Orders</h3>
                     <p id="stat-cancelled" style="color: #e74c3c;">0</p>
                 </div>
+
                 <div class="widget">
                     <h3>Total Products</h3>
                     <p id="stat-products">0</p>
@@ -55,6 +87,7 @@
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
