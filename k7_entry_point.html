@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Access | LYNEX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000;">
+    <div class="login-container" style="width: 100%; max-width: 400px; border: 1px solid #333; padding: 40px; border-radius: 10px; background: #1e1e1e;">
+        <h2 style="text-align: center; color: #ff9f43; margin-bottom: 30px;">SYSTEM ACCESS</h2>
+        
+        <form id="secure-login-form" onsubmit="handleLogin(event)">
+            <div style="margin-bottom: 15px;">
+                <label style="color:#ccc; display:block; margin-bottom:5px;">User ID</label>
+                <input type="text" id="username" required style="width:100%; padding:10px; background:#2a2a2a; border:1px solid #444; color:#fff;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="color:#ccc; display:block; margin-bottom:5px;">Pass Key</label>
+                <input type="password" id="password" required style="width:100%; padding:10px; background:#2a2a2a; border:1px solid #444; color:#fff;">
+            </div>
+            <button type="submit" class="btn primary-btn" style="width: 100%; padding: 12px; font-weight:bold;">AUTHENTICATE</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="color: #555; text-decoration: none;">Return</a>
+        </p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | LYNEX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list" id="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="feedback.html">Feedback</a></li>
+                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span></a></li>
+                </ul>
+                <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding: 100px 20px;">
+        <h2 class="section-title">Confirm Your Order</h2>
+        
+        <div style="display: flex; flex-direction: column; gap: 30px; max-width: 700px; margin: 0 auto;">
+            
+            <div style="background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; text-align: center;">
+                <h3 style="color: #fff; margin-bottom: 10px;">Total Product Price</h3>
+                <p style="font-size: 2em; color: #ff9f43; font-weight: 800; margin: 10px 0;">৳ <span id="checkout-total">0</span></p>
+                <p style="color: #aaa; font-size: 0.9em;">(Delivery charges will be added.)</p>
+            </div>
+
+            <div style="background: #1e1e1e; padding: 40px; border-radius: 8px; border: 1px solid #333;">
+                <h3 style="color: #fff; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px;">Billing Information</h3>
+                
+                <form id="checkout-form">
+                    <div style="margin-bottom: 20px;">
+                        <label>Full Name</label>
+                        <input type="text" name="name" required placeholder="আপনার পূর্ণ নাম">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label>Phone Number</label>
+                        <input type="number" name="phone" required placeholder="মোবাইল নাম্বার (01xxxxxxxxx)">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label>Shipping Address</label>
+                        <textarea name="address" required rows="4" placeholder="আপনার সম্পূর্ণ ঠিকানা (বাড়ি নং, রোড, এলাকা, জেলা)"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label>Payment Method</label>
+                        <select disabled style="opacity: 0.7; cursor: not-allowed;">
+                            <option selected>Cash on Delivery (COD)</option>
+                        </select>
+                    </div>
+
+                    <div style="background: rgba(255, 159, 67, 0.1); padding: 15px; border-left: 4px solid #ff9f43; margin-bottom: 30px; border-radius: 4px;">
+                        <p style="color: #ff9f43; font-size: 0.95em; font-weight: 500;">
+                            <i class="fas fa-info-circle"></i> নোট: ডেলিভারি চার্জ এবং সকল তথ্যের জন্যে আপনাকে কল করা হবে।
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn primary-btn" style="width: 100%; padding: 15px; font-size: 1.1em;">CONFIRM ORDER</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <h2 class="footer-brand">LYNEX</h2>
+            <p class="footer-desc">A glimpse into modern fashion, combining style and comfort for the trendsetters of tomorrow.</p>
+            
+            <h3 class="footer-links-title">LINKS</h3>
+            <div class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="feedback.html">Feedback</a>
+                <a href="delivery.html">Delivery Info</a>
+                <a href="terms.html">Terms & Conditions</a>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.facebook.com/lynex.bd" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://wa.me/8801917757634" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="mailto:lynexbd@digdig.org"><i class="fas fa-envelope"></i></a>
+            </div>
+
+            <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
