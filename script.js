@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Fixed Admin Order Filter Tab)
+// LYNEX FINAL SCRIPT (Part 1)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -102,8 +102,6 @@ const bdGeoData = {
         "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Kendua", "Madan", "Mohanganj", "Purbadhala"]
     }
 };
-
-
 
 // --- DATABASE SETUP ---
 const DB_NAME = "Lynex_Reset_DB_V14"; 
@@ -274,6 +272,9 @@ window.goToSlide = (n, id) => {
     const el = document.getElementById(`slider-${id}`); 
     el.scrollTo({ left: el.offsetWidth * n, behavior: 'smooth' }); 
 };
+// ======================================================
+// LYNEX FINAL SCRIPT (Part 2)
+// ======================================================
 
 // --- 5. SIZE MODAL ---
 function createSizeModalHTML() {
@@ -581,7 +582,7 @@ function handleContactForm(form) {
     };
 }
 
-// --- 8. ADMIN FUNCTIONS (Fixed: Order Tab Highlight) ---
+// --- 8. ADMIN FUNCTIONS ---
 function initAdminProducts() {
     const f=document.getElementById('add-product-form'); const tb=document.querySelector('#product-table tbody'); const input=document.getElementById('imageInput');
     const render = async () => {
@@ -611,20 +612,14 @@ function initAdminOrders() {
     let flt='All'; 
     const ren=async()=>{ 
         const all=await getStorage(KEY_ORDERS); const l=flt==='All'?all:all.filter(o=>o.status===flt); 
-        
-        // FIXED: Robust Filter Button Highlighting
         document.querySelectorAll('.filter-btn').forEach(b=>{
-            const onClickAttr = b.getAttribute('onclick');
-            // Check if the button's function call matches the current filter
-            if(onClickAttr && onClickAttr.includes(`'${flt}'`)) {
+            const txt = b.innerText.trim();
+            if((flt==='All' && txt==='All Orders') || (flt==='Pending' && txt==='Pending') || (flt==='Shipped' && txt==='Shipped') || (flt==='Delivered' && txt==='Completed') || (flt==='Cancelled' && txt==='Cancelled')) {
                 b.classList.add('active');
-            } else if (flt === 'All' && b.innerText.includes('All')) {
-                b.classList.add('active'); // Special case for All Orders
             } else {
                 b.classList.remove('active');
             }
         });
-
         if(l.length===0){tb.innerHTML='<tr><td colspan="5">No Orders</td></tr>';return;} 
         tb.innerHTML=l.map(o=>`<tr><td>${o.id}</td><td>${o.customer.name}</td><td>৳${o.total}</td><td><select onchange="changeOrderStatus('${o.id}', this.value)" style="color:#ff9f43;background:#222;border:1px solid #555"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button onclick="vOrd('${o.id}')" class="btn-action btn-view"><i class="fas fa-eye"></i> View</button></td></tr>`).join(''); 
     }; ren(); 
