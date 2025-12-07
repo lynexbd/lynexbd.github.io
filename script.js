@@ -498,75 +498,19 @@ async function loadCartSummaryForCheckout() {
     } 
 }
 
-// সংশোধিত handleCheckoutForm ফাংশন
-function handleCheckoutForm() {
-    const f = document.getElementById('checkout-form');
-    if(f) {
-        f.onsubmit = async (e) => {
-            e.preventDefault();
-            
-            // ১. বেসিক ভ্যালিডেশন
-            if (f.name.value.trim() === "") return showPopup('Error', 'Name Required', 'error');
-            if (f.phone.value.length !== 11) return showPopup('Error', 'Valid Phone Required', 'error');
+Window.changeOrderStatus = async (id, status) => { 
+        await update(ref(db, 'orders/' + id), { status: status });
+        showPopup('Updated', `Order marked as ${status}`, 'success');
+    };
 
-            const c = await getCheckoutItems(); 
-            if(c.length === 0) return showPopup('Error', 'No items to checkout!', 'error');
-
-            // ২. ডেটা প্রিপারেশন
-            const deliveryCharge = parseInt(document.getElementById('delivery-charge').innerText) || 0; 
-            const subTot = c.reduce((s,i) => s + (i.price * i.qty), 0); 
-            const grandTot = subTot + deliveryCharge;
-            const fullAddress = `Vill: ${f.village.value}, ${f.landmark.value}, Upz: ${f.upazila.value}, Dist: ${f.district.value}, Div: ${f.division.value}`;
-            
-            const orderId = 'ORD-' + Date.now().toString().slice(-6);
-
-            const ord = { 
-                id: orderId, 
-                date: new Date().toLocaleDateString(), 
-                timestamp: Date.now(),
-                customer: { name: f.name.value, phone: f.phone.value, address: fullAddress }, 
-                items: c, 
-                subTotal: subTot, 
-                deliveryCharge: deliveryCharge, 
-                total: grandTot, 
-                status: 'Pending' 
-            };
-
-            // ৩. Firebase-এ পুশ এবং স্টক আপডেট
-            try {
-                // ক. অর্ডার সেভ করা
-                await set(ref(db, 'orders/' + orderId), ord);
-                
-                // খ. প্রতিটি পণ্যের সাইজ অনুযায়ী স্টক কমানো
-                for(let item of c) {
-                    const sizePath = item.size.toLowerCase();
-                    const stockRef = ref(db, `products/${item.id}/stock/${sizePath}`);
-                    
-                    // বর্তমান স্টক রিড করা
-                    const snapshot = await get(stockRef);
-                    if(snapshot.exists()) {
-                        const currentStock = parseInt(snapshot.val());
-                        // নতুন স্টক হিসাব করে আপডেট করা (০ এর নিচে যাবে না)
-                        const newStock = Math.max(0, currentStock - item.qty);
-                        await set(stockRef, newStock);
-                    }
-                }
-                
-                // ৪. কার্ট ক্লিয়ার করা
-                if(sessionStorage.getItem(KEY_DIRECT_BUY)) {
-                    sessionStorage.removeItem(KEY_DIRECT_BUY);
-                } else {
-                    setLocalCart([]); 
-                    updateCartCount(); 
-                }
-
-                showPopup('Order Placed!', `Your Order ID: ${orderId}<br>We will contact you soon.`, 'success', 'index.html');
-            } catch (err) {
-                console.error("Firebase Update Error:", err);
-                showPopup('Error', 'Failed to place order. Check internet.', 'error');
-            }
-        };
-    }
+    window.vOrd = async(id) => {
+        const s = await get(child(ref(db), 'orders/' + id));
+        if(!s.exists()) return;
+        const o = s.val();
+        const itemRows = o.items.map(i => `<tr><td>${i.name} <span style="color:#ff9f43; font-size:0.8em;">(${i.size})</span></td><td style="text-align:center;">৳${i.price}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">৳${i.price*i.qty}</td></tr>`).join('');
+        const content = `<div style="text-align:left;"><p style="margin-bottom:5px;"><strong>Customer:</strong> ${o.customer.name}</p><p style="margin-bottom:5px;"><strong>Phone:</strong> ${o.customer.phone}</p><p style="margin-bottom:15px; font-size:0.9em; color:#aaa;"><strong>Address:</strong> ${o.customer.address}</p><div style="overflow-x:auto;"><table class="popup-table" style="width:100%; border-collapse: collapse; font-size:0.9em;"><thead><tr style="border-bottom:1px solid #555;"><th style="text-align:left; padding:5px;">Product</th><th style="text-align:center; padding:5px;">Rate</th><th style="text-align:center; padding:5px;">Qty</th><th style="text-align:right; padding:5px;">Total</th></tr></thead><tbody>${itemRows}</tbody></table></div><div style="margin-top:15px; border-top:1px solid #444; padding-top:10px;"><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Subtotal:</span><span>৳${o.subTotal}</span></div><div style="display:flex; justify-content:space-between; color:#ccc; margin-bottom:3px;"><span>Delivery Charge:</span><span>৳${o.deliveryCharge}</span></div><hr style="border:0; border-top:1px dashed #333; margin:5px 0;"><div style="display:flex; justify-content:space-between; color:#ff9f43; font-weight:bold; font-size:1.2em;"><span>Grand Total:</span><span>৳${o.total}</span></div></div></div>`;
+        showPopup('Order Details', content, 'info');
+    };
 }
 
 
