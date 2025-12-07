@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Specific Input Error Validation)
+// LYNEX FINAL SCRIPT (Cart Empty State & Shop Collection Btn)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -21,92 +21,18 @@ const PAGE_DASHBOARD = 'x_master_v9.html';
 
 // --- BANGLADESH GEO DATA ---
 const bdGeoData = {
-    "Dhaka": {
-        "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"],
-        "Dhaka": ["Savar", "Dhamrai", "Keraniganj", "Nawabganj", "Dohar", "Dhaka Sadar"],
-        "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
-        "Narayanganj": ["Narayanganj Sadar", "Bandar", "Araihazar", "Rupganj", "Sonargaon"],
-        "Tangail": ["Tangail Sadar", "Sakhipur", "Basail", "Madhupur", "Ghatail", "Kalihati", "Nagarpur", "Mirzapur", "Gopalpur", "Delduar", "Bhuapur", "Dhanbari"],
-        "Narsingdi": ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
-        "Manikganj": ["Manikganj Sadar", "Singair", "Shibalaya", "Saturia", "Harirampur", "Ghior", "Daulatpur"],
-        "Faridpur": ["Faridpur Sadar", "Boalmari", "Alfadanga", "Madhukhali", "Bhanga", "Nagarkanda", "Charbhadrasan", "Sadarpur", "Saltha"],
-        "Madaripur": ["Madaripur Sadar", "Shibchar", "Kalkini", "Rajoir"],
-        "Shariatpur": ["Shariatpur Sadar", "Naria", "Zajira", "Gosairhat", "Bhedarganj", "Damudya"],
-        "Gopalganj": ["Gopalganj Sadar", "Kashiani", "Tungipara", "Kotalipara", "Muksudpur"],
-        "Kishoreganj": ["Kishoreganj Sadar", "Hossainpur", "Pakundia", "Katiadi", "Karimganj", "Tarail", "Itna", "Mithamoin", "Austagram", "Nikli", "Bajitpur", "Kuliarchar", "Bhairab"],
-        "Rajbari": ["Rajbari Sadar", "Goalanda", "Pangsha", "Baliakandi", "Kalukhali"]
-    },
-    "Chattogram": {
-        "Chattogram": ["Chattogram Sadar", "Sitakunda", "Mirsharai", "Patiya", "Raozan", "Hathazari", "Fatikchhari", "Anwara", "Lohagara", "Satkania", "Boalkhali", "Chandanaish", "Banshkhali", "Rangunia", "Sandwip"],
-        "Cox's Bazar": ["Cox's Bazar Sadar", "Ramu", "Teknaf", "Ukhia", "Chakaria", "Pekua", "Moheshkhali", "Kutubdia"],
-        "Cumilla": ["Cumilla Sadar", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Muradnagar", "Nangalkot", "Meghna", "Titas", "Monohargonj", "Sadar Dakshin"],
-        "Brahmanbaria": ["Brahmanbaria Sadar", "Ashuganj", "Nasirnagar", "Nabinagar", "Sarail", "Kasba", "Akhaura", "Bancharampur", "Bijoynagar"],
-        "Chandpur": ["Chandpur Sadar", "Faridganj", "Haimchar", "Haziganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"],
-        "Noakhali": ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companyganj", "Hatiya", "Senbagh", "Subarnachar", "Kabirhat", "Sonaimuri"],
-        "Feni": ["Feni Sadar", "Chhagalnaiya", "Daganbhuiyan", "Parshuram", "Fulgazi", "Sonagazi"],
-        "Lakshmipur": ["Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"],
-        "Bandarban": ["Bandarban Sadar", "Thanchi", "Lama", "Naikhongchhari", "Ali Kadam", "Rowangchhari", "Ruma"],
-        "Khagrachhari": ["Khagrachhari Sadar", "Dighinala", "Panchhari", "Laxmichhari", "Mahalchhari", "Manikchhari", "Ramgarh", "Matiranga", "Guimara"],
-        "Rangamati": ["Rangamati Sadar", "Kaptai", "Kawkhali", "Baghaichhari", "Barkal", "Langadu", "Rajasthali", "Belaichhari", "Juraichhari", "Naniarchar"]
-    },
-    "Khulna": {
-        "Khulna": ["Khulna Sadar", "Dumuria", "Phultala", "Dighalia", "Rupsha", "Terokhada", "Batiaghata", "Dakop", "Paikgachha", "Koyra"],
-        "Jessore": ["Jessore Sadar", "Benapole", "Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Manirampur", "Sharsha"],
-        "Satkhira": ["Satkhira Sadar", "Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Shyamnagar", "Tala"],
-        "Bagerhat": ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"],
-        "Jhenaidah": ["Jhenaidah Sadar", "Harinakunda", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"],
-        "Kushtia": ["Kushtia Sadar", "Kumarkhali", "Khoksa", "Mirpur", "Daulatpur", "Bheramara"],
-        "Magura": ["Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"],
-        "Narail": ["Narail Sadar", "Kalia", "Lohagara"],
-        "Chuadanga": ["Chuadanga Sadar", "Alamdanga", "Damurhuda", "Jibannagar"],
-        "Meherpur": ["Meherpur Sadar", "Gangni", "Mujibnagar"]
-    },
-    "Rajshahi": {
-        "Rajshahi": ["Rajshahi Sadar", "Godagari", "Tanore", "Bagha", "Charghat", "Durgapur", "Mohanpur", "Paba", "Puthia"],
-        "Bogra": ["Bogra Sadar", "Sherpur", "Shibganj", "Adamdighi", "Dhupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Shajahanpur", "Sonatala"],
-        "Pabna": ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Santhia", "Sujanagar"],
-        "Sirajganj": ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Tarash", "Ullahpara"],
-        "Natore": ["Natore Sadar", "Bagatipara", "Baraigram", "Gurudaspur", "Lalpur", "Singra", "Naldanga"],
-        "Naogaon": ["Naogaon Sadar", "Atrai", "Badalgachhi", "Dhamoirhat", "Manda", "Mohadevpur", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"],
-        "Chapainawabganj": ["Chapainawabganj Sadar", "Bholahat", "Gomastapur", "Nachole", "Shibganj"],
-        "Joypurhat": ["Joypurhat Sadar", "Akkelpur", "Kalai", "Khetlal", "Panchbibi"]
-    },
-    "Sylhet": {
-        "Sylhet": ["Sylhet Sadar", "Beanibazar", "Golapganj", "Companiganj", "Fenchuganj", "Balaganj", "Bishwanath", "Gowainghat", "Jaintiapur", "Kanaighat", "Zakiganj", "Dakshin Surma", "Osmani Nagar"],
-        "Sunamganj": ["Sunamganj Sadar", "Chhatak", "Jagannathpur", "Derai", "Dharamapasha", "Bishwamvarpur", "Dowarabazar", "Jamalganj", "Sullah", "Tahirpur", "Dakshin Sunamganj"],
-        "Habiganj": ["Habiganj Sadar", "Ajmiriganj", "Bahubal", "Baniyachong", "Chunarughat", "Lakhai", "Madhabpur", "Nabiganj", "Shaistaganj"],
-        "Moulvibazar": ["Moulvibazar Sadar", "Barlekha", "Juri", "Kamalganj", "Kulaura", "Rajnagar", "Sreemangal"]
-    },
-    "Barishal": {
-        "Barishal": ["Barishal Sadar", "Bakerganj", "Babuganj", "Agailjhara", "Gaurnadi", "Hizla", "Mehendiganj", "Muladi", "Wazirpur", "Banaripara"],
-        "Bhola": ["Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"],
-        "Patuakhali": ["Patuakhali Sadar", "Bauphal", "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Rangabali", "Dumki"],
-        "Pirojpur": ["Pirojpur Sadar", "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad", "Indurkani"],
-        "Barguna": ["Barguna Sadar", "Amtali", "Bamna", "Betagi", "Patharghata", "Taltali"],
-        "Jhalokathi": ["Jhalokathi Sadar", "Kathalia", "Nalchity", "Rajapur"]
-    },
-    "Rangpur": {
-        "Rangpur": ["Rangpur Sadar", "Pirgachha", "Kaunia", "Badarganj", "Gangachara", "Mithapukur", "Pirganj", "Taraganj"],
-        "Dinajpur": ["Dinajpur Sadar", "Birampur", "Birganj", "Bochaganj", "Chirirbandar", "Fulbari", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Nawabganj", "Parbatipur"],
-        "Gaibandha": ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata", "Sundarganj"],
-        "Kurigram": ["Kurigram Sadar", "Bhurungamari", "Char Rajibpur", "Chilmari", "Phulbari", "Nageshwari", "Rajarhat", "Raomari", "Ulipur"],
-        "Lalmonirhat": ["Lalmonirhat Sadar", "Aditmari", "Hatibandha", "Kaliganj", "Patgram"],
-        "Nilphamari": ["Nilphamari Sadar", "Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Saidpur"],
-        "Panchagarh": ["Panchagarh Sadar", "Atwari", "Boda", "Debiganj", "Tetulia"],
-        "Thakurgaon": ["Thakurgaon Sadar", "Baliadangi", "Haripur", "Pirganj", "Ranishankail"]
-    },
-    "Mymensingh": {
-        "Mymensingh": ["Mymensingh Sadar", "Muktagachha", "Valuka", "Bhaluka", "Dhobaura", "Fulbaria", "Gafargaon", "Gauripur", "Haluaghat", "Ishwarganj", "Nandail", "Phulpur", "Trishal", "Tara Khanda"],
-        "Jamalpur": ["Jamalpur Sadar", "Bakshiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari"],
-        "Sherpur": ["Sherpur Sadar", "Jhenaigati", "Nakla", "Nalitabari", "Sreebardi"],
-        "Netrokona": ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Kendua", "Madan", "Mohanganj", "Purbadhala"]
-    }
+    "Dhaka": { "Munshiganj": ["Munshiganj Sadar", "Sreenagar", "Sirajdikhan", "Louhajang", "Gajaria", "Tongibari"], "Dhaka": ["Savar", "Dhamrai", "Keraniganj", "Nawabganj", "Dohar", "Dhaka Sadar"], "Gazipur": ["Gazipur Sadar", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"], "Narayanganj": ["Narayanganj Sadar", "Bandar", "Araihazar", "Rupganj", "Sonargaon"] },
+    "Chattogram": { "Chattogram": ["Chattogram Sadar", "Sitakunda", "Mirsharai", "Patiya", "Raozan"], "Cox's Bazar": ["Cox's Bazar Sadar", "Ramu", "Teknaf", "Ukhia"] },
+    "Khulna": { "Khulna": ["Khulna Sadar", "Dumuria", "Phultala"], "Jessore": ["Jessore Sadar", "Benapole"] },
+    "Rajshahi": { "Rajshahi": ["Rajshahi Sadar", "Godagari"], "Bogra": ["Bogra Sadar", "Sherpur"] },
+    "Sylhet": { "Sylhet": ["Sylhet Sadar", "Beanibazar"], "Sunamganj": ["Sunamganj Sadar"] },
+    "Barishal": { "Barishal": ["Barishal Sadar"], "Bhola": ["Bhola Sadar"] },
+    "Rangpur": { "Rangpur": ["Rangpur Sadar"], "Dinajpur": ["Dinajpur Sadar"] },
+    "Mymensingh": { "Mymensingh": ["Mymensingh Sadar", "Muktagachha"], "Jamalpur": ["Jamalpur Sadar"] }
 };
 
-
-
 // --- DATABASE SETUP ---
-const DB_NAME = "Lynex_Reset_DB_V10"; 
+const DB_NAME = "Lynex_Reset_DB_V11"; 
 const DB_VERSION = 1;
 let db;
 
@@ -379,7 +305,7 @@ async function confirmSizeSelection() {
 
 window.closeSizeModal = () => { document.getElementById('sizeModal').classList.remove('active'); };
 
-// --- 6. CHECKOUT LOGIC (With Error Highlighting) ---
+// --- 6. CHECKOUT LOGIC ---
 async function getCheckoutItems() {
     const directBuyData = sessionStorage.getItem(KEY_DIRECT_BUY);
     if (directBuyData) {
@@ -409,7 +335,7 @@ window.calculateTotal = function() {
     const subTotal = parseInt(subTotalElem.innerText) || 0; chargeElem.innerText = charge; grandElem.innerText = subTotal + charge;
 }
 
-// --- HELPER: SHOW/HIDE ERROR ---
+// Validation Helper
 function showError(inputId, errorId) {
     document.getElementById(inputId).classList.add('input-error');
     document.getElementById(errorId).style.display = 'block';
@@ -426,49 +352,24 @@ function handleCheckoutForm() {
             e.preventDefault();
             
             let isValid = true;
-
-            // 1. Validate Name
-            const name = document.getElementById('name');
-            if (name.value.trim() === "") {
-                showError('name', 'name-error');
-                isValid = false;
-            } else {
-                clearError('name', 'name-error');
-            }
-
-            // 2. Validate Phone
-            const phone = document.getElementById('phone');
-            const phoneVal = phone.value.trim();
+            // Name
+            if (f.name.value.trim() === "") { showError('name', 'name-error'); isValid = false; } else { clearError('name', 'name-error'); }
+            // Phone
+            const phoneVal = f.phone.value.trim();
             const validPrefixes = ['017', '019', '018', '014', '015', '013', '016'];
-            
-            if (phoneVal.length !== 11 || !validPrefixes.includes(phoneVal.substring(0, 3))) { 
-                showError('phone', 'phone-error');
-                isValid = false;
-            } else {
-                clearError('phone', 'phone-error');
-            }
+            if (phoneVal.length !== 11 || !validPrefixes.includes(phoneVal.substring(0, 3))) { showError('phone', 'phone-error'); isValid = false; } else { clearError('phone', 'phone-error'); }
+            // Address
+            const div = document.getElementById('division'); if(div.value==="") { showError('division','division-error'); isValid=false; } else clearError('division','division-error');
+            const dist = document.getElementById('district'); if(dist.value==="") { showError('district','district-error'); isValid=false; } else clearError('district','district-error');
+            const upz = document.getElementById('upazila'); if(upz.value==="") { showError('upazila','upazila-error'); isValid=false; } else clearError('upazila','upazila-error');
+            const vill = document.getElementById('village'); if(vill.value.trim()==="") { showError('village','village-error'); isValid=false; } else clearError('village','village-error');
 
-            // 3. Validate Address Parts
-            const div = document.getElementById('division');
-            if(div.value === "") { showError('division', 'division-error'); isValid = false; } else { clearError('division', 'division-error'); }
-
-            const dist = document.getElementById('district');
-            if(dist.value === "") { showError('district', 'district-error'); isValid = false; } else { clearError('district', 'district-error'); }
-
-            const upz = document.getElementById('upazila');
-            if(upz.value === "") { showError('upazila', 'upazila-error'); isValid = false; } else { clearError('upazila', 'upazila-error'); }
-
-            const vill = document.getElementById('village');
-            if(vill.value.trim() === "") { showError('village', 'village-error'); isValid = false; } else { clearError('village', 'village-error'); }
-
-            if (!isValid) {
-                // Scroll to the first error
+            if(!isValid) {
                 const firstError = document.querySelector('.input-error');
                 if(firstError) firstError.scrollIntoView({behavior: "smooth", block: "center"});
                 return;
             }
 
-            // --- PROCESS ORDER ---
             const c = await getCheckoutItems(); 
             if(c.length===0) return showPopup('Error', 'No items to checkout!', 'error');
             
@@ -489,34 +390,24 @@ function handleCheckoutForm() {
             if(sessionStorage.getItem(KEY_DIRECT_BUY)) sessionStorage.removeItem(KEY_DIRECT_BUY);
             else { await setStorage(KEY_CART, []); await updateCartCount(); }
             
-            // Detailed Success Popup
             const itemDetails = c.map(i => `
                 <div style="display:flex; justify-content:space-between; font-size:0.9em; margin-bottom:5px;">
-                    <span>${i.name} (${i.size}) x${i.qty}</span>
-                    <span>৳${i.price*i.qty}</span>
-                </div>
-            `).join('');
+                    <span>${i.name} (${i.size}) x${i.qty}</span><span>৳${i.price*i.qty}</span>
+                </div>`).join('');
 
             const msg = `
                 <div style="text-align:left; font-size:0.95em;">
-                    <p style="margin-bottom:5px;"><strong>Name:</strong> ${f.name.value}</p>
-                    <p style="margin-bottom:5px;"><strong>Phone:</strong> ${phoneVal}</p>
-                    <p style="margin-bottom:10px; color:#aaa; font-size:0.85em;"><strong>Address:</strong> ${fullAddress}</p>
-                    
+                    <p><strong>Name:</strong> ${f.name.value}</p>
+                    <p><strong>Phone:</strong> ${phoneVal}</p>
+                    <p style="color:#aaa; font-size:0.85em;"><strong>Address:</strong> ${fullAddress}</p>
                     <hr style="border:1px solid #444; margin:10px 0;">
-                    
-                    <p style="margin-bottom:5px; color:#ff9f43;"><strong>Order Items:</strong></p>
-                    ${itemDetails}
-                    
+                    <p style="color:#ff9f43;"><strong>Order Items:</strong></p>${itemDetails}
                     <hr style="border:1px solid #444; margin:10px 0;">
-                    
                     <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>৳${subTot}</span></div>
                     <div style="display:flex; justify-content:space-between;"><span>Delivery:</span><span>৳${deliveryCharge}</span></div>
                     <div style="display:flex; justify-content:space-between; font-size:1.2em; color:#ff9f43; font-weight:bold; margin-top:5px;"><span>Total:</span><span>৳${grandTot}</span></div>
-                    
                     <p style="margin-top:15px; text-align:center; font-size:0.8em; color:#777;">Order ID: ${id}</p>
-                </div>
-            `;
+                </div>`;
             showPopup('Order Placed Successfully!', msg, 'success', 'index.html');
         };
     }
@@ -546,11 +437,30 @@ async function loadCartSummaryForCheckout() {
     } 
 }
 
-// --- CART DISPLAY ---
+// --- NEW: CART EMPTY STATE (Cart Page Only) ---
 async function loadCartDisplay() {
-    const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); if(!c) return;
+    const c = document.querySelector('.cart-items'); const t = document.getElementById('cart-total'); 
+    const summarySection = document.querySelector('.cart-summary');
+    if(!c) return;
+
     const cart = await getStorage(KEY_CART);
-    if(cart.length===0) { c.innerHTML='<p style="text-align:center;">Your cart is currently empty.</p>'; if(t) t.innerText='0'; return; }
+    
+    // EMPTY STATE
+    if(cart.length===0) { 
+        c.innerHTML=`
+            <div style="text-align:center; padding: 40px 0;">
+                <i class="fas fa-shopping-basket" style="font-size: 3em; color: #444; margin-bottom: 20px;"></i>
+                <h3 style="color:#fff; margin-bottom: 10px;">Your Cart is Empty</h3>
+                <p style="color:#aaa; margin-bottom: 25px;">Looks like you haven't added anything yet.</p>
+                <a href="products.html" class="btn primary-btn">SHOP COLLECTION</a>
+            </div>`; 
+        if(t) t.innerText='0'; 
+        if(summarySection) summarySection.style.display = 'none'; // Hide Checkout Button
+        return; 
+    }
+
+    // FILLED STATE
+    if(summarySection) summarySection.style.display = 'block';
 
     c.innerHTML = cart.map((x,i)=> `
         <div class="cart-item">
