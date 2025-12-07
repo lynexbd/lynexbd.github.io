@@ -283,36 +283,40 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
-/* Stock Out Overlay (Dark & Diagonal) */
-.stock-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.65); /* কালো আস্তরণ */
-    z-index: 15;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    transition: 0.3s;
+/* --- STOCK OUT RIBBON (Right Corner Diagonal) --- */
+
+/* ইমেজের কন্টেইনারে overflow hidden থাকতে হবে */
+.image-wrapper {
+    position: relative;
+    overflow: hidden; /* রিবনের বাইরের অংশ কাটার জন্য */
 }
 
-.stock-text-diagonal {
+/* রিবন স্টাইল */
+.stock-ribbon {
+    position: absolute;
+    top: 20px;           /* উপর থেকে অবস্থান */
+    right: -35px;        /* ডান দিক থেকে পজিশন (নেগেটিভ ভ্যালু যাতে কোণায় বসে) */
+    width: 120px;        /* রিবনের লম্বা */
+    background-color: rgba(231, 76, 60, 0.9); /* লাল ব্যাকগ্রাউন্ড */
     color: #fff;
-    font-weight: 900;
-    font-size: 1.4em;
-    text-transform: uppercase;
-    border: 3px solid #e74c3c; /* লাল বর্ডার */
-    background-color: rgba(231, 76, 60, 0.2); /* হালকা স্বচ্ছ লাল */
-    padding: 10px 30px;
-    transform: rotate(-45deg); /* কোণাকুনি */
-    letter-spacing: 2px;
-    backdrop-filter: blur(2px);
-    box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
-    text-shadow: 2px 2px 4px #000;
+    text-align: center;
+    font-size: 0.75em;
+    font-weight: 800;
+    padding: 5px 0;
+    transform: rotate(45deg); /* ৪৫ ডিগ্রি কোণাকুনি */
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    letter-spacing: 1px;
+    pointer-events: none;
 }
+
+/* অপশনাল: ইমেজ হালকা কালো করার জন্য */
+.product-card.out-of-stock .slider-image {
+    opacity: 0.6;
+    filter: grayscale(80%);
+}
+
 
 /* Product Info & Price */
 .product-info h3 {
