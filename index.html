@@ -4,21 +4,33 @@
     <meta charset="UTF-8">
     <title>LYNEX | Modern Clothing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet" href="style.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
     <header class="header">
         <div class="container">
-            <div class="logo"><a href="index.html"><span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span></a></div>
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-lyn">LYN</span><span class="logo-e">E</span><span class="logo-x">X</span>
+                </a>
+            </div>
             <nav class="nav">
                 <ul class="nav-list" id="nav-list">
                     <li><a href="index.html" class="active">Home</a></li>
                     <li><a href="products.html">Products</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="feedback.html">Feedback</a></li>
-                    <li><a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span></a></li>
+                    <li>
+                        <a href="cart.html" class="cart-icon">
+                            <i class="fas fa-shopping-cart"></i> <span class="cart-count">(0)</span>
+                        </a>
+                    </li>
                 </ul>
                 <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
             </nav>
@@ -26,29 +38,34 @@
     </header>
 
     <section class="hero-section" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-bg.jpg');">
-    <div class="hero-content">
-        <h4 class="subtitle">PREMIUM ESSENTIALS</h4>
-        <h1>CRAFTED FOR ELEGANCE</h1>
-        <div class="hero-buttons">
-            <a href="products.html" class="btn primary-btn compact-btn">SHOP COLLECTION</a>
+        <div class="hero-content">
+            <h4 class="subtitle">PREMIUM ESSENTIALS</h4>
+            <h1>CRAFTED FOR ELEGANCE</h1>
+            <div class="hero-buttons">
+                <a href="products.html" class="btn primary-btn compact-btn">SHOP COLLECTION</a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <section class="products-section container">
-        <h2 class="section-title">Latest Products</h2>
+        <h2 class="section-title">Latest Arrivals</h2>
+        
         <div class="product-grid"></div>
-        <div style="text-align:center; margin-top: 40px;"><a href="products.html" class="btn secondary-btn">VIEW ALL</a></div>
+        
+        <div style="text-align:center; margin-top: 40px;">
+            <a href="products.html" class="btn secondary-btn">VIEW ALL PRODUCTS</a>
+        </div>
     </section>
 
     <footer class="footer">
-    <div class="container">
-        <h2 class="footer-brand">LYNEX</h2>
-        
-        <p class="footer-desc">
-            CRAFTED FOR ELEGANCE. <br>
-            Premium essentials for the modern trendsetter.
-        </p>
+        <div class="container">
+            <h2 class="footer-brand">LYNEX</h2>
+            
+            <p class="footer-desc">
+                CRAFTED FOR ELEGANCE. <br>
+                Premium essentials for the modern trendsetter.
+            </p>
+            
             <h3 class="footer-links-title">LINKS</h3>
             <div class="footer-nav">
                 <a href="index.html">Home</a>
@@ -68,6 +85,7 @@
             <div class="copyright"><p>&copy; 2024 LYNEX. All Rights Reserved.</p></div>
         </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
