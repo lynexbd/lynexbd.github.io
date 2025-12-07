@@ -15,7 +15,7 @@
             border: 1px solid #444;
             color: #fff;
             border-radius: 4px;
-            margin-bottom: 5px; /* Margin reduced to fit error msg */
+            margin-bottom: 5px; /* Reduced for error msg spacing */
             font-family: 'Montserrat', sans-serif;
         }
         .form-select:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -27,6 +27,12 @@
             margin-bottom: 15px; 
             display: none; 
             font-weight: 500;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
