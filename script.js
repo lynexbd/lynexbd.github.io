@@ -1,5 +1,5 @@
 // ======================================================
-// LYNEX FINAL SCRIPT (Delivery Charge Logic Added)
+// LYNEX FINAL SCRIPT (English UI - Bangla Note)
 // ======================================================
 
 // --- 1. CONFIGURATION ---
@@ -299,8 +299,8 @@ window.loadDistricts = function() {
     const districtSelect = document.getElementById("district");
     const upazilaSelect = document.getElementById("upazila");
 
-    districtSelect.innerHTML = '<option value="">জেলা নির্বাচন করুন</option>';
-    upazilaSelect.innerHTML = '<option value="">উপজেলা নির্বাচন করুন</option>';
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
     districtSelect.disabled = true;
     upazilaSelect.disabled = true;
 
@@ -321,7 +321,7 @@ window.loadUpazilas = function() {
     const district = document.getElementById("district").value;
     const upazilaSelect = document.getElementById("upazila");
 
-    upazilaSelect.innerHTML = '<option value="">উপজেলা নির্বাচন করুন</option>';
+    upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
     upazilaSelect.disabled = true;
 
     if (district && bdGeoData[division][district]) {
