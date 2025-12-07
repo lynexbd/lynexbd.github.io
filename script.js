@@ -732,56 +732,25 @@ function handleContactForm(form) {
         await set(ref(db, 'messages/' + msgId), m);
         form.reset(); showPopup('Message Sent', 'Thank you!', 'success');
     };
-  {
-// ২. ফিডব্যাক বা মেসেজ ম্যানেজমেন্ট
-function initAdminMessages() { 
-    const tb = document.querySelector('#messages-table tbody'); 
-    if(!tb) return;
-    
-    let currentFilter = 'New'; // ডিফল্ট ফিল্টার
+}
 
+function initAdminMessages() { 
+    const tb=document.querySelector('#messages-table tbody'); 
     onValue(ref(db, 'messages'), (snapshot) => {
         const data = snapshot.val();
-        if(!data){ tb.innerHTML='<tr><td colspan="5">No Messages Found</td></tr>'; return; }
-        
-        const all = Object.values(data).sort((a,b) => b.id - a.id); 
-        
-        // ডাটা ফিল্টার করা (isRead status এর ওপর ভিত্তি করে)
-        const filtered = currentFilter === 'New' ? all.filter(m => m.isRead === false) : all.filter(m => m.isRead === true);
-
-        // ট্যাব হাইলাইট করা
-        document.querySelectorAll('.filter-btn').forEach(b => {
-            if(b.innerText.includes(currentFilter)) b.classList.add('active');
-            else b.classList.remove('active');
-        });
-
-        if(filtered.length === 0){ tb.innerHTML=`<tr><td colspan="5">No ${currentFilter} Messages</td></tr>`; return; }
-
-        tb.innerHTML = filtered.map(m => `
+        if(!data){ tb.innerHTML='<tr><td colspan="5">No Messages</td></tr>'; return; }
+        const all = Object.values(data).reverse();
+        tb.innerHTML = all.map(m => `
             <tr>
                 <td>${m.date}</td>
                 <td>${m.name}<br><small>${m.email}</small></td>
                 <td>${m.subject}</td>
                 <td>${m.message}</td>
-                <td style="white-space:nowrap;">
-                    ${m.isRead === false ? `<button onclick="markMsgRead('${m.id}')" class="btn-action btn-read" style="background: #2ecc71; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;"><i class="fas fa-check"></i> Mark Read</button>` : ''}
-                    <button onclick="delMsg('${m.id}')" class="btn-action btn-delete" style="color: #e74c3c; background: none; border: none; cursor: pointer; margin-left: 10px;"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>`).join(''); 
+                <td><button onclick="delMsg('${m.id}')" class="btn-action btn-delete"><i class="fas fa-trash"></i></button></td>
+            </tr>`).join('');
     });
-
-    // ফিল্টার বাটন ফাংশন
-    window.filterMsgs = (m) => { currentFilter = m; }; 
-
-    // মেসেজ পড়া হিসেবে মার্ক করা
-    window.markMsgRead = async(id) => {
-        await update(ref(db, 'messages/' + id), { isRead: true });
-        showPopup('Success', 'Message moved to Read section', 'success');
-    };
-
-    window.delMsg = async(id) => { if(confirm('Are you sure?')) await remove(ref(db, 'messages/'+id)); }; 
+    window.delMsg = async(id) => { if(confirm('Delete?')) await remove(ref(db, 'messages/'+id)); };
 }
-
 
 async function initAdminDashboard() { 
     onValue(ref(db), (snap) => {
