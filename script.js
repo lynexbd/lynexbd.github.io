@@ -101,28 +101,34 @@ const bdGeoData = {
 // Helper: Get Data from Firebase Once
 async function getFirebaseData(path) {
     try {
+        // ১. লোডিং ফাস্ট করতে প্রথমে ক্যাশ ডেটা দেখাবে
+        const cachedData = localStorage.getItem(`cache_${path}`);
+        if (cachedData) {
+            console.log("Loading from cache...");
+            renderFromCache(JSON.parse(cachedData), path);
+        }
+
+        // ২. ব্যাকগ্রাউন্ডে Firebase থেকে ফ্রেশ ডেটা আনবে
         const snapshot = await get(child(ref(db), path));
         if (snapshot.exists()) {
-            const data = snapshot.val();
-            // Firebase returns objects, we convert to array for easier handling
-            return Object.values(data).reverse(); // Reverse to show latest first
-        } else {
-            return [];
+            const data = Object.values(snapshot.val()).reverse();
+            // নতুন ডেটা ক্যাশ করে রাখবে পরবর্তী সময়ের জন্য
+            localStorage.setItem(`cache_${path}`, JSON.stringify(data));
+            return data;
         }
+        return [];
     } catch (error) {
         console.error("Firebase Read Error:", error);
         return [];
     }
 }
 
-// Helper: Get Local Cart
-function getLocalCart() {
-    return JSON.parse(localStorage.getItem(KEY_CART) || '[]');
-}
-
-// Helper: Set Local Cart
-function setLocalCart(cart) {
-    localStorage.setItem(KEY_CART, JSON.stringify(cart));
+// ক্যাশ থেকে দ্রুত রেন্ডার করার হেল্পার
+function renderFromCache(data, path) {
+    if (path === 'products' && document.querySelector('.product-grid')) {
+        const isHome = document.querySelector('.hero-section') !== null;
+        displayProducts(data, isHome);
+    }
 }
 
 // ======================================================
