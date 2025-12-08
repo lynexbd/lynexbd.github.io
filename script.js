@@ -133,49 +133,60 @@ document.addEventListener('DOMContentLoaded', async function() {
     createPopupHTML();
     createSizeModalHTML();
 
+    // ক্লিনিং লজিক
     if (window.location.pathname.includes('cart.html')) {
         sessionStorage.removeItem(KEY_DIRECT_BUY);
     }
 
+    // মোবাইল মেনু টগল
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
+    // কার্ট কাউন্ট আপডেট (সব পেজের জন্য)
     updateCartCount();
 
+    // ১. লগইন পেজ ডিটেকশন
     if (document.getElementById('secure-login-form')) handleLogin();
 
-    // ADMIN PANEL CHECKS
+    // ২. এডমিন প্যানেল হাইলাইট এবং লজিক
     if (document.querySelector('.sidebar')) {
         if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) { 
             window.location.href = 'k7_entry_point.html'; 
             return; 
         }
         highlightAdminNav();
-        // Listeners for real-time admin updates
         if (document.getElementById('stat-revenue')) initAdminDashboard();
         if (document.getElementById('add-product-form')) initAdminProducts();
         if (document.getElementById('orders-table')) initAdminOrders();
         if (document.getElementById('messages-table')) initAdminMessages();
     }
 
-    // PUBLIC SITE CHECKS
+    // ৩. পাবলিক ওয়েবসাইট ডিটেকশন (পণ্য প্রদর্শনের জন্য)
     if (document.querySelector('.product-grid')) {
         const isHome = document.querySelector('.hero-section') !== null;
         loadProductsDisplay(isHome);
     }
     
+    // ৪. চেকআউট এবং অর্ডার লজিক
     if (document.getElementById('checkout-form')) {
         initAddressDropdowns();
         handleCheckoutForm();
         loadCartSummaryForCheckout();
     }
     
+    // ৫. কার্ট পেজ লজিক
     if (document.querySelector('.cart-items') && !document.getElementById('checkout-form')) loadCartDisplay();
     
+    // ৬. ফিডব্যাক পেজ লজিক
     const contactForm = document.getElementById('contact-form') || document.querySelector('form[action="feedback.html"]');
     if (contactForm) handleContactForm(contactForm);
+
+    // --- ৭. নতুন পেজগুলোর জন্য ডিটেকশন (About, Delivery, Terms) ---
+    // এই পেজগুলোতে আলাদা কোনো ফর্ম লজিক নেই, তাই শুধু কার্ট কাউন্ট আপডেটই যথেষ্ট।
+    // updateCartCount() ইতিমধ্যে উপরে রান হচ্ছে যা এই ৩ পেজের কাউন্ট ঠিক রাখবে।
 });
+
 
 // ======================================================
 // GLOBAL WINDOW FUNCTIONS (Required for HTML onclick)
