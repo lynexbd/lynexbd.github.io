@@ -825,20 +825,35 @@ function initAdminMessages() {
 
 
 async function initAdminDashboard() { 
+    // রিয়েল-টাইম লিসেনার যেন সব সময় চলে
     onValue(ref(db), (snap) => {
         const data = snap.val() || {};
         const orders = data.orders ? Object.values(data.orders) : [];
         const products = data.products ? Object.values(data.products) : [];
         
-        const rev = orders.filter(x=>x.status==='Delivered').reduce((s,i)=>s+(parseFloat(i.subTotal)||0),0); 
-        document.getElementById('stat-revenue').innerText='৳ '+rev; 
-        document.getElementById('stat-pending').innerText=orders.filter(x=>x.status==='Pending').length; 
-        document.getElementById('stat-shipped').innerText=orders.filter(x=>x.status==='Shipped').length; 
-        document.getElementById('stat-delivered').innerText=orders.filter(x=>x.status==='Delivered').length; 
-        document.getElementById('stat-cancelled').innerText=orders.filter(x=>x.status==='Cancelled').length; 
-        document.getElementById('stat-products').innerText=products.length;
+        // রেভিনিউ ক্যালকুলেশন (ডেলিভারি চার্জ ছাড়া)
+        const rev = orders.filter(x => x.status === 'Delivered').reduce((s, i) => s + (parseFloat(i.subTotal) || 0), 0); 
+        
+        const revElem = document.getElementById('stat-revenue');
+        if (revElem) revElem.innerText = '৳ ' + rev;
+
+        const pendingElem = document.getElementById('stat-pending');
+        if (pendingElem) pendingElem.innerText = orders.filter(x => x.status === 'Pending').length;
+
+        const shippedElem = document.getElementById('stat-shipped');
+        if (shippedElem) shippedElem.innerText = orders.filter(x => x.status === 'Shipped').length;
+
+        const deliveredElem = document.getElementById('stat-delivered');
+        if (deliveredElem) deliveredElem.innerText = orders.filter(x => x.status === 'Delivered').length;
+
+        const cancelledElem = document.getElementById('stat-cancelled');
+        if (cancelledElem) cancelledElem.innerText = orders.filter(x => x.status === 'Cancelled').length;
+
+        const productsElem = document.getElementById('stat-products');
+        if (productsElem) productsElem.innerText = products.length;
     });
 }
+
 
 // Utils
 function createPopupHTML() { if(!document.querySelector('.custom-popup-overlay')) { const p=document.createElement('div'); p.className='custom-popup-overlay'; p.innerHTML=`<div class="custom-popup-box"><i class="fas fa-info-circle popup-icon"></i><h3 class="popup-title"></h3><div class="popup-msg"></div><button class="btn primary-btn popup-btn">OK</button></div>`; document.body.appendChild(p); p.querySelector('.popup-btn').addEventListener('click', () => { p.classList.remove('active'); if(window.popupRedirect) { window.location.href=window.popupRedirect; window.popupRedirect=null; } }); } }
