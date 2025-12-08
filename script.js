@@ -151,13 +151,26 @@ document.addEventListener('DOMContentLoaded', async function() {
             window.location.href = 'k7_entry_point.html'; 
             return; 
         }
+                // এডমিন নেভিগেশন হাইলাইট লজিক রান করা
         highlightAdminNav();
-        // Listeners for real-time admin updates
-        if (document.getElementById('stat-revenue')) initAdminDashboard();
-        if (document.getElementById('add-product-form')) initAdminProducts();
-        if (document.getElementById('orders-table')) initAdminOrders();
-        if (document.getElementById('messages-table')) initAdminMessages();
-    }
+
+        // রিয়েল-টাইম এডমিন উইজেট এবং লজিক চেক (শুধুমাত্র এডমিন পেজে রান হবে)
+        if (document.getElementById('stat-revenue')) {
+            initAdminDashboard(); // ড্যাশবোর্ড আপডেট
+        }
+        
+        if (document.getElementById('add-product-form')) {
+            initAdminProducts(); // প্রোডাক্ট ম্যানেজমেন্ট
+        }
+        
+        if (document.getElementById('orders-table')) {
+            initAdminOrders(); // অর্ডার লিস্ট লুপ
+        }
+        
+        if (document.getElementById('messages-table')) {
+            initAdminMessages(); // ফিডব্যাক মেসেজ ফিল্টারিং
+        }
+
 
     // PUBLIC SITE CHECKS
     if (document.querySelector('.product-grid')) {
@@ -211,9 +224,30 @@ window.adjustModalQty = (change) => {
 // 1. PRODUCT DISPLAY (PUBLIC)
 // ======================================================
 async function loadProductsDisplay(isHome) {
-    let grid = document.querySelector('.product-grid'); if (!grid) return;
-    grid.innerHTML = '<p style="color:#aaa;text-align:center;">Loading products...</p>';
-    
+    let grid = document.querySelector('.product-grid'); 
+    if (!grid) return;
+
+    const cacheKey = 'lynex_products_cache';
+
+    // ১. প্রথমে ক্যাশ চেক করবে (এটি চোখের পলকে প্রোডাক্ট শো করবে)
+    const cachedProducts = localStorage.getItem(cacheKey);
+    if (cachedProducts) {
+        renderProducts(JSON.parse(cachedProducts), isHome);
+    } else {
+        grid.innerHTML = '<p style="color:#aaa;text-align:center;padding:50px;">Loading collection...</p>';
+    }
+
+    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে লাইভ ডেটা আনবে
+    try {
+        const freshProducts = await getFirebaseData('products');
+        if (freshProducts && freshProducts.length > 0) {
+            localStorage.setItem(cacheKey, JSON.stringify(freshProducts));
+            // লাইভ ডেটা দিয়ে অটোমেটিক আপডেট করবে যাতে স্টক সঠিক থাকে
+            renderProducts(freshProducts, isHome);
+        }
+    } catch (error) { console.error("Firebase Sync Error:", error); }
+}
+
     // Fetch from Firebase
     let p = await getFirebaseData('products');
     
@@ -635,11 +669,15 @@ function initAdminProducts() {
             stock: stock 
         };
 
-        try {
-            await set(ref(db, 'products/' + newId), newProd);
-            f.reset(); showPopup('Success', 'Product Added to Database!', 'success');
-        } catch(err) { console.error(err); showPopup('Error', 'Failed to add', 'error'); }
-    });
+        // আপনার initAdminProducts ফাংশনের f.addEventListener('submit'...) এর শেষে:
+try {
+    await set(ref(db, 'products/' + newId), newProd);
+    f.reset(); 
+    // নতুন প্রোডাক্ট অ্যাড হলে ক্যাশ ক্লিয়ার করতে হবে যাতে ইউজার আপডেট পায়
+    localStorage.removeItem('lynex_products_cache'); 
+    showPopup('Success', 'Product Added to Database!', 'success');
+} catch(err) { /* ... */ }
+
 
     // Delete Product
     window.delP = async(id) => {
