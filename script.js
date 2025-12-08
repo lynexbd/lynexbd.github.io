@@ -243,70 +243,80 @@ window.adjustModalQty = (change) => {
 // ======================================================
 // 1. PRODUCT DISPLAY (PUBLIC)
 // ======================================================
+// --- ৪. PRODUCT DISPLAY (Optimized for Speed & Firebase Sync) ---
+
+/**
+ * এই ফাংশনটি প্রথমে ক্যাশ থেকে ডাটা দেখাবে এবং ব্যাকগ্রাউন্ডে Firebase থেকে আপডেট করবে।
+ * @param {boolean} isHome - হোম পেজের নিউ অ্যারাইভাল ফিল্টার করার জন্য।
+ */
 async function loadProductsDisplay(isHome) {
     let grid = document.querySelector('.product-grid'); 
     if (!grid) return;
 
     const cacheKey = 'lynex_products_cache';
 
-    // ১. প্রথমে ক্যাশ চেক করবে (লোডিং এড়ানোর জন্য)
+    // ১. প্রথমে লোকাল ক্যাশ চেক করবে (যাতে ইউজার ঢোকার সাথে সাথে প্রোডাক্ট দেখে)
     const cachedProducts = localStorage.getItem(cacheKey);
     if (cachedProducts) {
-        // ক্যাশ ডাটা থাকলে সাথে সাথে রেন্ডার করবে
-        renderProducts(JSON.parse(cachedProducts), isHome);
+        renderProducts(JSON.parse(cachedProducts), isHome); 
     } else {
-        // যদি ক্যাশ না থাকে তবেই প্রথমবার লোডিং দেখাবে
-        grid.innerHTML = '<p style="color:#aaa;text-align:center;padding:50px;">Loading collection...</p>';
+        grid.innerHTML = '<p style="color:#aaa;text-align:center;padding:50px;">Loading our collection...</p>';
     }
 
-    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে ফ্রেশ ডেটা আনবে
+    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে ফ্রেশ ডাটা আনবে
     try {
-        const freshProducts = await getFirebaseData('products');
-        if (freshProducts && freshProducts.length > 0) {
-            // নতুন ডাটা ব্রাউজারে ক্যাশ করে রাখবে পরবর্তী পেজ লোডের জন্য
+        const snapshot = await get(child(ref(db), 'products'));
+        if (snapshot.exists()) {
+            const freshProducts = Object.values(snapshot.val()).reverse();
+            
+            // ডাটা ক্যাশ করে রাখবে পরবর্তী পেজ লোডের জন্য
             localStorage.setItem(cacheKey, JSON.stringify(freshProducts));
-            // লাইভ ডাটা দিয়ে নিঃশব্দে পুনরায় রেন্ডার করবে যাতে স্টক সঠিক থাকে
+            
+            // লাইভ ডাটা দিয়ে নিঃশব্দে আপডেট করবে যাতে স্টক বা দামের পরিবর্তন রিফ্লেক্ট হয়
             renderProducts(freshProducts, isHome);
         } else if (!cachedProducts) {
             grid.innerHTML = '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
         }
-    } catch (error) { 
-        console.error("Firebase Sync Error:", error); 
+    } catch (error) {
+        console.error("Background sync failed:", error);
     }
 }
+
+/**
+ * ডাটা থেকে এইচটিএমএল গ্রিড তৈরি করার মূল রেন্ডারিং ফাংশন।
+ */
 function renderProducts(p, isHome) {
     let grid = document.querySelector('.product-grid');
     if (!grid) return;
 
-    // হোম পেজের জন্য ফিল্টারিং
+    // হোম পেজের জন্য শুধুমাত্র নিউ অ্যারাইভাল ফিল্টার
     if (isHome) p = p.filter(x => x.isNewArrival);
 
     grid.innerHTML = p.map(i => {
+        // ১. দাম এবং ডিসকাউন্ট ক্যালকুলেশন
         let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
         let discountBadge = '';
-        
-        // ডিসকাউন্ট ক্যালকুলেশন
         if (i.originalPrice && i.originalPrice > i.price) {
             const d = Math.round(((i.originalPrice - i.price) / i.originalPrice) * 100);
             priceHTML = `<span class="old-price">৳ ${i.originalPrice}</span> <span class="current-price">৳ ${i.price}</span>`;
             discountBadge = `<span class="discount-badge">-${d}% OFF</span>`;
         }
 
-        // স্টক ম্যানেজমেন্ট
+        // ২. স্টক আউট চেক লজিক (সব সাইজের যোগফল ০ হলে)
         const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
         const totalStock = (parseInt(s.s)||0) + (parseInt(s.m)||0) + (parseInt(s.l)||0) + (parseInt(s.xl)||0) + (parseInt(s.xxl)||0);
         let stockRibbon = '', btnState = '', cardClass = '';
 
         if (totalStock === 0) {
-            stockRibbon = `<div class="stock-ribbon">STOCK OUT</div>`; // কোণাকুনি রিবন স্টাইল
+            stockRibbon = `<div class="stock-ribbon">STOCK OUT</div>`; // কোণাকুনি লাল ফিতা
             btnState = 'disabled style="opacity:0.5; cursor:not-allowed;"';
             cardClass = 'out-of-stock';
         }
 
+        // ৩. স্লাইডার ইমেজ এবং নেভিগেশন ডটস
         let images = i.images && i.images.length ? i.images : [''];
         let slides = images.map((src) => `<img src="${src}" class="slider-image">`).join('');
         
-        // স্লাইডার ডটস (Navigation Dots)
         let dots = '';
         if (images.length > 1) {
             dots = `<div class="slider-dots" id="dots-${i.id}">
@@ -314,6 +324,7 @@ function renderProducts(p, isHome) {
             </div>`;
         }
         
+        // ৪. ফাইনাল কার্ড এইচটিএমএল জেনারেশন
         return `
         <div class="product-card ${cardClass}">
             <div class="image-wrapper">
@@ -335,44 +346,6 @@ function renderProducts(p, isHome) {
 }
 
 
-        const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
-        const totalStock = (parseInt(s.s)||0) + (parseInt(s.m)||0) + (parseInt(s.l)||0) + (parseInt(s.xl)||0) + (parseInt(s.xxl)||0);
-        let stockRibbon = '', btnState = '', cardClass = '';
-
-        if (totalStock === 0) {
-            stockRibbon = `<div class="stock-ribbon">STOCK OUT</div>`;
-            btnState = 'disabled style="opacity:0.5; cursor:not-allowed;"';
-            cardClass = 'out-of-stock';
-        }
-
-        let images = i.images && i.images.length ? i.images : [''];
-        let slides = images.map((src) => `<img src="${src}" class="slider-image">`).join('');
-        let dots = '';
-        if (images.length > 1) {
-            dots = `<div class="slider-dots" id="dots-${i.id}">
-                ${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}
-            </div>`;
-        }
-        
-        return `
-        <div class="product-card ${cardClass}">
-            <div class="image-wrapper">
-                ${discountBadge}
-                ${stockRibbon}
-                <div class="slider-container" id="slider-${i.id}" onscroll="updateActiveDot(this, '${i.id}')">${slides}</div>
-                ${dots}
-            </div>
-            <div class="product-info">
-                <h3>${i.name}</h3>
-                <div class="price-container">${priceHTML}</div>
-                <div class="product-actions">
-                    <button onclick="openSizeSelector('${i.id}', 'cart')" class="btn secondary-btn" ${btnState}>Add to Cart</button>
-                    <button onclick="openSizeSelector('${i.id}', 'buy')" class="btn primary-btn" ${btnState}>Buy Now</button>
-                </div>
-            </div>
-        </div>`;
-    }).join('') : '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
-}
 
 // ======================================================
 // 2. SIZE MODAL & CART LOGIC
