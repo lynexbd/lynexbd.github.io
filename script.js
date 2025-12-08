@@ -133,51 +133,69 @@ document.addEventListener('DOMContentLoaded', async function() {
     createPopupHTML();
     createSizeModalHTML();
 
-    if (window.location.pathname.includes('cart.html')) {
-        sessionStorage.removeItem(KEY_DIRECT_BUY);
+    // ১. নেভিগেশন হাইলাইট রান করা (এটি সব পেজের লিঙ্ক ফিক্স করবে)
+    highlightAdminNav();
+function highlightAdminNav() {
+    const path = window.location.pathname;
+    const page = path.split("/").pop();
+
+    // এটি ইউজার এবং এডমিন উভয় নেভিগেশন হাইলাইট করবে
+    document.querySelectorAll('.nav-list li a, .sidebar ul li a').forEach(a => {
+        const href = a.getAttribute('href');
+        // বর্তমান পেজের নামের সাথে href মিললে active ক্লাস যোগ হবে
+        if (href === page || (page === "" && href === "index.html")) {
+            a.classList.add('active'); // ইউজার মেনুর জন্য
+            a.classList.add('admin-active'); // এডমিন মেনুর জন্য
+        } else {
+            a.classList.remove('active');
+            a.classList.remove('admin-active');
+        }
+    });
+}
+
+    // ২. তাৎক্ষণিক প্রোডাক্ট লোড (ক্যাশ থেকে)
+    const cacheKey = 'lynex_products_cache';
+    const cachedProducts = localStorage.getItem(cacheKey);
+
+    if (cachedProducts && document.querySelector('.product-grid')) {
+        const isHome = document.querySelector('.hero-section') !== null;
+        renderProducts(JSON.parse(cachedProducts), isHome); // ক্যাশ থেকে সাথে সাথে লোড
     }
 
+    // মোবাইল মেনু লজিক
     const menuToggle = document.getElementById('menu-toggle');
     const navList = document.getElementById('nav-list');
     if (menuToggle) menuToggle.addEventListener('click', () => navList.classList.toggle('active'));
     
     updateCartCount();
 
+    // কার্ট থেকে ডাইরেক্ট বাই ডাটা ক্লিয়ার
+    if (window.location.pathname.includes('cart.html')) {
+        sessionStorage.removeItem(KEY_DIRECT_BUY);
+    }
+
     if (document.getElementById('secure-login-form')) handleLogin();
 
-    // ADMIN PANEL CHECKS
+    // ৩. এডমিন প্যানেল লজিক
     if (document.querySelector('.sidebar')) {
         if (!sessionStorage.getItem(KEY_ADMIN_TOKEN)) { 
             window.location.href = 'k7_entry_point.html'; 
             return; 
         }
-                // এডমিন নেভিগেশন হাইলাইট লজিক রান করা
-        highlightAdminNav();
-
-        // রিয়েল-টাইম এডমিন উইজেট এবং লজিক চেক (শুধুমাত্র এডমিন পেজে রান হবে)
-        if (document.getElementById('stat-revenue')) {
-            initAdminDashboard(); // ড্যাশবোর্ড আপডেট
-        }
         
-        if (document.getElementById('add-product-form')) {
-            initAdminProducts(); // প্রোডাক্ট ম্যানেজমেন্ট
-        }
-        
-        if (document.getElementById('orders-table')) {
-            initAdminOrders(); // অর্ডার লিস্ট লুপ
-        }
-        
-        if (document.getElementById('messages-table')) {
-            initAdminMessages(); // ফিডব্যাক মেসেজ ফিল্টারিং
-        }
+        if (document.getElementById('stat-revenue')) initAdminDashboard();
+        if (document.getElementById('add-product-form')) initAdminProducts();
+        if (document.getElementById('orders-table')) initAdminOrders();
+        if (document.getElementById('messages-table')) initAdminMessages();
+    }
 
-
-    // PUBLIC SITE CHECKS
+    // ৪. ব্যাকগ্রাউন্ডে Firebase থেকে ডেটা সিঙ্ক
     if (document.querySelector('.product-grid')) {
         const isHome = document.querySelector('.hero-section') !== null;
-        loadProductsDisplay(isHome);
+        loadProductsDisplay(isHome); 
     }
     
+    // ৫. ফর্ম এবং চেকআউট লজিক
     if (document.getElementById('checkout-form')) {
         initAddressDropdowns();
         handleCheckoutForm();
@@ -189,6 +207,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const contactForm = document.getElementById('contact-form') || document.querySelector('form[action="feedback.html"]');
     if (contactForm) handleContactForm(contactForm);
 });
+
 
 // ======================================================
 // GLOBAL WINDOW FUNCTIONS (Required for HTML onclick)
@@ -229,38 +248,32 @@ async function loadProductsDisplay(isHome) {
 
     const cacheKey = 'lynex_products_cache';
 
-    // ১. প্রথমে ক্যাশ চেক করবে (এটি চোখের পলকে প্রোডাক্ট শো করবে)
+    // ১. প্রথমে ক্যাশ চেক করবে (লোডিং এড়ানোর জন্য)
     const cachedProducts = localStorage.getItem(cacheKey);
     if (cachedProducts) {
+        // ক্যাশ ডাটা থাকলে সাথে সাথে রেন্ডার করবে
         renderProducts(JSON.parse(cachedProducts), isHome);
     } else {
+        // যদি ক্যাশ না থাকে তবেই প্রথমবার লোডিং দেখাবে
         grid.innerHTML = '<p style="color:#aaa;text-align:center;padding:50px;">Loading collection...</p>';
     }
 
-    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে লাইভ ডেটা আনবে
+    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে ফ্রেশ ডেটা আনবে
     try {
         const freshProducts = await getFirebaseData('products');
         if (freshProducts && freshProducts.length > 0) {
+            // নতুন ডাটা ব্রাউজারে ক্যাশ করে রাখবে পরবর্তী পেজ লোডের জন্য
             localStorage.setItem(cacheKey, JSON.stringify(freshProducts));
-            // লাইভ ডেটা দিয়ে অটোমেটিক আপডেট করবে যাতে স্টক সঠিক থাকে
+            // লাইভ ডাটা দিয়ে নিঃশব্দে পুনরায় রেন্ডার করবে যাতে স্টক সঠিক থাকে
             renderProducts(freshProducts, isHome);
+        } else if (!cachedProducts) {
+            grid.innerHTML = '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
         }
-    } catch (error) { console.error("Firebase Sync Error:", error); }
+    } catch (error) { 
+        console.error("Firebase Sync Error:", error); 
+    }
 }
 
-    // Fetch from Firebase
-    let p = await getFirebaseData('products');
-    
-    if (isHome) p = p.filter(x => x.isNewArrival);
-
-    grid.innerHTML = p.length ? p.map(i => {
-        let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
-        let discountBadge = '';
-        if (i.originalPrice && i.originalPrice > i.price) {
-            const d = Math.round(((i.originalPrice - i.price) / i.originalPrice) * 100);
-            priceHTML = `<span class="old-price">৳ ${i.originalPrice}</span> <span class="current-price">৳ ${i.price}</span>`;
-            discountBadge = `<span class="discount-badge">-${d}% OFF</span>`;
-        }
 
         const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
         const totalStock = (parseInt(s.s)||0) + (parseInt(s.m)||0) + (parseInt(s.l)||0) + (parseInt(s.xl)||0) + (parseInt(s.xxl)||0);
