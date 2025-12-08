@@ -273,6 +273,65 @@ async function loadProductsDisplay(isHome) {
         console.error("Firebase Sync Error:", error); 
     }
 }
+function renderProducts(p, isHome) {
+    let grid = document.querySelector('.product-grid');
+    if (!grid) return;
+
+    // হোম পেজের জন্য ফিল্টারিং
+    if (isHome) p = p.filter(x => x.isNewArrival);
+
+    grid.innerHTML = p.map(i => {
+        let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
+        let discountBadge = '';
+        
+        // ডিসকাউন্ট ক্যালকুলেশন
+        if (i.originalPrice && i.originalPrice > i.price) {
+            const d = Math.round(((i.originalPrice - i.price) / i.originalPrice) * 100);
+            priceHTML = `<span class="old-price">৳ ${i.originalPrice}</span> <span class="current-price">৳ ${i.price}</span>`;
+            discountBadge = `<span class="discount-badge">-${d}% OFF</span>`;
+        }
+
+        // স্টক ম্যানেজমেন্ট
+        const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
+        const totalStock = (parseInt(s.s)||0) + (parseInt(s.m)||0) + (parseInt(s.l)||0) + (parseInt(s.xl)||0) + (parseInt(s.xxl)||0);
+        let stockRibbon = '', btnState = '', cardClass = '';
+
+        if (totalStock === 0) {
+            stockRibbon = `<div class="stock-ribbon">STOCK OUT</div>`; // কোণাকুনি রিবন স্টাইল
+            btnState = 'disabled style="opacity:0.5; cursor:not-allowed;"';
+            cardClass = 'out-of-stock';
+        }
+
+        let images = i.images && i.images.length ? i.images : [''];
+        let slides = images.map((src) => `<img src="${src}" class="slider-image">`).join('');
+        
+        // স্লাইডার ডটস (Navigation Dots)
+        let dots = '';
+        if (images.length > 1) {
+            dots = `<div class="slider-dots" id="dots-${i.id}">
+                ${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}
+            </div>`;
+        }
+        
+        return `
+        <div class="product-card ${cardClass}">
+            <div class="image-wrapper">
+                ${discountBadge}
+                ${stockRibbon}
+                <div class="slider-container" id="slider-${i.id}" onscroll="updateActiveDot(this, '${i.id}')">${slides}</div>
+                ${dots}
+            </div>
+            <div class="product-info">
+                <h3>${i.name}</h3>
+                <div class="price-container">${priceHTML}</div>
+                <div class="product-actions">
+                    <button onclick="openSizeSelector('${i.id}', 'cart')" class="btn secondary-btn" ${btnState}>Add to Cart</button>
+                    <button onclick="openSizeSelector('${i.id}', 'buy')" class="btn primary-btn" ${btnState}>Buy Now</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
 
 
         const s = i.stock || {s:0, m:0, l:0, xl:0, xxl:0};
