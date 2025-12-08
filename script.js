@@ -134,24 +134,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     createSizeModalHTML();
 
     // ১. নেভিগেশন হাইলাইট রান করা (এটি সব পেজের লিঙ্ক ফিক্স করবে)
-    highlightAdminNav();
-function highlightAdminNav() {
-    const path = window.location.pathname;
-    const page = path.split("/").pop();
-
-    // এটি ইউজার এবং এডমিন উভয় নেভিগেশন হাইলাইট করবে
-    document.querySelectorAll('.nav-list li a, .sidebar ul li a').forEach(a => {
-        const href = a.getAttribute('href');
-        // বর্তমান পেজের নামের সাথে href মিললে active ক্লাস যোগ হবে
-        if (href === page || (page === "" && href === "index.html")) {
-            a.classList.add('active'); // ইউজার মেনুর জন্য
-            a.classList.add('admin-active'); // এডমিন মেনুর জন্য
-        } else {
-            a.classList.remove('active');
-            a.classList.remove('admin-active');
-        }
-    });
-}
+    highlightAdminNav(); 
 
     // ২. তাৎক্ষণিক প্রোডাক্ট লোড (ক্যাশ থেকে)
     const cacheKey = 'lynex_products_cache';
@@ -159,7 +142,7 @@ function highlightAdminNav() {
 
     if (cachedProducts && document.querySelector('.product-grid')) {
         const isHome = document.querySelector('.hero-section') !== null;
-        renderProducts(JSON.parse(cachedProducts), isHome); // ক্যাশ থেকে সাথে সাথে লোড
+        renderProducts(JSON.parse(cachedProducts), isHome); // ক্যাশ থেকে তাৎক্ষণিক লোড
     }
 
     // মোবাইল মেনু লজিক
@@ -207,6 +190,24 @@ function highlightAdminNav() {
     const contactForm = document.getElementById('contact-form') || document.querySelector('form[action="feedback.html"]');
     if (contactForm) handleContactForm(contactForm);
 });
+
+// ফাংশনটি ইভেন্টের বাইরে রাখুন (গ্লোবাল স্কোপে)
+function highlightAdminNav() {
+    const path = window.location.pathname;
+    const page = path.split("/").pop();
+
+    document.querySelectorAll('.nav-list li a, .sidebar ul li a').forEach(a => {
+        const href = a.getAttribute('href');
+        if (href === page || (page === "" && href === "index.html")) {
+            a.classList.add('active'); // ইউজার মেনুর জন্য
+            a.classList.add('admin-active'); // এডমিন মেনুর জন্য
+        } else {
+            a.classList.remove('active');
+            a.classList.remove('admin-active');
+        }
+    });
+}
+
 
 
 // ======================================================
