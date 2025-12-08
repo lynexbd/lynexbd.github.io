@@ -227,16 +227,43 @@ window.adjustModalQty = (change) => {
 // ======================================================
 // 1. PRODUCT DISPLAY (PUBLIC)
 // ======================================================
+// --- ৪. PRODUCT DISPLAY (Optimized for Speed) ---
 async function loadProductsDisplay(isHome) {
-    let grid = document.querySelector('.product-grid'); if (!grid) return;
-    grid.innerHTML = '<p style="color:#aaa;text-align:center;">Loading products...</p>';
-    
-    // Fetch from Firebase
-    let p = await getFirebaseData('products');
-    
+    let grid = document.querySelector('.product-grid'); 
+    if (!grid) return;
+
+    const cacheKey = 'lynex_products_cache';
+
+    // ১. প্রথমে লোকাল ক্যাশ থেকে ডাটা দেখাবে (খুবই ফাস্ট)
+    const cachedProducts = localStorage.getItem(cacheKey);
+    if (cachedProducts) {
+        renderProducts(JSON.parse(cachedProducts), isHome);
+    } else {
+        grid.innerHTML = '<p style="color:#aaa;text-align:center;padding:50px;">Loading collection...</p>';
+    }
+
+    // ২. ব্যাকগ্রাউন্ডে Firebase থেকে ফ্রেশ ডাটা আনবে
+    try {
+        const freshProducts = await getFirebaseData('products');
+        if (freshProducts && freshProducts.length > 0) {
+            // ডাটা ক্যাশ করে রাখবে পরবর্তী পেজ লোডের জন্য
+            localStorage.setItem(cacheKey, JSON.stringify(freshProducts));
+            // ফ্রেশ ডাটা দিয়ে পুনরায় রেন্ডার করবে যাতে স্টক আপডেট থাকে
+            renderProducts(freshProducts, isHome);
+        } else if (!cachedProducts) {
+            grid.innerHTML = '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
+        }
+    } catch (error) {
+        console.error("Background sync failed:", error);
+    }
+}
+
+// আলাদা রেন্ডারিং হেল্পার (যা ক্যাশ এবং লাইভ ডাটা উভয়ের জন্য কাজ করবে)
+function renderProducts(p, isHome) {
+    let grid = document.querySelector('.product-grid');
     if (isHome) p = p.filter(x => x.isNewArrival);
 
-    grid.innerHTML = p.length ? p.map(i => {
+    grid.innerHTML = p.map(i => {
         let priceHTML = `<span class="current-price">৳ ${i.price}</span>`;
         let discountBadge = '';
         if (i.originalPrice && i.originalPrice > i.price) {
@@ -257,13 +284,8 @@ async function loadProductsDisplay(isHome) {
 
         let images = i.images && i.images.length ? i.images : [''];
         let slides = images.map((src) => `<img src="${src}" class="slider-image">`).join('');
-        let dots = '';
-        if (images.length > 1) {
-            dots = `<div class="slider-dots" id="dots-${i.id}">
-                ${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}
-            </div>`;
-        }
-        
+        let dots = images.length > 1 ? `<div class="slider-dots" id="dots-${i.id}">${images.map((_, idx) => `<span class="dot ${idx===0?'active':''}" onclick="goToSlide(${idx}, '${i.id}')"></span>`).join('')}</div>` : '';
+
         return `
         <div class="product-card ${cardClass}">
             <div class="image-wrapper">
@@ -281,8 +303,9 @@ async function loadProductsDisplay(isHome) {
                 </div>
             </div>
         </div>`;
-    }).join('') : '<p style="text-align:center;width:100%;color:#777;padding:50px;">No products found.</p>';
+    }).join('');
 }
+
 
 // ======================================================
 // 2. SIZE MODAL & CART LOGIC
